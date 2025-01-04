@@ -45,6 +45,7 @@ const Login = () => {
               supabaseClient={supabase}
               view="sign_in"
               providers={[]}
+              magicLink={false}
               appearance={{
                 theme: ThemeSupa,
                 variables: {
