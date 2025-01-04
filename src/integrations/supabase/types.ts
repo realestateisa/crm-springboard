@@ -9,6 +9,93 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      leads: {
+        Row: {
+          api_url: string | null
+          client: string | null
+          created_by: string | null
+          custom_fields: Json | null
+          date_created: string | null
+          date_updated: string | null
+          description: string | null
+          email: string | null
+          external_id: string | null
+          id: string
+          location: string | null
+          name: string
+          phone: string | null
+          phone_formatted: string | null
+          phone_status: string | null
+          phone_type: string | null
+          script: string | null
+          source: string | null
+          status: Database["public"]["Enums"]["lead_status"] | null
+          timezone: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          api_url?: string | null
+          client?: string | null
+          created_by?: string | null
+          custom_fields?: Json | null
+          date_created?: string | null
+          date_updated?: string | null
+          description?: string | null
+          email?: string | null
+          external_id?: string | null
+          id?: string
+          location?: string | null
+          name: string
+          phone?: string | null
+          phone_formatted?: string | null
+          phone_status?: string | null
+          phone_type?: string | null
+          script?: string | null
+          source?: string | null
+          status?: Database["public"]["Enums"]["lead_status"] | null
+          timezone?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          api_url?: string | null
+          client?: string | null
+          created_by?: string | null
+          custom_fields?: Json | null
+          date_created?: string | null
+          date_updated?: string | null
+          description?: string | null
+          email?: string | null
+          external_id?: string | null
+          id?: string
+          location?: string | null
+          name?: string
+          phone?: string | null
+          phone_formatted?: string | null
+          phone_status?: string | null
+          phone_type?: string | null
+          script?: string | null
+          source?: string | null
+          status?: Database["public"]["Enums"]["lead_status"] | null
+          timezone?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           account_type: Database["public"]["Enums"]["account_type"] | null
@@ -54,6 +141,17 @@ export type Database = {
     }
     Enums: {
       account_type: "Admin" | "ISA"
+      lead_status:
+        | "Send AI Text (Continue Outreach)"
+        | "Potential"
+        | "Connected"
+        | "Unqualified"
+        | "Bad Phone Number"
+        | "Interested"
+        | "Missed Transfer"
+        | "Do Not Contact"
+        | "Send to Client"
+        | "Contact Later"
     }
     CompositeTypes: {
       [_ in never]: never
