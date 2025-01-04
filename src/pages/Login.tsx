@@ -43,9 +43,6 @@ const Login = () => {
             <h2 className="text-2xl font-bold text-[#1A1F2C] mb-8 text-center tracking-tight">ISA/ONE</h2>
             <Auth 
               supabaseClient={supabase}
-              view="sign_in"
-              showLinks={true}
-              magicLink={false}
               appearance={{
                 theme: ThemeSupa,
                 variables: {
@@ -78,7 +75,6 @@ const Login = () => {
                   message: 'text-sm text-red-500 mt-1',
                 },
               }}
-              providers={[]}
               localization={{
                 variables: {
                   sign_in: {
