@@ -82,6 +82,9 @@ const Login = () => {
                     password_label: '',
                     email_input_placeholder: 'Email',
                     password_input_placeholder: 'Password'
+                  },
+                  sign_up: {
+                    link_text: '' // This removes the "Don't have an account? Sign up" text
                   }
                 }
               }}
