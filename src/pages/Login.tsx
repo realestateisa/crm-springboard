@@ -20,9 +20,6 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F8FBFE] to-white">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-center mb-8">
-          <img src="/lovable-uploads/1b7809ec-d09a-4273-ac3e-2cf10171414f.png" alt="Agent ISA" className="h-16" />
-        </div>
         <div className="max-w-md mx-auto">
           <div className="bg-white rounded-lg shadow-lg p-8">
             <h2 className="text-3xl font-bold text-[#2D3748] mb-6 text-center">Welcome Back</h2>
