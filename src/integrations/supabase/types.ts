@@ -9,7 +9,99 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      pods: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          account_type: Database["public"]["Enums"]["account_type"] | null
+          date_created: string | null
+          date_updated: string | null
+          email: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          profile_image_url: string | null
+          timezone: string | null
+        }
+        Insert: {
+          account_type?: Database["public"]["Enums"]["account_type"] | null
+          date_created?: string | null
+          date_updated?: string | null
+          email: string
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+          profile_image_url?: string | null
+          timezone?: string | null
+        }
+        Update: {
+          account_type?: Database["public"]["Enums"]["account_type"] | null
+          date_created?: string | null
+          date_updated?: string | null
+          email?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          profile_image_url?: string | null
+          timezone?: string | null
+        }
+        Relationships: []
+      }
+      user_pods: {
+        Row: {
+          created_at: string | null
+          pod_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          pod_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          pod_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_pods_pod_id_fkey"
+            columns: ["pod_id"]
+            isOneToOne: false
+            referencedRelation: "pods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_pods_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +110,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      account_type: "Admin" | "ISA"
     }
     CompositeTypes: {
       [_ in never]: never
