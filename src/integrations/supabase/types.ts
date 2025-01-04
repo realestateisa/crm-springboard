@@ -9,30 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      pods: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          id: string
-          name: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          name: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          name?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           account_type: Database["public"]["Enums"]["account_type"] | null
@@ -68,39 +44,6 @@ export type Database = {
           timezone?: string | null
         }
         Relationships: []
-      }
-      user_pods: {
-        Row: {
-          created_at: string | null
-          pod_id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          pod_id: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          pod_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_pods_pod_id_fkey"
-            columns: ["pod_id"]
-            isOneToOne: false
-            referencedRelation: "pods"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_pods_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
       }
     }
     Views: {
