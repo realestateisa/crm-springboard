@@ -9,6 +9,67 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      activities: {
+        Row: {
+          created_by: string | null
+          custom_fields: Json | null
+          date_created: string | null
+          date_updated: string | null
+          description: string | null
+          external_id: string | null
+          id: string
+          lead_id: string
+          type: Database["public"]["Enums"]["activity_type"]
+          updated_by: string | null
+        }
+        Insert: {
+          created_by?: string | null
+          custom_fields?: Json | null
+          date_created?: string | null
+          date_updated?: string | null
+          description?: string | null
+          external_id?: string | null
+          id?: string
+          lead_id: string
+          type: Database["public"]["Enums"]["activity_type"]
+          updated_by?: string | null
+        }
+        Update: {
+          created_by?: string | null
+          custom_fields?: Json | null
+          date_created?: string | null
+          date_updated?: string | null
+          description?: string | null
+          external_id?: string | null
+          id?: string
+          lead_id?: string
+          type?: Database["public"]["Enums"]["activity_type"]
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activities_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activities_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activities_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           api_url: string | null
