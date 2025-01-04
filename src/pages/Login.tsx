@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { Loader2, UserPlus } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -44,6 +44,8 @@ const Login = () => {
             <Auth 
               supabaseClient={supabase}
               view="sign_in"
+              magicLink={false}
+              showLinks={true}
               appearance={{
                 theme: ThemeSupa,
                 variables: {
@@ -83,6 +85,8 @@ const Login = () => {
                     password_label: '',
                     email_input_placeholder: 'Email',
                     password_input_placeholder: 'Password',
+                    button_label: 'Sign in',
+                    link_text: 'Already have an account? Sign in',
                   },
                   sign_up: {
                     email_label: '',
@@ -95,7 +99,6 @@ const Login = () => {
                 }
               }}
               providers={[]}
-              showLinks={true}
               theme="light"
             />
           </div>
