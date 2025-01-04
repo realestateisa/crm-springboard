@@ -590,6 +590,92 @@ export type Database = {
           },
         ]
       }
+      tasks: {
+        Row: {
+          assigned_to: string | null
+          created_by: string | null
+          custom_fields: Json | null
+          date: string | null
+          date_created: string | null
+          date_updated: string | null
+          due_date: string | null
+          id: string
+          is_complete: boolean | null
+          is_dateless: boolean | null
+          lead_id: string | null
+          object_id: string | null
+          object_type: string | null
+          text: string
+          type: string
+          updated_by: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_by?: string | null
+          custom_fields?: Json | null
+          date?: string | null
+          date_created?: string | null
+          date_updated?: string | null
+          due_date?: string | null
+          id?: string
+          is_complete?: boolean | null
+          is_dateless?: boolean | null
+          lead_id?: string | null
+          object_id?: string | null
+          object_type?: string | null
+          text: string
+          type: string
+          updated_by?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          created_by?: string | null
+          custom_fields?: Json | null
+          date?: string | null
+          date_created?: string | null
+          date_updated?: string | null
+          due_date?: string | null
+          id?: string
+          is_complete?: boolean | null
+          is_dateless?: boolean | null
+          lead_id?: string | null
+          object_id?: string | null
+          object_type?: string | null
+          text?: string
+          type?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       templates: {
         Row: {
           content: string

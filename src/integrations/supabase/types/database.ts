@@ -1,36 +1,73 @@
+import { Activity, ActivityInsert, ActivityUpdate } from "./activities"
+import { Call, CallInsert, CallUpdate } from "./calls"
+import { Email, EmailInsert, EmailUpdate } from "./emails"
 import { Lead, LeadInsert, LeadUpdate } from "./leads"
+import { Organization, OrganizationInsert, OrganizationUpdate } from "./organizations"
 import { Profile, ProfileInsert, ProfileUpdate } from "./profiles"
-import { AccountType, LeadStatus } from "./enums"
+import { Sequence, SequenceInsert, SequenceUpdate } from "./sequences"
+import { SequenceStep, SequenceStepInsert, SequenceStepUpdate } from "./sequence-steps"
+import { SMS, SMSInsert, SMSUpdate } from "./sms"
+import { Task, TaskInsert, TaskUpdate } from "./tasks"
+import { Template, TemplateInsert, TemplateUpdate } from "./templates"
+import { AccountType, ActivityType, CallDisposition, LeadStatus, MessageStatus, SequenceStatus } from "./enums"
 
 export interface Database {
   public: {
     Tables: {
+      activities: {
+        Row: Activity
+        Insert: ActivityInsert
+        Update: ActivityUpdate
+      }
+      calls: {
+        Row: Call
+        Insert: CallInsert
+        Update: CallUpdate
+      }
+      emails: {
+        Row: Email
+        Insert: EmailInsert
+        Update: EmailUpdate
+      }
       leads: {
         Row: Lead
         Insert: LeadInsert
         Update: LeadUpdate
-        Relationships: [
-          {
-            foreignKeyName: "leads_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "leads_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          }
-        ]
+      }
+      organizations: {
+        Row: Organization
+        Insert: OrganizationInsert
+        Update: OrganizationUpdate
       }
       profiles: {
         Row: Profile
         Insert: ProfileInsert
         Update: ProfileUpdate
-        Relationships: []
+      }
+      sequences: {
+        Row: Sequence
+        Insert: SequenceInsert
+        Update: SequenceUpdate
+      }
+      sequence_steps: {
+        Row: SequenceStep
+        Insert: SequenceStepInsert
+        Update: SequenceStepUpdate
+      }
+      sms: {
+        Row: SMS
+        Insert: SMSInsert
+        Update: SMSUpdate
+      }
+      tasks: {
+        Row: Task
+        Insert: TaskInsert
+        Update: TaskUpdate
+      }
+      templates: {
+        Row: Template
+        Insert: TemplateInsert
+        Update: TemplateUpdate
       }
     }
     Views: {
@@ -41,7 +78,11 @@ export interface Database {
     }
     Enums: {
       account_type: AccountType
+      activity_type: ActivityType
+      call_disposition: CallDisposition
       lead_status: LeadStatus
+      message_status: MessageStatus
+      sequence_status: SequenceStatus
     }
     CompositeTypes: {
       [_ in never]: never
