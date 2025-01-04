@@ -70,6 +70,162 @@ export type Database = {
           },
         ]
       }
+      calls: {
+        Row: {
+          created_by: string | null
+          date_created: string | null
+          date_updated: string | null
+          disposition: Database["public"]["Enums"]["call_disposition"] | null
+          duration: number | null
+          ended_at: string | null
+          external_id: string | null
+          id: string
+          lead_id: string | null
+          notes: string | null
+          recording_url: string | null
+          scheduled_date: string | null
+          started_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          created_by?: string | null
+          date_created?: string | null
+          date_updated?: string | null
+          disposition?: Database["public"]["Enums"]["call_disposition"] | null
+          duration?: number | null
+          ended_at?: string | null
+          external_id?: string | null
+          id?: string
+          lead_id?: string | null
+          notes?: string | null
+          recording_url?: string | null
+          scheduled_date?: string | null
+          started_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          created_by?: string | null
+          date_created?: string | null
+          date_updated?: string | null
+          disposition?: Database["public"]["Enums"]["call_disposition"] | null
+          duration?: number | null
+          ended_at?: string | null
+          external_id?: string | null
+          id?: string
+          lead_id?: string | null
+          notes?: string | null
+          recording_url?: string | null
+          scheduled_date?: string | null
+          started_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calls_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calls_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calls_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      emails: {
+        Row: {
+          content: string
+          created_by: string | null
+          date_created: string | null
+          date_updated: string | null
+          external_id: string | null
+          from_email: string
+          id: string
+          lead_id: string | null
+          scheduled_date: string | null
+          sent_date: string | null
+          status: Database["public"]["Enums"]["message_status"] | null
+          subject: string
+          template_id: string | null
+          to_email: string
+          updated_by: string | null
+        }
+        Insert: {
+          content: string
+          created_by?: string | null
+          date_created?: string | null
+          date_updated?: string | null
+          external_id?: string | null
+          from_email: string
+          id?: string
+          lead_id?: string | null
+          scheduled_date?: string | null
+          sent_date?: string | null
+          status?: Database["public"]["Enums"]["message_status"] | null
+          subject: string
+          template_id?: string | null
+          to_email: string
+          updated_by?: string | null
+        }
+        Update: {
+          content?: string
+          created_by?: string | null
+          date_created?: string | null
+          date_updated?: string | null
+          external_id?: string | null
+          from_email?: string
+          id?: string
+          lead_id?: string | null
+          scheduled_date?: string | null
+          sent_date?: string | null
+          status?: Database["public"]["Enums"]["message_status"] | null
+          subject?: string
+          template_id?: string | null
+          to_email?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emails_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emails_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emails_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emails_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           api_url: string | null
@@ -157,6 +313,51 @@ export type Database = {
           },
         ]
       }
+      organizations: {
+        Row: {
+          created_by: string | null
+          date_created: string | null
+          date_updated: string | null
+          description: string | null
+          id: string
+          name: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_by?: string | null
+          date_created?: string | null
+          date_updated?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_by?: string | null
+          date_created?: string | null
+          date_updated?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organizations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organizations_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           account_type: Database["public"]["Enums"]["account_type"] | null
@@ -192,6 +393,253 @@ export type Database = {
           timezone?: string | null
         }
         Relationships: []
+      }
+      sequence_steps: {
+        Row: {
+          created_by: string | null
+          date_created: string | null
+          date_updated: string | null
+          delay_hours: number | null
+          id: string
+          sequence_id: string | null
+          step_number: number
+          template_id: string | null
+          type: Database["public"]["Enums"]["activity_type"]
+          updated_by: string | null
+        }
+        Insert: {
+          created_by?: string | null
+          date_created?: string | null
+          date_updated?: string | null
+          delay_hours?: number | null
+          id?: string
+          sequence_id?: string | null
+          step_number: number
+          template_id?: string | null
+          type: Database["public"]["Enums"]["activity_type"]
+          updated_by?: string | null
+        }
+        Update: {
+          created_by?: string | null
+          date_created?: string | null
+          date_updated?: string | null
+          delay_hours?: number | null
+          id?: string
+          sequence_id?: string | null
+          step_number?: number
+          template_id?: string | null
+          type?: Database["public"]["Enums"]["activity_type"]
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequence_steps_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequence_steps_sequence_id_fkey"
+            columns: ["sequence_id"]
+            isOneToOne: false
+            referencedRelation: "sequences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequence_steps_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequence_steps_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sequences: {
+        Row: {
+          created_by: string | null
+          date_created: string | null
+          date_updated: string | null
+          description: string | null
+          id: string
+          name: string
+          status: Database["public"]["Enums"]["sequence_status"] | null
+          updated_by: string | null
+        }
+        Insert: {
+          created_by?: string | null
+          date_created?: string | null
+          date_updated?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          status?: Database["public"]["Enums"]["sequence_status"] | null
+          updated_by?: string | null
+        }
+        Update: {
+          created_by?: string | null
+          date_created?: string | null
+          date_updated?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          status?: Database["public"]["Enums"]["sequence_status"] | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequences_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequences_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sms: {
+        Row: {
+          content: string
+          created_by: string | null
+          date_created: string | null
+          date_updated: string | null
+          external_id: string | null
+          from_phone: string
+          id: string
+          lead_id: string | null
+          scheduled_date: string | null
+          sent_date: string | null
+          status: Database["public"]["Enums"]["message_status"] | null
+          template_id: string | null
+          to_phone: string
+          updated_by: string | null
+        }
+        Insert: {
+          content: string
+          created_by?: string | null
+          date_created?: string | null
+          date_updated?: string | null
+          external_id?: string | null
+          from_phone: string
+          id?: string
+          lead_id?: string | null
+          scheduled_date?: string | null
+          sent_date?: string | null
+          status?: Database["public"]["Enums"]["message_status"] | null
+          template_id?: string | null
+          to_phone: string
+          updated_by?: string | null
+        }
+        Update: {
+          content?: string
+          created_by?: string | null
+          date_created?: string | null
+          date_updated?: string | null
+          external_id?: string | null
+          from_phone?: string
+          id?: string
+          lead_id?: string | null
+          scheduled_date?: string | null
+          sent_date?: string | null
+          status?: Database["public"]["Enums"]["message_status"] | null
+          template_id?: string | null
+          to_phone?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sms_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sms_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sms_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sms_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      templates: {
+        Row: {
+          content: string
+          created_by: string | null
+          date_created: string | null
+          date_updated: string | null
+          id: string
+          name: string
+          subject: string | null
+          type: Database["public"]["Enums"]["activity_type"]
+          updated_by: string | null
+        }
+        Insert: {
+          content: string
+          created_by?: string | null
+          date_created?: string | null
+          date_updated?: string | null
+          id?: string
+          name: string
+          subject?: string | null
+          type: Database["public"]["Enums"]["activity_type"]
+          updated_by?: string | null
+        }
+        Update: {
+          content?: string
+          created_by?: string | null
+          date_created?: string | null
+          date_updated?: string | null
+          id?: string
+          name?: string
+          subject?: string | null
+          type?: Database["public"]["Enums"]["activity_type"]
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "templates_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
