@@ -23,7 +23,7 @@ export default function Login() {
         <Card className="p-8">
           <div className="mb-8 text-center">
             <img
-              src="/lovable-uploads/1b7809ec-d09a-4273-ac3e-2cf10171414f.png"
+              src="/lovable-uploads/b1e1b9a8-4362-4605-a82c-a8e5dee97200.png"
               alt="Logo"
               className="mx-auto h-12 mb-4"
             />
