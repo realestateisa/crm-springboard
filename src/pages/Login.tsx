@@ -86,7 +86,7 @@ const Login = () => {
                     email_input_placeholder: 'Email',
                     password_input_placeholder: 'Password',
                     button_label: 'Sign in',
-                    link_text: 'Already have an account? Sign in',
+                    link_text: 'New user? Create an account',
                   },
                   sign_up: {
                     email_label: '',
@@ -94,7 +94,7 @@ const Login = () => {
                     email_input_placeholder: 'Email',
                     password_input_placeholder: 'Password',
                     button_label: 'Sign up',
-                    link_text: 'New user? Create an account',
+                    link_text: 'Already have an account? Sign in',
                   }
                 }
               }}
