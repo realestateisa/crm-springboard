@@ -141,6 +141,15 @@ export type Database = {
     }
     Enums: {
       account_type: "Admin" | "ISA"
+      activity_type: "call" | "sms" | "email" | "note" | "custom"
+      call_disposition:
+        | "answered"
+        | "no_answer"
+        | "busy"
+        | "voicemail"
+        | "wrong_number"
+        | "disconnected"
+        | "callback_requested"
       lead_status:
         | "Send AI Text (Continue Outreach)"
         | "Potential"
@@ -152,6 +161,8 @@ export type Database = {
         | "Do Not Contact"
         | "Send to Client"
         | "Contact Later"
+      message_status: "draft" | "scheduled" | "sent" | "delivered" | "failed"
+      sequence_status: "active" | "paused" | "archived"
     }
     CompositeTypes: {
       [_ in never]: never
