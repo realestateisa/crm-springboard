@@ -12,7 +12,7 @@ export default function Login() {
     // Check current auth status
     supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
-        navigate("/users");
+        navigate("/");
       }
     });
   }, [navigate]);
@@ -22,6 +22,11 @@ export default function Login() {
       <div className="w-full max-w-md">
         <Card className="p-8">
           <div className="mb-8 text-center">
+            <img
+              src="/lovable-uploads/1b7809ec-d09a-4273-ac3e-2cf10171414f.png"
+              alt="Logo"
+              className="mx-auto h-12 mb-4"
+            />
             <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
             <p className="text-gray-600">Sign in to your account</p>
           </div>
