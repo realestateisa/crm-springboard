@@ -70,7 +70,7 @@ const Login = () => {
                   container: 'w-full',
                   button: 'w-full px-4 py-3 rounded-xl font-medium shadow-sm transition-colors hover:opacity-90',
                   input: 'w-full px-4 py-3 rounded-xl border bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-[#00A7E1] focus:ring-opacity-50 transition-all duration-200',
-                  label: 'text-sm font-medium text-[#1A1F2C] mb-1.5',
+                  label: 'sr-only', // This hides the labels visually while maintaining accessibility
                   anchor: 'text-[#00A7E1] hover:text-[#0095C8] transition-colors font-medium',
                   message: 'text-sm text-red-500 mt-1',
                 },
