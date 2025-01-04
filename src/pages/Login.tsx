@@ -89,6 +89,8 @@ const Login = () => {
                 }
               }}
               providers={[]}
+              view="sign_in"
+              showLinks={false}
               theme="light"
             />
           </div>
