@@ -366,8 +366,10 @@ export type Database = {
           email: string
           first_name: string | null
           id: string
+          is_active: boolean | null
           last_name: string | null
           profile_image_url: string | null
+          role: Database["public"]["Enums"]["user_role"] | null
           timezone: string | null
         }
         Insert: {
@@ -377,8 +379,10 @@ export type Database = {
           email: string
           first_name?: string | null
           id: string
+          is_active?: boolean | null
           last_name?: string | null
           profile_image_url?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
           timezone?: string | null
         }
         Update: {
@@ -388,8 +392,10 @@ export type Database = {
           email?: string
           first_name?: string | null
           id?: string
+          is_active?: boolean | null
           last_name?: string | null
           profile_image_url?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
           timezone?: string | null
         }
         Relationships: []
@@ -758,6 +764,7 @@ export type Database = {
         | "Contact Later"
       message_status: "draft" | "scheduled" | "sent" | "delivered" | "failed"
       sequence_status: "active" | "paused" | "archived"
+      user_role: "admin" | "isa"
     }
     CompositeTypes: {
       [_ in never]: never
