@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { Loader2 } from "lucide-react";
+import { Loader2, UserPlus } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -71,7 +71,7 @@ const Login = () => {
                   button: 'w-full px-4 py-3 rounded-xl font-medium shadow-sm transition-colors hover:opacity-90',
                   input: 'w-full px-4 py-3 rounded-xl border bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-[#00A7E1] focus:ring-opacity-50 transition-all duration-200 text-center placeholder:text-center',
                   label: 'sr-only',
-                  anchor: 'text-[#00A7E1] hover:text-[#0095C8] transition-colors font-medium',
+                  anchor: 'text-[#00A7E1] hover:text-[#0095C8] transition-colors font-medium flex items-center justify-center gap-2 mt-4',
                   message: 'text-sm text-red-500 mt-1',
                 },
               }}
@@ -89,7 +89,7 @@ const Login = () => {
                     email_input_placeholder: 'Email',
                     password_input_placeholder: 'Password',
                     button_label: 'Sign up',
-                    link_text: "Don't have an account? Sign up",
+                    link_text: 'New user? Create an account',
                   }
                 }
               }}
