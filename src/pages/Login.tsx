@@ -44,8 +44,8 @@ const Login = () => {
             <Auth 
               supabaseClient={supabase}
               view="sign_in"
-              magicLink={false}
               showLinks={true}
+              magicLink={false}
               appearance={{
                 theme: ThemeSupa,
                 variables: {
@@ -78,6 +78,7 @@ const Login = () => {
                   message: 'text-sm text-red-500 mt-1',
                 },
               }}
+              providers={[]}
               localization={{
                 variables: {
                   sign_in: {
@@ -98,8 +99,6 @@ const Login = () => {
                   }
                 }
               }}
-              providers={[]}
-              theme="light"
             />
           </div>
         </div>
