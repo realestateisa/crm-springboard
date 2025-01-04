@@ -22,6 +22,13 @@ const Login = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-md mx-auto">
           <div className="bg-white rounded-lg shadow-lg p-8">
+            <div className="flex justify-center mb-6">
+              <img 
+                src="/lovable-uploads/b1e1b9a8-4362-4605-a82c-a8e5dee97200.png" 
+                alt="Agent ISA" 
+                className="h-12"
+              />
+            </div>
             <h2 className="text-3xl font-bold text-[#2D3748] mb-6 text-center">Welcome Back</h2>
             <Auth 
               supabaseClient={supabase}
