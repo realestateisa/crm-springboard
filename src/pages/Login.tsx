@@ -40,7 +40,7 @@ const Login = () => {
                 className="h-14 w-auto"
               />
             </div>
-            <h2 className="text-2xl font-semibold text-[#1A1F2C] mb-8 text-center">Welcome Back</h2>
+            <h2 className="text-2xl font-bold text-[#1A1F2C] mb-8 text-center tracking-tight">ISA/ONE</h2>
             <Auth 
               supabaseClient={supabase}
               appearance={{
@@ -60,18 +60,19 @@ const Login = () => {
                       inputBorderWidth: '1px',
                     },
                     radii: {
-                      borderRadiusButton: '0.5rem',
-                      buttonBorderRadius: '0.5rem',
-                      inputBorderRadius: '0.5rem',
+                      borderRadiusButton: '0.75rem',
+                      buttonBorderRadius: '0.75rem',
+                      inputBorderRadius: '0.75rem',
                     },
                   },
                 },
                 className: {
                   container: 'w-full',
-                  button: 'w-full px-4 py-2.5 rounded-lg font-medium shadow-sm transition-colors',
-                  input: 'w-full px-4 py-2.5 rounded-lg border focus:ring-2 focus:ring-[#00A7E1] focus:ring-opacity-50 transition-shadow',
-                  label: 'text-sm font-medium text-[#1A1F2C]',
-                  anchor: 'text-[#00A7E1] hover:text-[#0095C8] transition-colors',
+                  button: 'w-full px-4 py-3 rounded-xl font-medium shadow-sm transition-colors hover:opacity-90',
+                  input: 'w-full px-4 py-3 rounded-xl border bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-[#00A7E1] focus:ring-opacity-50 transition-all duration-200',
+                  label: 'text-sm font-medium text-[#1A1F2C] mb-1.5',
+                  anchor: 'text-[#00A7E1] hover:text-[#0095C8] transition-colors font-medium',
+                  message: 'text-sm text-red-500 mt-1',
                 },
               }}
               providers={[]}
