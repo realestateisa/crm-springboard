@@ -1,14 +1,17 @@
 import { Auth } from "@supabase/auth-ui-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { Loader2 } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsLoading(false);
       if (session) {
         navigate("/");
       }
@@ -17,19 +20,27 @@ const Login = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#F8FBFE] to-white flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[#00A7E1]" />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F8FBFE] to-white">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-md mx-auto">
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <div className="flex justify-center mb-6">
+    <div className="min-h-screen bg-gradient-to-b from-[#F8FBFE] to-white flex items-center">
+      <div className="container max-w-md mx-auto px-4">
+        <div className="bg-white rounded-xl shadow-xl overflow-hidden">
+          <div className="p-8">
+            <div className="flex justify-center mb-8">
               <img 
                 src="/lovable-uploads/b1e1b9a8-4362-4605-a82c-a8e5dee97200.png" 
                 alt="Agent ISA" 
-                className="h-12"
+                className="h-14 w-auto"
               />
             </div>
-            <h2 className="text-3xl font-bold text-[#2D3748] mb-6 text-center">Welcome Back</h2>
+            <h2 className="text-2xl font-semibold text-[#1A1F2C] mb-8 text-center">Welcome Back</h2>
             <Auth 
               supabaseClient={supabase}
               appearance={{
@@ -39,13 +50,28 @@ const Login = () => {
                     colors: {
                       brand: '#00A7E1',
                       brandAccent: '#0095C8',
+                      inputBackground: 'white',
+                      inputText: '#1A1F2C',
+                      inputBorder: '#E2E8F0',
+                      inputBorderFocus: '#00A7E1',
+                    },
+                    borderWidths: {
+                      buttonBorderWidth: '0px',
+                      inputBorderWidth: '1px',
+                    },
+                    radii: {
+                      borderRadiusButton: '0.5rem',
+                      buttonBorderRadius: '0.5rem',
+                      inputBorderRadius: '0.5rem',
                     },
                   },
                 },
                 className: {
                   container: 'w-full',
-                  button: 'w-full px-4 py-2 rounded-md',
-                  input: 'w-full px-3 py-2 border rounded-md',
+                  button: 'w-full px-4 py-2.5 rounded-lg font-medium shadow-sm transition-colors',
+                  input: 'w-full px-4 py-2.5 rounded-lg border focus:ring-2 focus:ring-[#00A7E1] focus:ring-opacity-50 transition-shadow',
+                  label: 'text-sm font-medium text-[#1A1F2C]',
+                  anchor: 'text-[#00A7E1] hover:text-[#0095C8] transition-colors',
                 },
               }}
               providers={[]}
