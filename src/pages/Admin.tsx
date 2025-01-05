@@ -1,39 +1,19 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Profile } from "@/integrations/supabase/types/profiles";
 import { Loader2, UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Profile } from "@/integrations/supabase/types/profiles";
+import UserTable from "@/components/admin/UserTable";
+import UserDialog from "@/components/admin/UserDialog";
 
 const Admin = () => {
   const [users, setUsers] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMode, setDialogMode] = useState<"edit" | "add">("edit");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -84,33 +64,88 @@ const Admin = () => {
     fetchUsers();
   }, [navigate, toast]);
 
-  const handleEditUser = async (updatedUser: Partial<Profile>) => {
-    if (!selectedUser) return;
+  const handleAddUser = () => {
+    setSelectedUser(null);
+    setDialogMode("add");
+    setDialogOpen(true);
+  };
 
-    const { error } = await supabase
-      .from("profiles")
-      .update(updatedUser)
-      .eq("id", selectedUser.id);
+  const handleEditUser = (user: Profile) => {
+    setSelectedUser(user);
+    setDialogMode("edit");
+    setDialogOpen(true);
+  };
 
-    if (error) {
+  const handleSaveUser = async (userData: Partial<Profile>) => {
+    if (dialogMode === "edit" && selectedUser) {
+      const { error } = await supabase
+        .from("profiles")
+        .update(userData)
+        .eq("id", selectedUser.id);
+
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to update user.",
+        });
+        return;
+      }
+
+      setUsers(users.map(user => 
+        user.id === selectedUser.id ? { ...user, ...userData } : user
+      ));
+
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to update user.",
+        title: "Success",
+        description: "User updated successfully.",
       });
-      return;
+    } else {
+      // For new users, we need to create both auth user and profile
+      const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
+        email: userData.email!,
+        password: "temporary123", // Temporary password
+        email_confirm: true,
+      });
+
+      if (authError) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to create user account.",
+        });
+        return;
+      }
+
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .insert({
+          ...userData,
+          id: authUser.user.id,
+        });
+
+      if (profileError) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to create user profile.",
+        });
+        return;
+      }
+
+      // Refresh the users list
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("*")
+        .order("date_created", { ascending: false });
+
+      setUsers(profiles || []);
+
+      toast({
+        title: "Success",
+        description: "User created successfully.",
+      });
     }
-
-    setUsers(users.map(user => 
-      user.id === selectedUser.id ? { ...user, ...updatedUser } : user
-    ));
-
-    toast({
-      title: "Success",
-      description: "User updated successfully.",
-    });
-
-    setEditDialogOpen(false);
   };
 
   const handleToggleStatus = async (user: Profile) => {
@@ -150,135 +185,29 @@ const Admin = () => {
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-[#1A1F2C]">User Management</h1>
-        <Button className="bg-[#00A7E1] hover:bg-[#0095C8]">
+        <Button 
+          className="bg-[#00A7E1] hover:bg-[#0095C8]"
+          onClick={handleAddUser}
+        >
           <UserPlus className="mr-2 h-4 w-4" />
           Add User
         </Button>
       </div>
       <div className="bg-white rounded-xl shadow-xl overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell className="font-medium">
-                  {user.first_name} {user.last_name}
-                </TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell className="capitalize">{user.role}</TableCell>
-                <TableCell>
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      user.is_active
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {user.is_active ? "Active" : "Inactive"}
-                  </span>
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mr-2"
-                    onClick={() => {
-                      setSelectedUser(user);
-                      setEditDialogOpen(true);
-                    }}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className={user.is_active ? "text-red-600" : "text-green-600"}
-                    onClick={() => handleToggleStatus(user)}
-                  >
-                    {user.is_active ? "Deactivate" : "Activate"}
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <UserTable
+          users={users}
+          onEdit={handleEditUser}
+          onToggleStatus={handleToggleStatus}
+        />
       </div>
 
-      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit User</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  defaultValue={selectedUser?.first_name || ""}
-                  onChange={(e) => {
-                    if (selectedUser) {
-                      handleEditUser({ ...selectedUser, first_name: e.target.value });
-                    }
-                  }}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  defaultValue={selectedUser?.last_name || ""}
-                  onChange={(e) => {
-                    if (selectedUser) {
-                      handleEditUser({ ...selectedUser, last_name: e.target.value });
-                    }
-                  }}
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                defaultValue={selectedUser?.email || ""}
-                onChange={(e) => {
-                  if (selectedUser) {
-                    handleEditUser({ ...selectedUser, email: e.target.value });
-                  }
-                }}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="role">Role</Label>
-              <Select
-                defaultValue={selectedUser?.role || "isa"}
-                onValueChange={(value) => {
-                  if (selectedUser) {
-                    handleEditUser({ ...selectedUser, role: value as "admin" | "isa" });
-                  }
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="isa">ISA</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <UserDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onSave={handleSaveUser}
+        user={selectedUser || undefined}
+        mode={dialogMode}
+      />
     </div>
   );
 };
