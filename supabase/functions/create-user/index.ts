@@ -12,7 +12,6 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     
@@ -146,45 +145,7 @@ Deno.serve(async (req) => {
       )
     }
 
-    // Send welcome email with password reset link using Resend
-    if (RESEND_API_KEY) {
-      try {
-        console.log('Sending welcome email to:', userData.email)
-        const emailResponse = await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${RESEND_API_KEY}`,
-          },
-          body: JSON.stringify({
-            from: 'ISA/ONE <onboarding@resend.dev>',
-            to: [userData.email],
-            subject: 'Welcome to ISA/ONE - Set Up Your Password',
-            html: `
-              <h1>Welcome to ISA/ONE!</h1>
-              <p>Hello ${userData.first_name},</p>
-              <p>Your account has been created. To get started, please set up your password by clicking the link below:</p>
-              <p><a href="${resetData.properties.action_link}">Set Your Password</a></p>
-              <p>If you didn't request this account, please ignore this email.</p>
-              <p>Best regards,<br>The ISA/ONE Team</p>
-            `,
-          }),
-        })
-
-        if (!emailResponse.ok) {
-          const emailError = await emailResponse.text()
-          console.error('Error sending welcome email:', emailError)
-          // Don't return error as user is created successfully
-        } else {
-          console.log('Welcome email sent successfully')
-        }
-      } catch (emailError) {
-        console.error('Error sending welcome email:', emailError)
-        // Don't return error as user is created successfully
-      }
-    } else {
-      console.warn('RESEND_API_KEY not found, skipping welcome email')
-    }
+    console.log('Password reset link generated successfully:', resetData.properties.action_link)
 
     return new Response(
       JSON.stringify({ 
