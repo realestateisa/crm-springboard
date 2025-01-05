@@ -24,6 +24,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const menuItems = [
   { 
@@ -42,18 +43,41 @@ const menuItems = [
 export function AppSidebar() {
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const checkAdminStatus = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
         
-        setIsAdmin(profile?.role === 'admin');
+        if (user) {
+          console.log("Current user ID:", user.id);
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+          
+          if (error) {
+            console.error("Error fetching profile:", error);
+            toast({
+              title: "Error",
+              description: "Could not fetch user role",
+              variant: "destructive",
+            });
+            return;
+          }
+
+          console.log("Profile data:", profile);
+          setIsAdmin(profile?.role === 'admin');
+        }
+      } catch (error) {
+        console.error("Error in checkAdminStatus:", error);
+        toast({
+          title: "Error",
+          description: "Could not verify admin status",
+          variant: "destructive",
+        });
       }
     };
 
