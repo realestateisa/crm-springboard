@@ -13,6 +13,7 @@ import ResetPassword from "./pages/ResetPassword";
 import { AppSidebar } from "./components/AppSidebar";
 import { AppHeader } from "./components/AppHeader";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { AdminProvider } from "./contexts/AdminContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -55,17 +56,19 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   return isAuthenticated ? (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full">
-        <AppSidebar />
-        <div className="flex-1 flex flex-col">
-          <AppHeader />
-          <main className="flex-1">
-            {children}
-          </main>
+    <AdminProvider>
+      <SidebarProvider>
+        <div className="flex min-h-screen w-full">
+          <AppSidebar />
+          <div className="flex-1 flex flex-col">
+            <AppHeader />
+            <main className="flex-1">
+              {children}
+            </main>
+          </div>
         </div>
-      </div>
-    </SidebarProvider>
+      </SidebarProvider>
+    </AdminProvider>
   ) : (
     <Navigate to="/login" />
   );
