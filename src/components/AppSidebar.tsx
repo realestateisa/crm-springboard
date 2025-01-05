@@ -21,8 +21,8 @@ import {
   SidebarMenuSubItem
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useAdmin } from "@/contexts/AdminContext";
 
 const menuItems = [
@@ -43,6 +43,21 @@ const menuItems = [
 export function AppSidebar() {
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const { isAdmin } = useAdmin();
+  const location = useLocation();
+
+  // Update expanded item based on current route
+  useEffect(() => {
+    const currentPath = location.pathname;
+    const matchingMenuItem = menuItems.find(item => 
+      currentPath.startsWith(item.href)
+    );
+    
+    if (matchingMenuItem) {
+      setExpandedItem(matchingMenuItem.label);
+    } else {
+      setExpandedItem(null);
+    }
+  }, [location.pathname]);
 
   return (
     <Sidebar className="fixed top-0 left-0 h-full w-64 bg-sidebar/95 backdrop-blur supports-[backdrop-filter]:bg-sidebar/60 border-r border-sidebar-border/50">
@@ -78,10 +93,7 @@ export function AppSidebar() {
               )}
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.label}>
-                  <SidebarMenuButton 
-                    asChild
-                    onClick={() => setExpandedItem(expandedItem === item.label ? null : item.label)}
-                  >
+                  <SidebarMenuButton asChild>
                     <Link 
                       to={item.href} 
                       className="flex items-center gap-3 px-3 py-2 text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md transition-colors duration-200"
@@ -90,7 +102,7 @@ export function AppSidebar() {
                       <span>{item.label}</span>
                     </Link>
                   </SidebarMenuButton>
-                  {item.subItems && expandedItem === item.label && (
+                  {item.subItems && expandedItem === item.label && location.pathname.startsWith('/tasks/inbox') && (
                     <SidebarMenuSub>
                       {item.subItems.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.label}>
