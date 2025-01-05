@@ -249,6 +249,7 @@ export type Database = {
           source: string | null
           status: Database["public"]["Enums"]["lead_status"] | null
           timezone: string | null
+          transfer_ext: string | null
           updated_by: string | null
         }
         Insert: {
@@ -273,6 +274,7 @@ export type Database = {
           source?: string | null
           status?: Database["public"]["Enums"]["lead_status"] | null
           timezone?: string | null
+          transfer_ext?: string | null
           updated_by?: string | null
         }
         Update: {
@@ -297,6 +299,7 @@ export type Database = {
           source?: string | null
           status?: Database["public"]["Enums"]["lead_status"] | null
           timezone?: string | null
+          transfer_ext?: string | null
           updated_by?: string | null
         }
         Relationships: [

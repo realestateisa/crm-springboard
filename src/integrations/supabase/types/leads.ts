@@ -23,6 +23,7 @@ export interface Lead {
   source: string | null
   status: LeadStatus | null
   timezone: string | null
+  transfer_ext: string | null
   updated_by: string | null
 }
 
