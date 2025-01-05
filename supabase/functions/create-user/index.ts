@@ -20,6 +20,24 @@ Deno.serve(async (req) => {
     const userData = await req.json()
     console.log('Received user data:', userData)
 
+    // Check if user already exists
+    const { data: existingUser } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('email', userData.email)
+      .single()
+
+    if (existingUser) {
+      console.error('User already exists:', userData.email)
+      return new Response(
+        JSON.stringify({ error: 'A user with this email address already exists' }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
     // Create the user in auth.users
     const { data: authUser, error: createUserError } = await supabase.auth.admin.createUser({
       email: userData.email,

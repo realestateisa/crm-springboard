@@ -92,6 +92,7 @@ const UserManagement = ({ users, setUsers }: UserManagementProps) => {
         title: "Success",
         description: "User updated successfully.",
       });
+      setDialogOpen(false);
     } else {
       try {
         const { data, error } = await supabase.functions.invoke('create-user', {
@@ -99,7 +100,21 @@ const UserManagement = ({ users, setUsers }: UserManagementProps) => {
         });
 
         if (error) {
-          throw new Error(error.message || 'Failed to create user');
+          // Parse the error message from the response
+          let errorMessage = "Failed to create user";
+          try {
+            const errorBody = JSON.parse(error.message);
+            errorMessage = errorBody.error || errorMessage;
+          } catch {
+            errorMessage = error.message;
+          }
+
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: errorMessage,
+          });
+          return;
         }
 
         // Refresh the users list
@@ -109,10 +124,11 @@ const UserManagement = ({ users, setUsers }: UserManagementProps) => {
           .order("date_created", { ascending: false });
 
         setUsers(profiles || []);
+        setDialogOpen(false);
 
         toast({
           title: "Success",
-          description: "User created successfully.",
+          description: "User created successfully. A password reset email has been sent.",
         });
       } catch (error) {
         toast({

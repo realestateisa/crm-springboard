@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -35,14 +36,27 @@ const UserDialog = ({ open, onOpenChange, onSave, user, mode }: UserDialogProps)
       is_active: true,
     }
   );
+  const [error, setError] = useState<string>("");
 
   const handleSave = () => {
-    // Ensure email is provided
+    // Reset any previous error
+    setError("");
+
+    // Basic validation
     if (!formData.email) {
+      setError("Email is required");
       return;
     }
+    if (!formData.first_name) {
+      setError("First name is required");
+      return;
+    }
+    if (!formData.last_name) {
+      setError("Last name is required");
+      return;
+    }
+
     onSave(formData);
-    onOpenChange(false);
   };
 
   return (
@@ -50,6 +64,11 @@ const UserDialog = ({ open, onOpenChange, onSave, user, mode }: UserDialogProps)
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{mode === "edit" ? "Edit" : "Add"} User</DialogTitle>
+          {error && (
+            <DialogDescription className="text-red-500">
+              {error}
+            </DialogDescription>
+          )}
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="grid grid-cols-2 gap-4">
