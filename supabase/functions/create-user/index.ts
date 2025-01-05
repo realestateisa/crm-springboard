@@ -103,6 +103,8 @@ Deno.serve(async (req) => {
       )
     }
 
+    console.log('User created successfully in auth.users')
+
     // Update the profile with additional information
     const { error: updateProfileError } = await supabase
       .from('profiles')
@@ -127,11 +129,12 @@ Deno.serve(async (req) => {
       )
     }
 
-    // Generate password reset link
+    console.log('Profile updated successfully')
+
+    // Now that the user is created, generate password reset link
     const { data: resetData, error: resetError } = await supabase.auth.admin.generateLink({
       type: 'recovery',
       email: userData.email,
-      newEmail: userData.email,
     })
 
     if (resetError) {
