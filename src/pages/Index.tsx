@@ -3,12 +3,14 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function Index() {
   return (
     <div className="min-h-screen flex w-full">
-      <main className="flex-1 flex flex-col min-w-0 pl-[16rem]">
+      <main className="flex-1 flex flex-col min-w-0">
         <header className="border-b border-border h-14 flex items-center px-4 gap-4 bg-background">
+          <SidebarTrigger className="h-8 w-8" />
           <div className="flex-1 flex items-center gap-4">
             <div className="relative flex-1 max-w-xl">
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-foreground/70" />
