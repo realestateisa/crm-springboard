@@ -12,11 +12,28 @@ import {
 import { Button } from "@/components/ui/button";
 import { Profile } from "@/integrations/supabase/types/profiles";
 import { Loader2, UserPlus } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Admin = () => {
   const [users, setUsers] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -66,6 +83,60 @@ const Admin = () => {
     checkAdminAccess();
     fetchUsers();
   }, [navigate, toast]);
+
+  const handleEditUser = async (updatedUser: Partial<Profile>) => {
+    if (!selectedUser) return;
+
+    const { error } = await supabase
+      .from("profiles")
+      .update(updatedUser)
+      .eq("id", selectedUser.id);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update user.",
+      });
+      return;
+    }
+
+    setUsers(users.map(user => 
+      user.id === selectedUser.id ? { ...user, ...updatedUser } : user
+    ));
+
+    toast({
+      title: "Success",
+      description: "User updated successfully.",
+    });
+
+    setEditDialogOpen(false);
+  };
+
+  const handleToggleStatus = async (user: Profile) => {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ is_active: !user.is_active })
+      .eq("id", user.id);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update user status.",
+      });
+      return;
+    }
+
+    setUsers(users.map(u => 
+      u.id === user.id ? { ...u, is_active: !u.is_active } : u
+    ));
+
+    toast({
+      title: "Success",
+      description: `User ${user.is_active ? "deactivated" : "activated"} successfully.`,
+    });
+  };
 
   if (loading) {
     return (
@@ -120,7 +191,8 @@ const Admin = () => {
                     size="sm"
                     className="mr-2"
                     onClick={() => {
-                      // Edit user functionality will be implemented
+                      setSelectedUser(user);
+                      setEditDialogOpen(true);
                     }}
                   >
                     Edit
@@ -129,9 +201,7 @@ const Admin = () => {
                     variant="outline"
                     size="sm"
                     className={user.is_active ? "text-red-600" : "text-green-600"}
-                    onClick={() => {
-                      // Toggle user status functionality will be implemented
-                    }}
+                    onClick={() => handleToggleStatus(user)}
                   >
                     {user.is_active ? "Deactivate" : "Activate"}
                   </Button>
@@ -141,6 +211,74 @@ const Admin = () => {
           </TableBody>
         </Table>
       </div>
+
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit User</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  id="firstName"
+                  defaultValue={selectedUser?.first_name || ""}
+                  onChange={(e) => {
+                    if (selectedUser) {
+                      handleEditUser({ ...selectedUser, first_name: e.target.value });
+                    }
+                  }}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  defaultValue={selectedUser?.last_name || ""}
+                  onChange={(e) => {
+                    if (selectedUser) {
+                      handleEditUser({ ...selectedUser, last_name: e.target.value });
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                defaultValue={selectedUser?.email || ""}
+                onChange={(e) => {
+                  if (selectedUser) {
+                    handleEditUser({ ...selectedUser, email: e.target.value });
+                  }
+                }}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="role">Role</Label>
+              <Select
+                defaultValue={selectedUser?.role || "isa"}
+                onValueChange={(value) => {
+                  if (selectedUser) {
+                    handleEditUser({ ...selectedUser, role: value as "admin" | "isa" });
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="isa">ISA</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
