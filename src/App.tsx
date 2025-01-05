@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import Inbox from "./pages/Inbox";
 import ResetPassword from "./pages/ResetPassword";
+import { AppSidebar } from "./components/AppSidebar";
 
 const queryClient = new QueryClient();
 
@@ -28,7 +29,16 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <div>Loading...</div>;
   }
 
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
+  return isAuthenticated ? (
+    <div className="flex min-h-screen">
+      <AppSidebar />
+      <main className="flex-1">
+        {children}
+      </main>
+    </div>
+  ) : (
+    <Navigate to="/login" />
+  );
 };
 
 const App = () => (
