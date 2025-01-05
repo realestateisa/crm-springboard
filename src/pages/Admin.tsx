@@ -92,7 +92,7 @@ const Admin = () => {
         .from("profiles")
         .update({
           ...userData,
-          email: userData.email, // Ensure email is included
+          email: userData.email,
         })
         .eq("id", selectedUser.id);
 
@@ -114,51 +114,42 @@ const Admin = () => {
         description: "User updated successfully.",
       });
     } else {
-      // For new users, we need to create both auth user and profile
-      const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
-        email: userData.email,
-        password: "temporary123", // Temporary password
-        email_confirm: true,
-      });
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-user`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify(userData),
+          }
+        );
 
-      if (authError) {
+        if (!response.ok) {
+          throw new Error('Failed to create user');
+        }
+
+        // Refresh the users list
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("*")
+          .order("date_created", { ascending: false });
+
+        setUsers(profiles || []);
+
+        toast({
+          title: "Success",
+          description: "User created successfully.",
+        });
+      } catch (error) {
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Failed to create user account.",
+          description: error.message || "Failed to create user.",
         });
-        return;
       }
-
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .insert({
-          ...userData,
-          id: authUser.user.id,
-          email: userData.email, // Ensure email is included
-        });
-
-      if (profileError) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to create user profile.",
-        });
-        return;
-      }
-
-      // Refresh the users list
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("*")
-        .order("date_created", { ascending: false });
-
-      setUsers(profiles || []);
-
-      toast({
-        title: "Success",
-        description: "User created successfully.",
-      });
     }
   };
 
