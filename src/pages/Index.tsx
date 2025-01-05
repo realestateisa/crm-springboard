@@ -1,3 +1,9 @@
+import { Search, Mail, Phone, MessageSquare, CheckSquare, Bell } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+
 export default function Index() {
   return (
     <div className="min-h-screen flex w-full">
