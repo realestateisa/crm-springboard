@@ -17,7 +17,12 @@ interface UserTableProps {
   onDelete: (user: Profile) => void;
 }
 
-const UserTable = ({ users, onEdit, onToggleStatus, onDelete }: UserTableProps) => {
+const UserTable = ({ 
+  users = [], 
+  onEdit, 
+  onToggleStatus, 
+  onDelete 
+}: UserTableProps) => {
   return (
     <Table>
       <TableHeader>
