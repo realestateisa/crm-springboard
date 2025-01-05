@@ -59,7 +59,7 @@ export default function Index() {
         </div>
       </div>
 
-      <div className="flex-1 p-4 bg-background">
+      <div className="flex-1 p-6 bg-background">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {/* Dashboard content will go here */}
         </div>
