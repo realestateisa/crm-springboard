@@ -11,6 +11,7 @@ import Admin from "./pages/Admin";
 import Inbox from "./pages/Inbox";
 import ResetPassword from "./pages/ResetPassword";
 import { AppSidebar } from "./components/AppSidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const queryClient = new QueryClient();
 
@@ -30,12 +31,14 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   return isAuthenticated ? (
-    <div className="flex min-h-screen">
-      <AppSidebar />
-      <main className="flex-1">
-        {children}
-      </main>
-    </div>
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full">
+        <AppSidebar />
+        <main className="flex-1">
+          {children}
+        </main>
+      </div>
+    </SidebarProvider>
   ) : (
     <Navigate to="/login" />
   );
