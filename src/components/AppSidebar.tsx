@@ -30,7 +30,7 @@ const menuItems = [
 export function AppSidebar() {
   return (
     <Sidebar>
-      <SidebarContent className="flex flex-col h-full">
+      <SidebarContent className="flex flex-col h-full bg-[#D3E4FD]">
         <div className="p-4 border-b border-sidebar-border">
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">
