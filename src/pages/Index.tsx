@@ -9,7 +9,7 @@ export default function Index() {
   const { state } = useSidebar();
   
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col min-h-screen">
       <header className="border-b border-border h-14 flex items-center px-4 gap-4 bg-background sticky top-0 z-10">
         <div className="flex-1 flex items-center gap-4">
           <div className="relative flex-1 max-w-xl">
@@ -59,7 +59,7 @@ export default function Index() {
         </div>
       </div>
 
-      <main className="flex-1 p-4">
+      <main className="flex-1 p-4 bg-background">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {/* Dashboard content will go here */}
         </div>
