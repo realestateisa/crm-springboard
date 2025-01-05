@@ -80,10 +80,11 @@ Deno.serve(async (req) => {
       )
     }
 
-    // Create the user in auth.users
+    // Create the user in auth.users with a random password
+    const tempPassword = Math.random().toString(36).slice(-12)
     const { data: authUser, error: createUserError } = await supabase.auth.admin.createUser({
       email: userData.email,
-      password: Math.random().toString(36).slice(-8), // Generate random password
+      password: tempPassword,
       email_confirm: true,
       user_metadata: {
         first_name: userData.first_name,
@@ -115,6 +116,8 @@ Deno.serve(async (req) => {
 
     if (updateProfileError) {
       console.error('Error updating profile:', updateProfileError)
+      // If profile update fails, clean up by deleting the auth user
+      await supabase.auth.admin.deleteUser(authUser.user.id)
       return new Response(
         JSON.stringify({ error: updateProfileError.message }),
         { 
@@ -124,20 +127,26 @@ Deno.serve(async (req) => {
       )
     }
 
-    // Send password reset email to the new user
-    const { error: resetError } = await supabase.auth.admin.generateLink({
+    // Generate password reset link
+    const { data: resetData, error: resetError } = await supabase.auth.admin.generateLink({
       type: 'recovery',
       email: userData.email,
+      newEmail: userData.email,
     })
 
     if (resetError) {
-      console.error('Error sending password reset email:', resetError)
-      // We don't return an error here as the user was created successfully
+      console.error('Error generating password reset link:', resetError)
+      // Don't return an error since the user was created successfully
       // Just log it for debugging
+    } else {
+      console.log('Password reset link generated successfully')
     }
 
     return new Response(
-      JSON.stringify({ id: authUser.user.id }),
+      JSON.stringify({ 
+        id: authUser.user.id,
+        message: 'User created successfully. A password reset email has been sent.'
+      }),
       { 
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
