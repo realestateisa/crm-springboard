@@ -360,7 +360,6 @@ export type Database = {
       }
       profiles: {
         Row: {
-          account_type: Database["public"]["Enums"]["account_type"] | null
           date_created: string | null
           date_updated: string | null
           email: string
@@ -373,7 +372,6 @@ export type Database = {
           timezone: string | null
         }
         Insert: {
-          account_type?: Database["public"]["Enums"]["account_type"] | null
           date_created?: string | null
           date_updated?: string | null
           email: string
@@ -386,7 +384,6 @@ export type Database = {
           timezone?: string | null
         }
         Update: {
-          account_type?: Database["public"]["Enums"]["account_type"] | null
           date_created?: string | null
           date_updated?: string | null
           email?: string
@@ -741,7 +738,6 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      account_type: "Admin" | "ISA"
       activity_type: "call" | "sms" | "email" | "note" | "custom"
       call_disposition:
         | "answered"

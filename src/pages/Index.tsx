@@ -75,10 +75,10 @@ export default function Index() {
                     <div key={i} className="flex items-center gap-4 p-4 hover:bg-primary/5 rounded-lg cursor-pointer border border-transparent hover:border-primary/20">
                       <Mail className="h-4 w-4 text-primary" />
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-foreground">Value Build Homes</p>
-                        <p className="text-sm text-foreground/80">Follow up</p>
+                        <p className="text-sm font-medium text-foreground">Value Build Homes</p>
+                        <p className="text-xs text-foreground/80">Follow up</p>
                       </div>
-                      <span className="text-sm font-medium text-foreground/90">Today</span>
+                      <span className="text-xs font-medium text-foreground/90">Today</span>
                     </div>
                   ))}
                 </div>
