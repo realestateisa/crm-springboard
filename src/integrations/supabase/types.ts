@@ -236,18 +236,17 @@ export type Database = {
           date_updated: string | null
           description: string | null
           email: string | null
-          external_id: string | null
           first_name: string
           id: string
-          last_name: string
-          location: string | null
+          last_name: string | null
+          location: string
           phone: string | null
           phone_formatted: string | null
           phone_status: string | null
           phone_type: string | null
           script: string | null
           source: string | null
-          status: Database["public"]["Enums"]["lead_status"] | null
+          status: Database["public"]["Enums"]["lead_status"]
           timezone: string | null
           transfer_ext: string | null
           updated_by: string | null
@@ -261,18 +260,17 @@ export type Database = {
           date_updated?: string | null
           description?: string | null
           email?: string | null
-          external_id?: string | null
           first_name?: string
           id?: string
-          last_name?: string
-          location?: string | null
+          last_name?: string | null
+          location: string
           phone?: string | null
           phone_formatted?: string | null
           phone_status?: string | null
           phone_type?: string | null
           script?: string | null
           source?: string | null
-          status?: Database["public"]["Enums"]["lead_status"] | null
+          status?: Database["public"]["Enums"]["lead_status"]
           timezone?: string | null
           transfer_ext?: string | null
           updated_by?: string | null
@@ -286,18 +284,17 @@ export type Database = {
           date_updated?: string | null
           description?: string | null
           email?: string | null
-          external_id?: string | null
           first_name?: string
           id?: string
-          last_name?: string
-          location?: string | null
+          last_name?: string | null
+          location?: string
           phone?: string | null
           phone_formatted?: string | null
           phone_status?: string | null
           phone_type?: string | null
           script?: string | null
           source?: string | null
-          status?: Database["public"]["Enums"]["lead_status"] | null
+          status?: Database["public"]["Enums"]["lead_status"]
           timezone?: string | null
           transfer_ext?: string | null
           updated_by?: string | null
