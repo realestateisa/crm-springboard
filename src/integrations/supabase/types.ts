@@ -239,6 +239,7 @@ export type Database = {
           first_name: string
           id: string
           last_name: string | null
+          lead_type: string | null
           location: string
           phone: string | null
           phone_formatted: string | null
@@ -263,6 +264,7 @@ export type Database = {
           first_name?: string
           id?: string
           last_name?: string | null
+          lead_type?: string | null
           location: string
           phone?: string | null
           phone_formatted?: string | null
@@ -287,6 +289,7 @@ export type Database = {
           first_name?: string
           id?: string
           last_name?: string | null
+          lead_type?: string | null
           location?: string
           phone?: string | null
           phone_formatted?: string | null

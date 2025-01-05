@@ -10,11 +10,11 @@ export interface Lead {
   date_updated: string | null
   description: string | null
   email: string | null
-  external_id: string | null
   first_name: string
-  last_name: string
+  last_name: string | null
   id: string
-  location: string | null
+  lead_type: string | null
+  location: string
   phone: string | null
   phone_formatted: string | null
   phone_status: string | null
