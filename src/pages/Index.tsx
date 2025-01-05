@@ -1,9 +1,8 @@
-import { Search, Mail, Phone, MessageSquare, CheckSquare, Bell, Calendar, Clock } from "lucide-react";
+import { Search, Mail, Phone, MessageSquare, CheckSquare, Bell } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 
 export default function Index() {
@@ -65,61 +64,7 @@ export default function Index() {
 
           <div className="flex-1 overflow-auto p-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Follow up with John Doe</CardTitle>
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xs text-muted-foreground">Due in 2 days</div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    <Clock className="h-3 w-3 inline-block mr-1" />
-                    2:00 PM
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Send proposal to Sarah</CardTitle>
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xs text-muted-foreground">Due tomorrow</div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    <Clock className="h-3 w-3 inline-block mr-1" />
-                    11:30 AM
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Call Mike about project</CardTitle>
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xs text-muted-foreground">Due today</div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    <Clock className="h-3 w-3 inline-block mr-1" />
-                    4:15 PM
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Review contract changes</CardTitle>
-                  <CheckSquare className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xs text-muted-foreground">Due in 3 days</div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    <Clock className="h-3 w-3 inline-block mr-1" />
-                    10:00 AM
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Dashboard content will go here */}
             </div>
           </div>
         </div>
