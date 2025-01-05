@@ -132,7 +132,7 @@ Deno.serve(async (req) => {
     console.log('Profile updated successfully')
 
     // Now that the user is created, send password reset email
-    const { error: resetError } = await supabase.auth.admin.sendPasswordResetEmail(userData.email)
+    const { error: resetError } = await supabase.auth.admin.resetPasswordForEmail(userData.email)
 
     if (resetError) {
       console.error('Error sending password reset email:', resetError)
