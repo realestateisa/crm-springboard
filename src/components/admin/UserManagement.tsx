@@ -41,28 +41,45 @@ const UserManagement = ({ users, setUsers }: UserManagementProps) => {
   const handleConfirmDelete = async () => {
     if (!userToDelete) return;
 
-    const { error } = await supabase
-      .from("profiles")
-      .delete()
-      .eq("id", userToDelete.id);
+    try {
+      // First, delete the user from auth.users using the admin API
+      const { error: deleteAuthError } = await supabase.functions.invoke('delete-user', {
+        body: { userId: userToDelete.id }
+      });
 
-    if (error) {
+      if (deleteAuthError) {
+        let errorMessage = "Failed to delete user";
+        try {
+          const errorBody = JSON.parse(deleteAuthError.message);
+          errorMessage = errorBody.error || errorMessage;
+        } catch {
+          errorMessage = deleteAuthError.message;
+        }
+
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: errorMessage,
+        });
+        return;
+      }
+
+      // Update the UI
+      setUsers(users.filter((u) => u.id !== userToDelete.id));
+      setDeleteDialogOpen(false);
+      setUserToDelete(null);
+
+      toast({
+        title: "Success",
+        description: "User deleted successfully.",
+      });
+    } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to delete user.",
+        description: error.message || "Failed to delete user.",
       });
-      return;
     }
-
-    setUsers(users.filter((u) => u.id !== userToDelete.id));
-    setDeleteDialogOpen(false);
-    setUserToDelete(null);
-
-    toast({
-      title: "Success",
-      description: "User deleted successfully.",
-    });
   };
 
   const handleSaveUser = async (userData: Partial<Profile>) => {
