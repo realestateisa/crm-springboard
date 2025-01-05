@@ -31,7 +31,24 @@ serve(async (req) => {
       )
     }
 
-    // Delete the user using the admin API
+    // First delete from profiles table
+    const { error: profileDeleteError } = await supabase
+      .from('profiles')
+      .delete()
+      .eq('id', userId)
+
+    if (profileDeleteError) {
+      console.error('Error deleting profile:', profileDeleteError)
+      return new Response(
+        JSON.stringify({ error: 'Failed to delete user profile' }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    // Then delete from auth.users using admin API
     const { error: deleteUserError } = await supabase.auth.admin.deleteUser(
       userId
     )
