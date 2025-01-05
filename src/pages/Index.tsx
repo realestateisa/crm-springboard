@@ -10,7 +10,7 @@ export default function Index() {
   
   return (
     <div className="min-h-screen flex w-full">
-      <main className="flex-1 flex flex-col min-w-0 md:ml-[16rem]">
+      <main className={`flex-1 flex flex-col min-w-0 transition-[margin] duration-300 ease-in-out ${state === "expanded" ? "md:ml-[16rem]" : "md:ml-0"}`}>
         <header className="border-b border-border h-14 flex items-center px-4 gap-4 bg-background">
           <SidebarTrigger className="h-8 w-8" />
           <div className="flex-1 flex items-center gap-4">
