@@ -45,17 +45,17 @@ export function AppSidebar() {
   const { isAdmin } = useAdmin();
 
   return (
-    <Sidebar className="fixed top-0 left-0 h-full w-64">
+    <Sidebar className="fixed top-0 left-0 h-full w-64 bg-sidebar/95 backdrop-blur supports-[backdrop-filter]:bg-sidebar/60 border-r border-sidebar-border/50">
       <SidebarContent className="flex flex-col h-full">
-        <div className="h-14 p-4 border-b border-sidebar-border flex items-center">
+        <div className="h-14 p-4 border-b border-sidebar-border/50 flex items-center">
           <div className="flex items-center gap-2">
-            <Avatar className="h-8 w-8">
+            <Avatar className="h-8 w-8 ring-2 ring-sidebar-border/50 transition-shadow hover:ring-sidebar-border">
               <AvatarImage src="/placeholder.svg" />
               <AvatarFallback>AC</AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">Anthony Cambece</p>
-              <p className="text-xs text-muted-foreground truncate">Agent ISA</p>
+              <p className="text-sm font-medium truncate text-sidebar-foreground">Anthony Cambece</p>
+              <p className="text-xs text-sidebar-foreground/70 truncate">Agent ISA</p>
             </div>
           </div>
         </div>
@@ -66,7 +66,10 @@ export function AppSidebar() {
               {isAdmin && (
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link to="/admin" className="flex items-center gap-3 px-3 py-2">
+                    <Link 
+                      to="/admin" 
+                      className="flex items-center gap-3 px-3 py-2 text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md transition-colors duration-200"
+                    >
                       <Shield className="h-4 w-4" />
                       <span>Admin</span>
                     </Link>
@@ -79,7 +82,10 @@ export function AppSidebar() {
                     asChild
                     onClick={() => setExpandedItem(expandedItem === item.label ? null : item.label)}
                   >
-                    <Link to={item.href} className="flex items-center gap-3 px-3 py-2">
+                    <Link 
+                      to={item.href} 
+                      className="flex items-center gap-3 px-3 py-2 text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md transition-colors duration-200"
+                    >
                       <item.icon className="h-4 w-4" />
                       <span>{item.label}</span>
                     </Link>
@@ -89,7 +95,10 @@ export function AppSidebar() {
                       {item.subItems.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.label}>
                           <SidebarMenuSubButton asChild>
-                            <Link to={subItem.href} className="flex items-center gap-2">
+                            <Link 
+                              to={subItem.href} 
+                              className="flex items-center gap-2 text-sidebar-foreground/70 hover:text-sidebar-foreground transition-colors duration-200"
+                            >
                               <subItem.icon className="h-4 w-4" />
                               <span>{subItem.label}</span>
                             </Link>
@@ -104,11 +113,14 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <div className="mt-auto border-t border-sidebar-border p-4">
+        <div className="mt-auto border-t border-sidebar-border/50 p-4">
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link to="/settings" className="flex items-center gap-3 px-3 py-2">
+                <Link 
+                  to="/settings" 
+                  className="flex items-center gap-3 px-3 py-2 text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md transition-colors duration-200"
+                >
                   <Settings className="h-4 w-4" />
                   <span>Settings</span>
                 </Link>

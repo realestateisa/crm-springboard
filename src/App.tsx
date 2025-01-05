@@ -83,9 +83,36 @@ const App = () => (
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
-          <Route path="/tasks/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
-          <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+          <Route 
+            path="/admin" 
+            element={
+              <ProtectedRoute>
+                <div className="min-h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                  <Admin />
+                </div>
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/tasks/inbox" 
+            element={
+              <ProtectedRoute>
+                <div className="min-h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                  <Inbox />
+                </div>
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/" 
+            element={
+              <ProtectedRoute>
+                <div className="min-h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                  <Index />
+                </div>
+              </ProtectedRoute>
+            } 
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
