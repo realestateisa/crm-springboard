@@ -42,7 +42,6 @@ const UserManagement = ({ users, setUsers }: UserManagementProps) => {
     if (!userToDelete) return;
 
     try {
-      // First, delete the user from auth.users using the admin API
       const { error: deleteAuthError } = await supabase.functions.invoke('delete-user', {
         body: { userId: userToDelete.id }
       });
@@ -64,7 +63,6 @@ const UserManagement = ({ users, setUsers }: UserManagementProps) => {
         return;
       }
 
-      // Update the UI
       setUsers(users.filter((u) => u.id !== userToDelete.id));
       setDeleteDialogOpen(false);
       setUserToDelete(null);
@@ -117,7 +115,6 @@ const UserManagement = ({ users, setUsers }: UserManagementProps) => {
         });
 
         if (error) {
-          // Parse the error message from the response
           let errorMessage = "Failed to create user";
           try {
             const errorBody = JSON.parse(error.message);
@@ -134,7 +131,6 @@ const UserManagement = ({ users, setUsers }: UserManagementProps) => {
           return;
         }
 
-        // Refresh the users list
         const { data: profiles } = await supabase
           .from("profiles")
           .select("*")

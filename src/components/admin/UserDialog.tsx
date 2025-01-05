@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface UserDialogProps {
   open: boolean;
@@ -37,26 +38,55 @@ const UserDialog = ({ open, onOpenChange, onSave, user, mode }: UserDialogProps)
     }
   );
   const [error, setError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSave = () => {
-    // Reset any previous error
+  const validateEmail = (email: string) => {
+    return email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+  };
+
+  const handleSave = async () => {
     setError("");
+    setIsLoading(true);
 
-    // Basic validation
-    if (!formData.email) {
-      setError("Email is required");
-      return;
-    }
-    if (!formData.first_name) {
-      setError("First name is required");
-      return;
-    }
-    if (!formData.last_name) {
-      setError("Last name is required");
-      return;
-    }
+    try {
+      // Basic validation
+      if (!formData.email) {
+        setError("Email is required");
+        return;
+      }
+      if (!validateEmail(formData.email)) {
+        setError("Please enter a valid email address");
+        return;
+      }
+      if (!formData.first_name) {
+        setError("First name is required");
+        return;
+      }
+      if (!formData.last_name) {
+        setError("Last name is required");
+        return;
+      }
 
-    onSave(formData);
+      // Check if email exists (only for new users)
+      if (mode === "add") {
+        const { data: existingUser } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("email", formData.email)
+          .single();
+
+        if (existingUser) {
+          setError("A user with this email already exists");
+          return;
+        }
+      }
+
+      onSave(formData);
+    } catch (err) {
+      setError(err.message || "An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -122,8 +152,8 @@ const UserDialog = ({ open, onOpenChange, onSave, user, mode }: UserDialogProps)
               </SelectContent>
             </Select>
           </div>
-          <Button onClick={handleSave} className="w-full">
-            {mode === "edit" ? "Save Changes" : "Add User"}
+          <Button onClick={handleSave} className="w-full" disabled={isLoading}>
+            {isLoading ? "Processing..." : mode === "edit" ? "Save Changes" : "Add User"}
           </Button>
         </div>
       </DialogContent>
