@@ -77,10 +77,23 @@ const Admin = () => {
   };
 
   const handleSaveUser = async (userData: Partial<Profile>) => {
+    // Ensure email is provided
+    if (!userData.email) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Email is required.",
+      });
+      return;
+    }
+
     if (dialogMode === "edit" && selectedUser) {
       const { error } = await supabase
         .from("profiles")
-        .update(userData)
+        .update({
+          ...userData,
+          email: userData.email, // Ensure email is included
+        })
         .eq("id", selectedUser.id);
 
       if (error) {
@@ -103,7 +116,7 @@ const Admin = () => {
     } else {
       // For new users, we need to create both auth user and profile
       const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
-        email: userData.email!,
+        email: userData.email,
         password: "temporary123", // Temporary password
         email_confirm: true,
       });
@@ -122,6 +135,7 @@ const Admin = () => {
         .insert({
           ...userData,
           id: authUser.user.id,
+          email: userData.email, // Ensure email is included
         });
 
       if (profileError) {

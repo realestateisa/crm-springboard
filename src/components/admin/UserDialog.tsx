@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 interface UserDialogProps {
@@ -36,6 +37,10 @@ const UserDialog = ({ open, onOpenChange, onSave, user, mode }: UserDialogProps)
   );
 
   const handleSave = () => {
+    // Ensure email is provided
+    if (!formData.email) {
+      return;
+    }
     onSave(formData);
     onOpenChange(false);
   };
@@ -74,6 +79,7 @@ const UserDialog = ({ open, onOpenChange, onSave, user, mode }: UserDialogProps)
             <Input
               id="email"
               type="email"
+              required
               value={formData.email || ""}
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
