@@ -1,90 +1,94 @@
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Search, Mail, Phone, MessageSquare, CheckSquare, Bell } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 
-const Index = () => {
+export default function Index() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Navigation */}
-      <nav className="border-b bg-white/50 backdrop-blur-sm fixed w-full z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-primary">ISA/ONE</h1>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        <main className="flex-1 flex flex-col min-w-0">
+          <header className="border-b border-border h-14 flex items-center px-4 gap-4">
+            <SidebarTrigger />
+            <div className="flex-1 flex items-center gap-4">
+              <div className="relative flex-1 max-w-xl">
+                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input 
+                  placeholder="Search..." 
+                  className="pl-8 w-full"
+                />
+              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarImage src="/placeholder.svg" />
+                <AvatarFallback>AC</AvatarFallback>
+              </Avatar>
             </div>
-            <div className="flex space-x-4">
-              <Button variant="ghost">Login</Button>
-              <Button>Get Started</Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+          </header>
 
-      {/* Hero Section */}
-      <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center">
-            <h1 className="text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-              Streamline Your ISA Operations
-            </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">
-              The all-in-one CRM solution designed specifically for Inside Sales Agents. 
-              Manage leads, track performance, and grow your business efficiently.
-            </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Button size="lg">Start Free Trial</Button>
-              <Button variant="outline" size="lg">Learn More</Button>
+          <div className="flex-1 flex flex-col min-h-0">
+            <div className="border-b border-border">
+              <div className="flex items-center px-4 h-14">
+                <h1 className="text-lg font-semibold">Inbox</h1>
+                <Separator orientation="vertical" className="mx-4 h-4" />
+                <div className="flex items-center gap-4">
+                  <Button variant="ghost" size="sm" className="text-muted-foreground">
+                    <Mail className="h-4 w-4 mr-2" />
+                    Emails
+                    <span className="ml-2 text-xs bg-muted rounded-full px-2">5</span>
+                  </Button>
+                  <Button variant="ghost" size="sm" className="text-muted-foreground">
+                    <Phone className="h-4 w-4 mr-2" />
+                    Calls
+                    <span className="ml-2 text-xs bg-muted rounded-full px-2">2</span>
+                  </Button>
+                  <Button variant="ghost" size="sm" className="text-muted-foreground">
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    SMS
+                    <span className="ml-2 text-xs bg-muted rounded-full px-2">1</span>
+                  </Button>
+                  <Button variant="ghost" size="sm" className="text-muted-foreground">
+                    <CheckSquare className="h-4 w-4 mr-2" />
+                    Tasks
+                    <span className="ml-2 text-xs bg-muted rounded-full px-2">2</span>
+                  </Button>
+                  <Button variant="ghost" size="sm" className="text-muted-foreground">
+                    <Bell className="h-4 w-4 mr-2" />
+                    Reminders
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-auto p-4">
+              {/* Inbox content will go here */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Select all</span>
+                  <span className="text-sm text-muted-foreground">Anthony Cambece</span>
+                </div>
+                
+                {/* Example inbox items */}
+                <div className="space-y-1">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="flex items-center gap-4 p-4 hover:bg-muted/50 rounded-lg cursor-pointer">
+                      <Mail className="h-4 w-4 text-blue-500" />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium">Value Build Homes</p>
+                        <p className="text-sm text-muted-foreground truncate">Follow up</p>
+                      </div>
+                      <span className="text-sm text-muted-foreground">Today</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </main>
       </div>
-
-      {/* Features Section */}
-      <div className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <Card>
-              <CardHeader>
-                <CardTitle>Team Management</CardTitle>
-                <CardDescription>Organize your ISA teams efficiently</CardDescription>
-              </CardHeader>
-              <CardContent>
-                Create and manage pods, assign roles, and track team performance all in one place.
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Performance Tracking</CardTitle>
-                <CardDescription>Monitor key metrics in real-time</CardDescription>
-              </CardHeader>
-              <CardContent>
-                Get insights into your team's performance with detailed analytics and reporting.
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Collaboration Tools</CardTitle>
-                <CardDescription>Work together seamlessly</CardDescription>
-              </CardHeader>
-              <CardContent>
-                Share information, communicate effectively, and stay aligned with your team.
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <footer className="bg-gray-50">
-        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="text-gray-500">© 2024 ISA/ONE. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </SidebarProvider>
   );
-};
-
-export default Index;
+}
