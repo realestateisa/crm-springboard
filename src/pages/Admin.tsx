@@ -1,4 +1,4 @@
-import { UserManagement } from "@/components/admin/UserManagement";
+import UserManagement from "@/components/admin/UserManagement";
 
 export default function Admin() {
   return (
