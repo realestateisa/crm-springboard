@@ -29,16 +29,18 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F8FBFE] to-white flex items-center justify-center">
-      <div className="w-full max-w-md mx-auto px-4">
-        <div className="bg-white rounded-xl shadow-xl p-8">
-          <div className="flex flex-col items-center">
-            <img 
-              src="/lovable-uploads/b1e1b9a8-4362-4605-a82c-a8e5dee97200.png" 
-              alt="Agent ISA" 
-              className="h-14 w-auto mb-8"
-            />
-            <h2 className="text-2xl font-bold text-[#1A1F2C] mb-8 tracking-tight">ISA/ONE</h2>
+    <div className="min-h-screen bg-gradient-to-b from-[#F8FBFE] to-white flex items-center">
+      <div className="container max-w-md mx-auto px-4">
+        <div className="bg-white rounded-xl shadow-xl overflow-hidden">
+          <div className="p-8">
+            <div className="flex justify-center mb-8">
+              <img 
+                src="/lovable-uploads/b1e1b9a8-4362-4605-a82c-a8e5dee97200.png" 
+                alt="Agent ISA" 
+                className="h-14 w-auto"
+              />
+            </div>
+            <h2 className="text-2xl font-bold text-[#1A1F2C] mb-8 text-center tracking-tight">ISA/ONE</h2>
             <Auth 
               supabaseClient={supabase}
               view="sign_in"
@@ -73,7 +75,7 @@ const Login = () => {
                   input: 'w-full px-4 py-3 rounded-xl border bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-[#00A7E1] focus:ring-opacity-50 transition-all duration-200 text-center placeholder:text-center',
                   label: 'sr-only',
                   anchor: 'text-[#00A7E1] hover:text-[#0095C8] transition-colors font-medium flex items-center justify-center gap-2 mt-4',
-                  message: 'text-sm text-red-500 mt-1 text-center',
+                  message: 'text-sm text-red-500 mt-1',
                 },
               }}
               localization={{
