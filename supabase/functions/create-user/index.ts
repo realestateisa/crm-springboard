@@ -20,17 +20,25 @@ Deno.serve(async (req) => {
     const userData = await req.json()
     console.log('Received user data:', userData)
 
-    // Check if user already exists
-    const { data: existingUser } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('email', userData.email)
-      .single()
-
-    if (existingUser) {
-      console.error('User already exists:', userData.email)
+    // First check auth.users table using admin API
+    const { data: existingAuthUser, error: authCheckError } = await supabase.auth.admin.listUsers()
+    
+    if (authCheckError) {
+      console.error('Error checking auth users:', authCheckError)
       return new Response(
-        JSON.stringify({ error: 'A user with this email address already exists' }),
+        JSON.stringify({ error: 'Failed to check existing users' }),
+        { 
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    const emailExists = existingAuthUser.users.some(user => user.email === userData.email)
+    if (emailExists) {
+      console.error('Email already exists in auth.users:', userData.email)
+      return new Response(
+        JSON.stringify({ error: 'A user with this email address has already been registered' }),
         { 
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
