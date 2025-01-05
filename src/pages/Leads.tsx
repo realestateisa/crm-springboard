@@ -48,8 +48,7 @@ export default function Leads() {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Email</TableHead>
+                <TableHead>Client</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Created</TableHead>
@@ -61,7 +60,6 @@ export default function Leads() {
                   <TableRow key={i}>
                     <TableCell><Skeleton className="h-4 w-[250px]" /></TableCell>
                     <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-[200px]" /></TableCell>
                     <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
                     <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
                     <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
@@ -72,8 +70,7 @@ export default function Leads() {
                   <TableCell>
                     {lead.first_name} {lead.last_name}
                   </TableCell>
-                  <TableCell>{lead.phone}</TableCell>
-                  <TableCell>{lead.email}</TableCell>
+                  <TableCell>{lead.client}</TableCell>
                   <TableCell>{lead.status}</TableCell>
                   <TableCell>{lead.location}</TableCell>
                   <TableCell>
