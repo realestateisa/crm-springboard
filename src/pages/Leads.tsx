@@ -37,51 +37,53 @@ export default function Leads() {
   });
 
   return (
-    <div className="container py-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight">Leads</h1>
-      </div>
+    <div className="pl-[var(--leftNavMinWidth)] lg:pl-[var(--leftNavMaxWidth)]">
+      <div className="container py-6 space-y-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold tracking-tight">Leads</h1>
+        </div>
 
-      <div className="border rounded-lg">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead>Created</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i}>
-                  <TableCell><Skeleton className="h-4 w-[250px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[200px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                </TableRow>
-              ))
-            ) : leads?.map((lead) => (
-              <TableRow key={lead.id}>
-                <TableCell>
-                  {lead.first_name} {lead.last_name}
-                </TableCell>
-                <TableCell>{lead.phone}</TableCell>
-                <TableCell>{lead.email}</TableCell>
-                <TableCell>{lead.status}</TableCell>
-                <TableCell>{lead.location}</TableCell>
-                <TableCell>
-                  {new Date(lead.date_created!).toLocaleDateString()}
-                </TableCell>
+        <div className="border rounded-lg">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Phone</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Location</TableHead>
+                <TableHead>Created</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell><Skeleton className="h-4 w-[250px]" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-[200px]" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+                  </TableRow>
+                ))
+              ) : leads?.map((lead) => (
+                <TableRow key={lead.id}>
+                  <TableCell>
+                    {lead.first_name} {lead.last_name}
+                  </TableCell>
+                  <TableCell>{lead.phone}</TableCell>
+                  <TableCell>{lead.email}</TableCell>
+                  <TableCell>{lead.status}</TableCell>
+                  <TableCell>{lead.location}</TableCell>
+                  <TableCell>
+                    {new Date(lead.date_created!).toLocaleDateString()}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   );
