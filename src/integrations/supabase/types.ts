@@ -231,6 +231,7 @@ export type Database = {
           api_url: string | null
           client: string | null
           created_by: string | null
+          crm_id: string | null
           custom_fields: Json | null
           date_created: string | null
           date_updated: string | null
@@ -256,6 +257,7 @@ export type Database = {
           api_url?: string | null
           client?: string | null
           created_by?: string | null
+          crm_id?: string | null
           custom_fields?: Json | null
           date_created?: string | null
           date_updated?: string | null
@@ -281,6 +283,7 @@ export type Database = {
           api_url?: string | null
           client?: string | null
           created_by?: string | null
+          crm_id?: string | null
           custom_fields?: Json | null
           date_created?: string | null
           date_updated?: string | null

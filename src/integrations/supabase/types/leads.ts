@@ -24,6 +24,7 @@ export interface Lead {
   status: LeadStatus | null
   timezone: string | null
   transfer_ext: string | null
+  crm_id: string | null
   updated_by: string | null
 }
 
