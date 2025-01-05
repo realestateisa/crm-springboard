@@ -11,6 +11,7 @@ import Admin from "./pages/Admin";
 import Inbox from "./pages/Inbox";
 import ResetPassword from "./pages/ResetPassword";
 import { AppSidebar } from "./components/AppSidebar";
+import { AppHeader } from "./components/AppHeader";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
 const queryClient = new QueryClient({
@@ -57,9 +58,12 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
-        <main className="flex-1">
-          {children}
-        </main>
+        <div className="flex-1 flex flex-col">
+          <AppHeader />
+          <main className="flex-1">
+            {children}
+          </main>
+        </div>
       </div>
     </SidebarProvider>
   ) : (
