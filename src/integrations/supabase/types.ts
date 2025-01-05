@@ -237,9 +237,10 @@ export type Database = {
           description: string | null
           email: string | null
           external_id: string | null
+          first_name: string
           id: string
+          last_name: string
           location: string | null
-          name: string
           phone: string | null
           phone_formatted: string | null
           phone_status: string | null
@@ -260,9 +261,10 @@ export type Database = {
           description?: string | null
           email?: string | null
           external_id?: string | null
+          first_name?: string
           id?: string
+          last_name?: string
           location?: string | null
-          name: string
           phone?: string | null
           phone_formatted?: string | null
           phone_status?: string | null
@@ -283,9 +285,10 @@ export type Database = {
           description?: string | null
           email?: string | null
           external_id?: string | null
+          first_name?: string
           id?: string
+          last_name?: string
           location?: string | null
-          name?: string
           phone?: string | null
           phone_formatted?: string | null
           phone_status?: string | null

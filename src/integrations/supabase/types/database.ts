@@ -9,7 +9,6 @@ import { SequenceStep, SequenceStepInsert, SequenceStepUpdate } from "./sequence
 import { SMS, SMSInsert, SMSUpdate } from "./sms"
 import { Task, TaskInsert, TaskUpdate } from "./tasks"
 import { Template, TemplateInsert, TemplateUpdate } from "./templates"
-import { AccountType, ActivityType, CallDisposition, LeadStatus, MessageStatus, SequenceStatus } from "./enums"
 
 export interface Database {
   public: {
@@ -77,12 +76,12 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
-      account_type: AccountType
-      activity_type: ActivityType
-      call_disposition: CallDisposition
-      lead_status: LeadStatus
-      message_status: MessageStatus
-      sequence_status: SequenceStatus
+      activity_type: "call" | "sms" | "email" | "note" | "custom"
+      call_disposition: "answered" | "no_answer" | "busy" | "voicemail" | "wrong_number" | "disconnected" | "callback_requested"
+      lead_status: "Send AI Text (Continue Outreach)" | "Potential" | "Connected" | "Unqualified" | "Bad Phone Number" | "Interested" | "Missed Transfer" | "Do Not Contact" | "Send to Client" | "Contact Later"
+      message_status: "draft" | "scheduled" | "sent" | "delivered" | "failed"
+      sequence_status: "active" | "paused" | "archived"
+      user_role: "admin" | "isa"
     }
     CompositeTypes: {
       [_ in never]: never

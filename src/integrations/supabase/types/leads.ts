@@ -11,9 +11,10 @@ export interface Lead {
   description: string | null
   email: string | null
   external_id: string | null
+  first_name: string
+  last_name: string
   id: string
   location: string | null
-  name: string
   phone: string | null
   phone_formatted: string | null
   phone_status: string | null
@@ -25,8 +26,9 @@ export interface Lead {
   updated_by: string | null
 }
 
-export interface LeadInsert extends Partial<Omit<Lead, "name">> {
-  name: string
+export interface LeadInsert extends Partial<Omit<Lead, "first_name" | "last_name">> {
+  first_name: string
+  last_name: string
 }
 
 export interface LeadUpdate extends Partial<Lead> {}
