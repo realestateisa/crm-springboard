@@ -15,19 +15,31 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 const menuItems = [
-  { icon: Inbox, label: "Inbox", href: "/" },
-  { icon: CheckSquare, label: "Done", href: "/done" },
+  { 
+    icon: Inbox, 
+    label: "Inbox", 
+    href: "/tasks/inbox",
+    subItems: [
+      { label: "Done", href: "/done", icon: CheckSquare }
+    ]
+  },
   { icon: Users, label: "Opportunities", href: "/opportunities" },
   { icon: MessageSquare, label: "Conversations", href: "/conversations" },
   { icon: BarChart2, label: "Reports", href: "/reports" },
 ];
 
 export function AppSidebar() {
+  const [expandedItem, setExpandedItem] = useState<string | null>(null);
+
   return (
     <Sidebar>
       <SidebarContent className="flex flex-col h-full">
@@ -52,12 +64,29 @@ export function AppSidebar() {
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.label}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton 
+                    asChild
+                    onClick={() => setExpandedItem(expandedItem === item.label ? null : item.label)}
+                  >
                     <a href={item.href} className="flex items-center gap-3 px-3 py-2">
                       <item.icon className="h-4 w-4" />
                       <span>{item.label}</span>
                     </a>
                   </SidebarMenuButton>
+                  {item.subItems && expandedItem === item.label && (
+                    <SidebarMenuSub>
+                      {item.subItems.map((subItem) => (
+                        <SidebarMenuSubItem key={subItem.label}>
+                          <SidebarMenuSubButton asChild>
+                            <a href={subItem.href} className="flex items-center gap-2">
+                              <subItem.icon className="h-4 w-4" />
+                              <span>{subItem.label}</span>
+                            </a>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
