@@ -87,7 +87,7 @@ export function AppSidebar() {
   return (
     <Sidebar className="fixed top-0 left-0 h-full w-64">
       <SidebarContent className="flex flex-col h-full">
-        <div className="p-4 border-b border-sidebar-border">
+        <div className="h-14 p-4 border-b border-sidebar-border flex items-center">
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">
               <AvatarImage src="/placeholder.svg" />
