@@ -11,9 +11,23 @@ import Admin from "./pages/Admin";
 import Inbox from "./pages/Inbox";
 import ResetPassword from "./pages/ResetPassword";
 import { AppSidebar } from "./components/AppSidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 
 const queryClient = new QueryClient();
+
+const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
+  const { state } = useSidebar();
+  const paddingClass = state === "collapsed" ? "pl-12" : "pl-64"; // 12 for collapsed, 64 (16rem) for expanded
+
+  return (
+    <div className="flex min-h-screen w-full">
+      <AppSidebar />
+      <main className={`flex-1 transition-[padding] duration-200 ${paddingClass}`}>
+        {children}
+      </main>
+    </div>
+  );
+};
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -32,12 +46,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   return isAuthenticated ? (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full">
-        <AppSidebar />
-        <main className="flex-1">
-          {children}
-        </main>
-      </div>
+      <ProtectedLayout>
+        {children}
+      </ProtectedLayout>
     </SidebarProvider>
   ) : (
     <Navigate to="/login" />
