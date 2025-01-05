@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Profile } from "@/integrations/supabase/types/profiles";
 import UserTable from "@/components/admin/UserTable";
 import UserDialog from "@/components/admin/UserDialog";
+import { getSupabaseUrl, getSupabaseAnonKey } from "@/utils/supabaseUtils";
 
 const Admin = () => {
   const [users, setUsers] = useState<Profile[]>([]);
@@ -77,16 +78,6 @@ const Admin = () => {
   };
 
   const handleSaveUser = async (userData: Partial<Profile>) => {
-    // Ensure email is provided
-    if (!userData.email) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Email is required.",
-      });
-      return;
-    }
-
     if (dialogMode === "edit" && selectedUser) {
       const { error } = await supabase
         .from("profiles")
@@ -116,19 +107,20 @@ const Admin = () => {
     } else {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-user`,
+          `${getSupabaseUrl()}/functions/v1/create-user`,
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+              'Authorization': `Bearer ${getSupabaseAnonKey()}`,
             },
             body: JSON.stringify(userData),
           }
         );
 
         if (!response.ok) {
-          throw new Error('Failed to create user');
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to create user');
         }
 
         // Refresh the users list
