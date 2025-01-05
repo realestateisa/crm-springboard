@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
+import Inbox from "./pages/Inbox";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Admin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tasks/inbox"
+            element={
+              <ProtectedRoute>
+                <Inbox />
               </ProtectedRoute>
             }
           />
