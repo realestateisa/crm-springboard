@@ -131,14 +131,11 @@ Deno.serve(async (req) => {
 
     console.log('Profile updated successfully')
 
-    // Now that the user is created, generate password reset link
-    const { data: resetData, error: resetError } = await supabase.auth.admin.generateLink({
-      type: 'recovery',
-      email: userData.email,
-    })
+    // Now that the user is created, send password reset email
+    const { error: resetError } = await supabase.auth.admin.sendPasswordResetEmail(userData.email)
 
     if (resetError) {
-      console.error('Error generating password reset link:', resetError)
+      console.error('Error sending password reset email:', resetError)
       return new Response(
         JSON.stringify({ error: resetError.message }),
         { 
@@ -148,7 +145,7 @@ Deno.serve(async (req) => {
       )
     }
 
-    console.log('Password reset link generated successfully:', resetData.properties.action_link)
+    console.log('Password reset email sent successfully')
 
     return new Response(
       JSON.stringify({ 
