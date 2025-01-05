@@ -21,7 +21,7 @@ Deno.serve(async (req) => {
     console.log('Received user data:', userData)
 
     // First check auth.users table using admin API
-    const { data: existingAuthUser, error: authCheckError } = await supabase.auth.admin.listUsers()
+    const { data: existingAuthUsers, error: authCheckError } = await supabase.auth.admin.listUsers()
     
     if (authCheckError) {
       console.error('Error checking auth users:', authCheckError)
@@ -34,11 +34,45 @@ Deno.serve(async (req) => {
       )
     }
 
-    const emailExists = existingAuthUser.users.some(user => user.email === userData.email)
+    console.log('Checking auth.users table for email:', userData.email)
+    const emailExists = existingAuthUsers.users.some(user => user.email === userData.email)
+    console.log('Email exists in auth.users?', emailExists)
+
     if (emailExists) {
       console.error('Email already exists in auth.users:', userData.email)
       return new Response(
         JSON.stringify({ error: 'A user with this email address has already been registered' }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    // Also check profiles table
+    const { data: existingProfiles, error: profileCheckError } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('email', userData.email)
+    
+    if (profileCheckError) {
+      console.error('Error checking profiles:', profileCheckError)
+      return new Response(
+        JSON.stringify({ error: 'Failed to check existing profiles' }),
+        { 
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    console.log('Checking profiles table for email:', userData.email)
+    console.log('Existing profiles with this email:', existingProfiles)
+
+    if (existingProfiles && existingProfiles.length > 0) {
+      console.error('Email already exists in profiles:', userData.email)
+      return new Response(
+        JSON.stringify({ error: 'A user with this email address already exists in profiles' }),
         { 
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
