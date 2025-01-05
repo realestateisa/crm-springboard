@@ -9,8 +9,8 @@ export default function Index() {
   const { state } = useSidebar();
   
   return (
-    <div className="flex flex-col h-full">
-      <header className="border-b border-border h-14 flex items-center px-4 gap-4 bg-background sticky top-0 z-10 ml-64">
+    <div className="flex flex-col h-full pt-28">
+      <header className="border-b border-border h-14 flex items-center px-4 gap-4 bg-background fixed top-0 right-0 left-64 z-10">
         <div className="flex-1 flex items-center gap-4">
           <div className="relative flex-1 max-w-xl">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-foreground/70" />
@@ -26,7 +26,7 @@ export default function Index() {
         </div>
       </header>
 
-      <div className="border-b border-border bg-background/95 sticky top-14 z-[5] ml-64">
+      <div className="border-b border-border bg-background/95 fixed top-14 right-0 left-64 z-[5]">
         <div className="flex items-center px-4 h-14">
           <h1 className="text-lg font-semibold text-foreground">Dashboard</h1>
           <Separator orientation="vertical" className="mx-4 h-4" />
@@ -59,7 +59,7 @@ export default function Index() {
         </div>
       </div>
 
-      <main className="flex-1 p-4 bg-background ml-64">
+      <main className="flex-1 p-4 bg-background">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {/* Dashboard content will go here */}
         </div>
