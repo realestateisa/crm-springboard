@@ -36,12 +36,18 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter basename="/">
+      <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
-          <Route path="/admin/*" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+          <Route path="/admin/*" element={
+            <ProtectedRoute>
+              <Routes>
+                <Route path="/" element={<Admin />} />
+                <Route path="*" element={<Admin />} />
+              </Routes>
+            </ProtectedRoute>
+          } />
           <Route path="/tasks/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
           <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
