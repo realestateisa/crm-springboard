@@ -9,7 +9,7 @@ export default function Index() {
   const { state } = useSidebar();
   
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full pl-[16rem]">
       <header className="border-b border-border h-14 flex items-center px-4 gap-4 bg-background sticky top-0 z-10">
         <div className="flex-1 flex items-center gap-4">
           <div className="relative flex-1 max-w-xl">
