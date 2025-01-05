@@ -8,7 +8,8 @@ import { Card } from "@/components/ui/card";
 export default function Index() {
   return (
     <div className="flex-1 flex flex-col min-w-0">
-      <header className="border-b border-border h-14 flex items-center px-4 gap-4 bg-background">
+      {/* Top Header */}
+      <header className="border-b border-border h-14 flex items-center px-4 gap-4 bg-background sticky top-0 z-10">
         <div className="flex-1 flex items-center gap-4">
           <div className="relative flex-1 max-w-xl">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-foreground/70" />
@@ -24,8 +25,10 @@ export default function Index() {
         </div>
       </header>
 
+      {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-0">
-        <div className="border-b border-border bg-background/95">
+        {/* Sub Header */}
+        <div className="border-b border-border bg-background/95 sticky top-14 z-10">
           <div className="flex items-center px-4 h-14">
             <h1 className="text-lg font-semibold text-foreground">Dashboard</h1>
             <Separator orientation="vertical" className="mx-4 h-4" />
@@ -58,7 +61,8 @@ export default function Index() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto p-4">
+        {/* Dashboard Content */}
+        <div className="flex-1 overflow-auto p-4 bg-background">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card className="p-4">
               <h3 className="font-semibold mb-2">Total Leads</h3>
