@@ -7,7 +7,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Profile } from "@/integrations/supabase/types/profiles";
 import UserTable from "@/components/admin/UserTable";
 import UserDialog from "@/components/admin/UserDialog";
-import { getSupabaseUrl, getSupabaseAnonKey } from "@/utils/supabaseUtils";
 
 const Admin = () => {
   const [users, setUsers] = useState<Profile[]>([]);
@@ -106,21 +105,12 @@ const Admin = () => {
       });
     } else {
       try {
-        const response = await fetch(
-          `${getSupabaseUrl()}/functions/v1/create-user`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${getSupabaseAnonKey()}`,
-            },
-            body: JSON.stringify(userData),
-          }
-        );
+        const { data, error } = await supabase.functions.invoke('create-user', {
+          body: userData,
+        });
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to create user');
+        if (error) {
+          throw new Error(error.message || 'Failed to create user');
         }
 
         // Refresh the users list
