@@ -6,7 +6,8 @@ import {
   MessageSquare,
   Settings,
   ChevronDown,
-  Shield
+  Shield,
+  User
 } from "lucide-react";
 import {
   Sidebar,
@@ -32,7 +33,8 @@ const menuItems = [
     label: "Inbox", 
     href: "/tasks/inbox",
     subItems: [
-      { label: "Done", href: "/done", icon: CheckSquare }
+      { label: "Done", href: "/done", icon: CheckSquare },
+      { label: "Leads", href: "/leads", icon: User }
     ]
   },
   { icon: Users, label: "Opportunities", href: "/opportunities" },
