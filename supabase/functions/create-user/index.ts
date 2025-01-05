@@ -64,6 +64,18 @@ Deno.serve(async (req) => {
       )
     }
 
+    // Send password reset email to the new user
+    const { error: resetError } = await supabase.auth.admin.generateLink({
+      type: 'recovery',
+      email: userData.email,
+    })
+
+    if (resetError) {
+      console.error('Error sending password reset email:', resetError)
+      // We don't return an error here as the user was created successfully
+      // Just log it for debugging
+    }
+
     return new Response(
       JSON.stringify({ id: authUser.user.id }),
       { 
