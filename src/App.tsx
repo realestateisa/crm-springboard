@@ -34,7 +34,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
-        <main className="flex-1 flex flex-col min-w-0 md:ml-[16rem]">
+        <main className="flex-1 flex flex-col min-w-0">
           {children}
         </main>
       </div>
