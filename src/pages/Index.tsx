@@ -5,8 +5,27 @@ import { Input } from "@/components/ui/input";
 import { Search, Mail, Phone, MessageSquare, CheckSquare, Bell } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Index() {
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      const { data: profiles, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('date_created', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching profiles:', error);
+      } else {
+        console.log('All profiles:', profiles);
+      }
+    };
+
+    fetchProfiles();
+  }, []);
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
