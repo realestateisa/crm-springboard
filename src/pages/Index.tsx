@@ -4,6 +4,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { Card } from "@/components/ui/card";
 
 export default function Index() {
   const { state } = useSidebar();
@@ -64,7 +65,42 @@ export default function Index() {
 
           <div className="flex-1 overflow-auto p-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              {/* Dashboard content will go here */}
+              {/* Task Cards */}
+              <Card className="p-4">
+                <div className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-primary" />
+                  <h3 className="font-medium">Follow up email</h3>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">Send follow-up email to John regarding the proposal</p>
+                <div className="mt-4 text-xs text-muted-foreground">Due today at 5:00 PM</div>
+              </Card>
+
+              <Card className="p-4">
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-primary" />
+                  <h3 className="font-medium">Client call</h3>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">Scheduled call with Sarah about project timeline</p>
+                <div className="mt-4 text-xs text-muted-foreground">Tomorrow at 10:00 AM</div>
+              </Card>
+
+              <Card className="p-4">
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4 text-primary" />
+                  <h3 className="font-medium">SMS Response</h3>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">Reply to Mark's message about meeting</p>
+                <div className="mt-4 text-xs text-muted-foreground">Due in 2 hours</div>
+              </Card>
+
+              <Card className="p-4">
+                <div className="flex items-center gap-2">
+                  <CheckSquare className="h-4 w-4 text-primary" />
+                  <h3 className="font-medium">Review Document</h3>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">Review and sign contract for new client</p>
+                <div className="mt-4 text-xs text-muted-foreground">Due by end of day</div>
+              </Card>
             </div>
           </div>
         </div>
