@@ -69,13 +69,17 @@ const UserDialog = ({ open, onOpenChange, onSave, user, mode }: UserDialogProps)
 
       // Check if email exists (only for new users)
       if (mode === "add") {
-        const { data: existingUser } = await supabase
+        const { data: existingUsers, error: queryError } = await supabase
           .from("profiles")
           .select("id")
-          .eq("email", formData.email)
-          .single();
+          .eq("email", formData.email);
 
-        if (existingUser) {
+        if (queryError) {
+          setError("Failed to check email availability");
+          return;
+        }
+
+        if (existingUsers && existingUsers.length > 0) {
           setError("A user with this email already exists");
           return;
         }
