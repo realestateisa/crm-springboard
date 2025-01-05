@@ -5,7 +5,6 @@ import {
   BarChart2, 
   MessageSquare,
   Settings,
-  ChevronDown,
   Shield,
   User
 } from "lucide-react";
@@ -22,11 +21,9 @@ import {
   SidebarMenuSubItem
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { useSidebar } from "@/components/ui/sidebar";
 
 const menuItems = [
   { 
@@ -47,7 +44,6 @@ export function AppSidebar() {
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const { toast } = useToast();
-  const { state } = useSidebar();
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -89,7 +85,7 @@ export function AppSidebar() {
   }, []);
 
   return (
-    <Sidebar className={`fixed top-0 left-0 h-full transform transition-transform duration-300 ease-in-out ${state === "collapsed" ? "-translate-x-full" : "translate-x-0"}`}>
+    <Sidebar className="fixed top-0 left-0 h-full w-64">
       <SidebarContent className="flex flex-col h-full">
         <div className="p-4 border-b border-sidebar-border">
           <div className="flex items-center gap-2">
@@ -101,9 +97,6 @@ export function AppSidebar() {
               <p className="text-sm font-medium truncate">Anthony Cambece</p>
               <p className="text-xs text-muted-foreground truncate">Agent ISA</p>
             </div>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <ChevronDown className="h-4 w-4" />
-            </Button>
           </div>
         </div>
 
