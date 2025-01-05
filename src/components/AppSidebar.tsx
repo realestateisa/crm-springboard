@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useSidebar } from "@/components/ui/sidebar";
 
 const menuItems = [
   { 
@@ -46,6 +47,7 @@ export function AppSidebar() {
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const { toast } = useToast();
+  const { state } = useSidebar();
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -88,7 +90,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarContent className="flex flex-col h-full">
+      <SidebarContent className={`flex flex-col h-full transform transition-transform duration-300 ease-in-out ${state === "collapsed" ? "-translate-x-full" : "translate-x-0"}`}>
         <div className="p-4 border-b border-sidebar-border">
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">
