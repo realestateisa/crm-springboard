@@ -8,14 +8,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
 
 interface UserTableProps {
   users: Profile[];
   onEdit: (user: Profile) => void;
   onToggleStatus: (user: Profile) => void;
+  onDelete: (user: Profile) => void;
 }
 
-const UserTable = ({ users, onEdit, onToggleStatus }: UserTableProps) => {
+const UserTable = ({ users, onEdit, onToggleStatus, onDelete }: UserTableProps) => {
   return (
     <Table>
       <TableHeader>
@@ -46,11 +48,10 @@ const UserTable = ({ users, onEdit, onToggleStatus }: UserTableProps) => {
                 {user.is_active ? "Active" : "Inactive"}
               </span>
             </TableCell>
-            <TableCell className="text-right">
+            <TableCell className="text-right space-x-2">
               <Button
                 variant="outline"
                 size="sm"
-                className="mr-2"
                 onClick={() => onEdit(user)}
               >
                 Edit
@@ -62,6 +63,14 @@ const UserTable = ({ users, onEdit, onToggleStatus }: UserTableProps) => {
                 onClick={() => onToggleStatus(user)}
               >
                 {user.is_active ? "Deactivate" : "Activate"}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-red-600"
+                onClick={() => onDelete(user)}
+              >
+                <Trash2 className="h-4 w-4" />
               </Button>
             </TableCell>
           </TableRow>
