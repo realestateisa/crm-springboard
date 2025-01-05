@@ -12,7 +12,7 @@ export default function Index() {
   return (
     <div className="min-h-screen flex w-full">
       <main className="flex-1 flex flex-col min-w-0 md:ml-[16rem]">
-        <header className="border-b border-border h-14 flex items-center px-4 gap-4 bg-background">
+        <header className="border-b border-border h-14 flex items-center px-4 gap-4 bg-background sticky top-0 z-10">
           <div className="flex-1 flex items-center gap-4">
             <div className="relative flex-1 max-w-xl">
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-foreground/70" />
@@ -29,7 +29,7 @@ export default function Index() {
         </header>
 
         <div className="flex-1 flex flex-col min-h-0">
-          <div className="border-b border-border bg-background/95">
+          <div className="border-b border-border bg-background/95 sticky top-14 z-[5]">
             <div className="flex items-center px-4 h-14">
               <h1 className="text-lg font-semibold text-foreground">Dashboard</h1>
               <Separator orientation="vertical" className="mx-4 h-4" />
