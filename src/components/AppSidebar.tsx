@@ -32,10 +32,10 @@ const menuItems = [
     label: "Inbox", 
     href: "/tasks/inbox",
     subItems: [
-      { label: "Done", href: "/done", icon: CheckSquare },
-      { label: "Leads", href: "/leads", icon: User }
+      { label: "Done", href: "/done", icon: CheckSquare }
     ]
   },
+  { icon: User, label: "Leads", href: "/leads" },
   { icon: Users, label: "Opportunities", href: "/opportunities" },
   { icon: MessageSquare, label: "Conversations", href: "/conversations" },
   { icon: BarChart2, label: "Reports", href: "/reports" },
