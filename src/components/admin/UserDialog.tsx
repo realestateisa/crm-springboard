@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface UserDialogProps {
@@ -28,17 +28,37 @@ interface UserDialogProps {
 }
 
 const UserDialog = ({ open, onOpenChange, onSave, user, mode }: UserDialogProps) => {
-  const [formData, setFormData] = useState<Partial<Profile>>(
-    user || {
-      first_name: "",
-      last_name: "",
-      email: "",
-      role: "isa",
-      is_active: true,
-    }
-  );
+  const [formData, setFormData] = useState<Partial<Profile>>({
+    first_name: "",
+    last_name: "",
+    email: "",
+    role: "isa",
+    is_active: true,
+  });
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Reset form data when the dialog opens/closes or when user prop changes
+  useEffect(() => {
+    if (mode === "edit" && user) {
+      setFormData({
+        first_name: user.first_name || "",
+        last_name: user.last_name || "",
+        email: user.email || "",
+        role: user.role || "isa",
+        is_active: user.is_active !== null ? user.is_active : true,
+      });
+    } else {
+      setFormData({
+        first_name: "",
+        last_name: "",
+        email: "",
+        role: "isa",
+        is_active: true,
+      });
+    }
+    setError("");
+  }, [user, mode, open]);
 
   const validateEmail = (email: string) => {
     return email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
