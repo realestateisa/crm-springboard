@@ -24,6 +24,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { Link } from "react-router-dom";
 
 const menuItems = [
   { 
@@ -106,10 +107,10 @@ export function AppSidebar() {
               {isAdmin && (
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <a href="/admin" className="flex items-center gap-3 px-3 py-2">
+                    <Link to="/admin" className="flex items-center gap-3 px-3 py-2">
                       <Shield className="h-4 w-4" />
                       <span>Admin</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )}
@@ -119,20 +120,20 @@ export function AppSidebar() {
                     asChild
                     onClick={() => setExpandedItem(expandedItem === item.label ? null : item.label)}
                   >
-                    <a href={item.href} className="flex items-center gap-3 px-3 py-2">
+                    <Link to={item.href} className="flex items-center gap-3 px-3 py-2">
                       <item.icon className="h-4 w-4" />
                       <span>{item.label}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                   {item.subItems && expandedItem === item.label && (
                     <SidebarMenuSub>
                       {item.subItems.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.label}>
                           <SidebarMenuSubButton asChild>
-                            <a href={subItem.href} className="flex items-center gap-2">
+                            <Link to={subItem.href} className="flex items-center gap-2">
                               <subItem.icon className="h-4 w-4" />
                               <span>{subItem.label}</span>
-                            </a>
+                            </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       ))}
@@ -148,10 +149,10 @@ export function AppSidebar() {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <a href="/settings" className="flex items-center gap-3 px-3 py-2">
+                <Link to="/settings" className="flex items-center gap-3 px-3 py-2">
                   <Settings className="h-4 w-4" />
                   <span>Settings</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
