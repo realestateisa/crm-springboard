@@ -87,7 +87,6 @@ const Login = () => {
                     password_input_placeholder: 'Password',
                     button_label: 'Sign in',
                     link_text: 'New user? Create an account',
-                    forgotten_password_label: 'Forgot your password?',
                   },
                   sign_up: {
                     email_label: '',
