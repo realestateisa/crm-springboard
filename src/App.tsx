@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import Inbox from "./pages/Inbox";
+import Leads from "./pages/Leads";
 import ResetPassword from "./pages/ResetPassword";
 import { AppSidebar } from "./components/AppSidebar";
 import { AppHeader } from "./components/AppHeader";
@@ -99,6 +100,16 @@ const App = () => (
               <ProtectedRoute>
                 <div className="min-h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                   <Inbox />
+                </div>
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/leads" 
+            element={
+              <ProtectedRoute>
+                <div className="min-h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                  <Leads />
                 </div>
               </ProtectedRoute>
             } 
