@@ -6,7 +6,7 @@ export default function Inbox() {
   return (
     <div className="flex-1 flex flex-col min-h-0 md:ml-[16rem]">
       <div className="flex-1 overflow-auto p-4">
-        <div className="max-w-4xl mx-auto space-y-4">
+        <div className="max-w-6xl mx-auto space-y-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
               <span className="text-xs font-medium text-muted-foreground">Select all</span>
