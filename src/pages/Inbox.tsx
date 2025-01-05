@@ -11,7 +11,7 @@ export default function Inbox() {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
-        <main className="flex-1 flex flex-col min-w-0">
+        <main className="flex-1 flex flex-col min-w-0 pl-[16rem]">
           <header className="border-b border-border h-14 flex items-center px-4 gap-4 bg-background">
             <SidebarTrigger />
             <div className="flex-1 flex items-center gap-4">

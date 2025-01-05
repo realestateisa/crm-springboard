@@ -61,14 +61,14 @@ const Admin = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#F8FBFE] to-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-[#F8FBFE] to-white flex items-center justify-center pl-[16rem]">
         <Loader2 className="h-8 w-8 animate-spin text-[#00A7E1]" />
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-10 pl-[16rem]">
       <UserManagement users={users} setUsers={setUsers} />
     </div>
   );
