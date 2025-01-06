@@ -47,7 +47,11 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       setCall(newCall);
 
       newCall.on('ringing', () => setCallStatus('ringing'));
-      newCall.on('accept', () => setCallStatus('in-progress'));
+      newCall.on('accept', () => {
+        setCallStatus('in-progress');
+        console.log('Call connected with CallSid:', newCall.parameters.CallSid);
+        setOutboundCallSid(newCall.parameters.CallSid);
+      });
       newCall.on('disconnect', () => {
         setCallStatus('completed');
         setOriginalCallerHungUp(true);
@@ -56,14 +60,6 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         console.error('Call error:', error);
         setCallStatus('failed');
         toast.error('Call error: ' + error.message);
-      });
-
-      // Listen for CallSid from Twilio
-      newCall.on('info', (info: any) => {
-        if (info.CallSid) {
-          console.log('Received CallSid:', info.CallSid);
-          setOutboundCallSid(info.CallSid);
-        }
       });
 
     } catch (error) {

@@ -4,8 +4,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { TransferStatus } from './useCallState';
 
 export function useCallTransfer() {
-  const [isWaitingForCallSid, setIsWaitingForCallSid] = useState(false);
-
   const handleTransfer = async (
     device: any,
     call: any,
@@ -20,10 +18,7 @@ export function useCallTransfer() {
     }
 
     if (!outboundCallSid) {
-      if (!isWaitingForCallSid) {
-        setIsWaitingForCallSid(true);
-        toast.error('Call ID not available yet. Please wait a moment and try again.');
-      }
+      toast.error('Call ID not available');
       return;
     }
 
@@ -109,7 +104,6 @@ export function useCallTransfer() {
   };
 
   return {
-    handleTransfer,
-    isWaitingForCallSid
+    handleTransfer
   };
 }
