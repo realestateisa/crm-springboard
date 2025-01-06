@@ -110,38 +110,42 @@ export default function Leads() {
   }
 
   return (
-    <div className="flex-1 flex flex-col min-w-0 md:ml-[16rem]">
-      <div className="container py-6 space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground/90">
-            Leads {totalLeads > 0 && 
-              <span className="text-xl font-normal text-muted-foreground ml-2">
-                ({totalLeads.toLocaleString()} total)
-              </span>
-            }
-          </h1>
-          <div className="w-full sm:w-72">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search leads..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 w-full bg-background border-border/50 focus:border-primary/50 transition-colors duration-200"
-              />
+    <div className="flex-1 flex flex-col min-w-0 md:ml-[16rem] bg-background">
+      <div className="border-b border-border/50">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex items-baseline gap-2">
+              <h1 className="text-2xl font-semibold tracking-tight">
+                Leads
+              </h1>
+              {totalLeads > 0 && (
+                <span className="text-lg text-muted-foreground">
+                  ({totalLeads.toLocaleString()})
+                </span>
+              )}
+            </div>
+            <div className="w-full sm:w-72">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search leads..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9 w-full bg-background border-border/50 focus:border-primary/50 transition-colors duration-200"
+                />
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="rounded-lg border border-border/50 bg-card shadow-sm overflow-hidden transition-all duration-200 hover:border-border">
-          <LeadsTable leads={leads} isLoading={isLoading} />
+      <div className="flex-1 container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="bg-card rounded-lg border border-border/50 shadow-sm overflow-hidden transition-all duration-200">
+          <LeadsTable leads={leads} />
         </div>
 
         {/* Infinite scroll sentinel */}
-        <div 
-          ref={loadMoreRef} 
-          className="flex justify-center p-4"
-        >
+        <div ref={loadMoreRef} className="flex justify-center p-4">
           {isFetchingNextPage && (
             <div className="flex items-center gap-2 text-muted-foreground animate-fade-in">
               <Loader2 className="h-4 w-4 animate-spin" />

@@ -22,33 +22,33 @@ export const LeadsTable = ({ leads }: LeadsTableProps) => {
   };
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Client</TableHead>
-            <TableHead>Location</TableHead>
-            <TableHead>Status</TableHead>
+    <Table>
+      <TableHeader>
+        <TableRow className="hover:bg-transparent">
+          <TableHead className="font-medium">Client</TableHead>
+          <TableHead className="font-medium">Location</TableHead>
+          <TableHead className="font-medium">Status</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {leads.map((lead) => (
+          <TableRow
+            key={lead.id}
+            className="cursor-pointer hover:bg-muted/50"
+            onClick={() => handleLeadClick(lead.id)}
+          >
+            <TableCell className="py-3 font-medium">
+              {lead.first_name} {lead.last_name}
+            </TableCell>
+            <TableCell className="py-3 text-muted-foreground">
+              {lead.location}
+            </TableCell>
+            <TableCell className="py-3">
+              <LeadStatusBadge status={lead.status} />
+            </TableCell>
           </TableRow>
-        </TableHeader>
-        <TableBody>
-          {leads.map((lead) => (
-            <TableRow
-              key={lead.id}
-              className="cursor-pointer hover:bg-muted/50"
-              onClick={() => handleLeadClick(lead.id)}
-            >
-              <TableCell>
-                {lead.first_name} {lead.last_name}
-              </TableCell>
-              <TableCell>{lead.location}</TableCell>
-              <TableCell>
-                <LeadStatusBadge status={lead.status} />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+        ))}
+      </TableBody>
+    </Table>
   );
-};
+}
