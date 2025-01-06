@@ -24,13 +24,18 @@ export function useCallTransfer() {
 
     try {
       const conferenceId = `conf_${Date.now()}`;
+      const childCallSid = call.parameters.StirIdentity;
       
-      console.log('Moving call to conference:', { callSid: outboundCallSid, conferenceId });
+      console.log('Moving call to conference:', { parentCallSid: outboundCallSid, childCallSid, conferenceId });
 
-      const body = { callSid: outboundCallSid, conferenceId };
+      const body = { 
+        parentCallSid: outboundCallSid, 
+        childCallSid,
+        conferenceId 
+      };
       console.log('Sending to edge function:', body);
 
-      // Move the current call to the conference using the edge function
+      // Move both calls to the conference using the edge function
       const { data, error } = await supabase.functions.invoke('move-call-to-conference', {
         body
       });

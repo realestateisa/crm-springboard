@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import twilio from "npm:twilio@4.19.0"
+import { Twilio } from 'npm:twilio@4.19.0'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -16,38 +16,41 @@ serve(async (req) => {
   }
 
   try {
-    const { callSid, conferenceId } = await req.json()
+    const { parentCallSid, childCallSid, conferenceId } = await req.json()
     
-    console.log(`Moving call ${callSid} to conference ${conferenceId}`);
+    console.log(`Moving calls to conference ${conferenceId}:`, { parentCallSid, childCallSid });
 
-    if (!callSid) {
-      throw new Error('CallSid is required');
+    if (!parentCallSid || !childCallSid || !conferenceId) {
+      throw new Error('CallSids and ConferenceId are required');
     }
 
-    if (!conferenceId) {
-      throw new Error('ConferenceId is required');
-    }
-
-    const client = new twilio.Twilio(
+    const client = new Twilio(
       Deno.env.get('TWILIO_ACCOUNT_SID') ?? '',
       Deno.env.get('TWILIO_AUTH_TOKEN') ?? ''
     );
 
-    // Generate TwiML to move the call into a conference
-    const twiml = new twilio.twiml.VoiceResponse();
+    // Generate TwiML for both calls
+    const twiml = new Twilio.twiml.VoiceResponse();
     twiml.dial().conference({
-      startConferenceOnEnter: 'false',
-      endConferenceOnExit: 'true',
+      startConferenceOnEnter: 'true',
+      endConferenceOnExit: 'false',
       waitUrl: 'http://twimlets.com/holdmusic?Bucket=com.twilio.music.classical'
     }, conferenceId);
 
     console.log('Generated TwiML:', twiml.toString());
 
-    // Update the call with the new TwiML
-    await client.calls(callSid)
+    // Move both calls to conference
+    const moveParentCall = client.calls(parentCallSid)
       .update({
         twiml: twiml.toString()
       });
+
+    const moveChildCall = client.calls(childCallSid)
+      .update({
+        twiml: twiml.toString()
+      });
+
+    await Promise.all([moveParentCall, moveChildCall]);
 
     return new Response(
       JSON.stringify({ success: true }),
@@ -59,7 +62,7 @@ serve(async (req) => {
       }
     )
   } catch (error) {
-    console.error('Error moving call to conference:', error);
+    console.error('Error moving calls to conference:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
