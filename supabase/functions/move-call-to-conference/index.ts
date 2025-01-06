@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { VoiceResponse } from "npm:twilio/lib/twiml/VoiceResponse"
+import { VoiceResponse } from "npm:twilio@4.19.0/lib/twiml/VoiceResponse"
 import twilio from "npm:twilio@4.19.0"
 
 const corsHeaders = {
@@ -10,7 +10,7 @@ const corsHeaders = {
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
@@ -38,6 +38,8 @@ serve(async (req) => {
       endConferenceOnExit: 'true',
       waitUrl: 'http://twimlets.com/holdmusic?Bucket=com.twilio.music.classical'
     }, conferenceId);
+
+    console.log('Generated TwiML:', twiml.toString());
 
     // Update the call with the new TwiML
     await client.calls(callSid)
