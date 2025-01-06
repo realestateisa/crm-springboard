@@ -29,7 +29,7 @@ const LeadStatusBadge = ({ status }: LeadStatusBadgeProps) => {
   };
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusStyle(status)}`}>
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${getStatusStyle(status)}`}>
       {status}
     </span>
   );
