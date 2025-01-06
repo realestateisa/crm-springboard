@@ -26,7 +26,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         if (error) throw error;
 
         const newDevice = new Device(token, {
-          codecPreferences: ['opus', 'pcmu'] as ['opus', 'pcmu'],
+          codecPreferences: ['opus', 'pcmu'] as any, // Type assertion to fix codec error
           allowIncomingWhileBusy: false
         });
 
@@ -132,8 +132,8 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         params: {
           To: '12106643493',
           ConferenceName: conferenceId,
-          StartConferenceOnEnter: true,
-          EndConferenceOnExit: false
+          StartConferenceOnEnter: 'true', // Changed to string
+          EndConferenceOnExit: 'false' // Changed to string
         }
       });
 
@@ -146,8 +146,8 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
           await call.updateOptions({
             params: {
               ConferenceName: conferenceId,
-              StartConferenceOnEnter: true,
-              EndConferenceOnExit: true
+              StartConferenceOnEnter: 'true', // Changed to string
+              EndConferenceOnExit: 'true' // Changed to string
             }
           });
           setTransferStatus('transferred');
