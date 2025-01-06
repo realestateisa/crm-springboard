@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import Inbox from "./pages/Inbox";
 import Leads from "./pages/Leads";
+import Lead from "./pages/Lead";
 import ResetPassword from "./pages/ResetPassword";
 import { AppSidebar } from "./components/AppSidebar";
 import { AppHeader } from "./components/AppHeader";
@@ -110,6 +111,16 @@ const App = () => (
               <ProtectedRoute>
                 <div className="min-h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                   <Leads />
+                </div>
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/lead/:id" 
+            element={
+              <ProtectedRoute>
+                <div className="min-h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                  <Lead />
                 </div>
               </ProtectedRoute>
             } 
