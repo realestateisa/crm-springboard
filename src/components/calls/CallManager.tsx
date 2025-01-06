@@ -110,10 +110,6 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
       newTransferCall.on('accept', () => {
         setTransferStatus('transferred');
-        // Original call can now be disconnected as it's in the conference
-        if (call) {
-          call.disconnect();
-        }
       });
 
       newTransferCall.on('disconnect', () => {
