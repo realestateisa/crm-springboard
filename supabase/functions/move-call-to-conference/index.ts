@@ -1,5 +1,6 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { Twilio } from 'npm:twilio@4.19.0'
+import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
+import { Twilio } from "npm:twilio@4.19.0/lib/rest/Twilio.js"
+import { twiml } from "npm:twilio@4.19.0/lib/twiml/index.js"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -30,24 +31,24 @@ serve(async (req) => {
     );
 
     // Generate TwiML for both calls
-    const twiml = new Twilio.twiml.VoiceResponse();
-    twiml.dial().conference({
+    const voiceResponse = new twiml.VoiceResponse();
+    voiceResponse.dial().conference({
       startConferenceOnEnter: 'true',
       endConferenceOnExit: 'false',
       waitUrl: 'http://twimlets.com/holdmusic?Bucket=com.twilio.music.classical'
     }, conferenceId);
 
-    console.log('Generated TwiML:', twiml.toString());
+    console.log('Generated TwiML:', voiceResponse.toString());
 
     // Move both calls to conference
     const moveParentCall = client.calls(parentCallSid)
       .update({
-        twiml: twiml.toString()
+        twiml: voiceResponse.toString()
       });
 
     const moveChildCall = client.calls(childCallSid)
       .update({
-        twiml: twiml.toString()
+        twiml: voiceResponse.toString()
       });
 
     await Promise.all([moveParentCall, moveChildCall]);
