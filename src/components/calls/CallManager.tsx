@@ -36,7 +36,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       const newCall = await device.connect({
         params: {
           To: phoneNumber,
-          statusCallback: '/call-status', // This will receive the outbound call SID
+          statusCallback: '/call-status',
         }
       });
 
@@ -54,7 +54,6 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         toast.error('Call error: ' + error.message);
       });
 
-      // Listen for the outbound call SID
       newCall.on('info', (info: any) => {
         if (info.CallSid) {
           setOutboundCallSid(info.CallSid);
@@ -75,7 +74,6 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     }
 
     try {
-      // Create a conference when transfer is initiated
       const conferenceId = `conf_${Date.now()}`;
       
       // Put the original call on hold
@@ -83,16 +81,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       setIsOnHold(true);
       setTransferStatus('connecting');
 
-      // First move the current call to the conference
-      await call.updateOptions({
-        params: {
-          ConferenceName: conferenceId,
-          StartConferenceOnEnter: 'true',
-          EndConferenceOnExit: 'false'
-        }
-      });
-
-      // Then make the transfer call and add to conference
+      // Make the transfer call
       const newTransferCall = await device.connect({
         params: {
           To: '12106643493',
@@ -104,8 +93,28 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
       setTransferCall(newTransferCall);
 
-      newTransferCall.on('accept', () => {
-        setTransferStatus('transferred');
+      // Once the transfer call is accepted, move the original call to the conference
+      newTransferCall.on('accept', async () => {
+        try {
+          await device.connect({
+            params: {
+              To: phoneNumber,
+              ConferenceName: conferenceId,
+              StartConferenceOnEnter: 'true',
+              EndConferenceOnExit: 'false'
+            }
+          });
+          
+          setTransferStatus('transferred');
+          // Original call can now be disconnected as it's in the conference
+          if (call) {
+            call.disconnect();
+          }
+        } catch (error) {
+          console.error('Error moving original call to conference:', error);
+          setTransferStatus('failed');
+          toast.error('Transfer failed: Error moving call to conference');
+        }
       });
 
       newTransferCall.on('disconnect', () => {
