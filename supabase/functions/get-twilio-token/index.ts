@@ -32,7 +32,8 @@ serve(async (req) => {
     }
 
     // Import Twilio JWT helper
-    const { AccessToken } = await import('npm:twilio/lib/jwt/AccessToken')
+    const { default: twilio } = await import('npm:twilio')
+    const AccessToken = twilio.jwt.AccessToken
     const VoiceGrant = AccessToken.VoiceGrant
 
     // Create an access token
