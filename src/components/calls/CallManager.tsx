@@ -1,4 +1,4 @@
-import { Device } from '@twilio/voice-sdk';
+import { Device, Codec } from '@twilio/voice-sdk';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -26,7 +26,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         if (error) throw error;
 
         const newDevice = new Device(token, {
-          codecPreferences: ['opus', 'pcmu'],
+          codecPreferences: ['opus' as Codec, 'pcmu' as Codec],
           allowIncomingWhileBusy: false
         });
 
