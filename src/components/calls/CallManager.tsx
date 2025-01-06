@@ -11,18 +11,20 @@ interface CallManagerProps {
 export function CallManager({ phoneNumber }: CallManagerProps) {
   const [device, setDevice] = useState<Device | null>(null);
   const [call, setCall] = useState<any>(null);
+  const [transferCall, setTransferCall] = useState<any>(null);
   const [callStatus, setCallStatus] = useState<'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed' | null>(null);
+  const [transferStatus, setTransferStatus] = useState<'connecting' | 'transferred' | 'failed' | undefined>();
   const [isMuted, setIsMuted] = useState(false);
+  const [isOnHold, setIsOnHold] = useState(false);
+  const [originalCallerHungUp, setOriginalCallerHungUp] = useState(false);
 
   useEffect(() => {
     const setupDevice = async () => {
       try {
-        // Get token from our Supabase Edge Function
         const { data: { token }, error } = await supabase.functions.invoke('get-twilio-token');
         
         if (error) throw error;
 
-        // Create new device
         const newDevice = new Device(token, {
           codecPreferences: ['opus', 'pcmu'] as unknown as Device.Codec[],
           allowIncomingWhileBusy: false
@@ -31,7 +33,6 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         await newDevice.register();
         setDevice(newDevice);
 
-        // Setup device event handlers
         newDevice.on('error', (error: any) => {
           console.error('Twilio device error:', error);
           toast.error('Call error: ' + error.message);
@@ -66,10 +67,12 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
       setCall(newCall);
 
-      // Setup call event handlers
       newCall.on('ringing', () => setCallStatus('ringing'));
       newCall.on('accept', () => setCallStatus('in-progress'));
-      newCall.on('disconnect', () => setCallStatus('completed'));
+      newCall.on('disconnect', () => {
+        setCallStatus('completed');
+        setOriginalCallerHungUp(true);
+      });
       newCall.on('error', (error: any) => {
         console.error('Call error:', error);
         setCallStatus('failed');
@@ -89,6 +92,13 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       setCallStatus('completed');
       setCall(null);
     }
+    if (transferCall) {
+      transferCall.disconnect();
+      setTransferCall(null);
+      setTransferStatus(undefined);
+    }
+    setIsOnHold(false);
+    setOriginalCallerHungUp(false);
   };
 
   const handleMute = () => {
@@ -102,9 +112,59 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     }
   };
 
-  const handleTransfer = () => {
-    // TODO: Implement transfer functionality
-    toast.info('Transfer functionality coming soon');
+  const handleTransfer = async () => {
+    if (!device || !call) return;
+    
+    try {
+      // Put the original call on hold
+      if (call.status() === 'open') {
+        call.mute(true);
+        setIsOnHold(true);
+      }
+
+      setTransferStatus('connecting');
+      
+      // Make the transfer call
+      const newTransferCall = await device.connect({
+        params: {
+          To: '12106643493',
+        }
+      });
+
+      setTransferCall(newTransferCall);
+
+      newTransferCall.on('ringing', () => setTransferStatus('connecting'));
+      newTransferCall.on('accept', () => setTransferStatus('transferred'));
+      newTransferCall.on('disconnect', () => {
+        setTransferCall(null);
+        setTransferStatus(undefined);
+        // If the transfer call ends, unmute the original call
+        if (call && call.status() === 'open' && !originalCallerHungUp) {
+          call.mute(false);
+          setIsOnHold(false);
+        }
+      });
+      newTransferCall.on('error', (error: any) => {
+        console.error('Transfer call error:', error);
+        setTransferStatus('failed');
+        toast.error('Transfer failed: ' + error.message);
+        // If transfer fails, unmute the original call
+        if (call && call.status() === 'open' && !originalCallerHungUp) {
+          call.mute(false);
+          setIsOnHold(false);
+        }
+      });
+
+    } catch (error) {
+      console.error('Error making transfer:', error);
+      setTransferStatus('failed');
+      toast.error('Failed to initiate transfer');
+      // If transfer fails, unmute the original call
+      if (call && call.status() === 'open' && !originalCallerHungUp) {
+        call.mute(false);
+        setIsOnHold(false);
+      }
+    }
   };
 
   return (
@@ -117,6 +177,9 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
           onMute={handleMute}
           onTransfer={handleTransfer}
           isMuted={isMuted}
+          transferStatus={transferStatus}
+          isOnHold={isOnHold}
+          originalCallerHungUp={originalCallerHungUp}
         />
       )}
       <button
