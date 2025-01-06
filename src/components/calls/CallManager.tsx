@@ -26,7 +26,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         if (error) throw error;
 
         const newDevice = new Device(token, {
-          codecPreferences: ['opus', 'pcmu'] as ['opus', 'pcmu'],
+          codecPreferences: ['opus', 'pcmu'] as unknown as Device.Codec[],
           allowIncomingWhileBusy: false
         });
 
