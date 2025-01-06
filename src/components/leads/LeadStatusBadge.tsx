@@ -4,7 +4,7 @@ interface LeadStatusBadgeProps {
   status: LeadStatus;
 }
 
-const LeadStatusBadge = ({ status }: LeadStatusBadgeProps) => {
+export const LeadStatusBadge = ({ status }: LeadStatusBadgeProps) => {
   const getStatusStyle = (status: LeadStatus) => {
     switch (status) {
       case LeadStatus.MISSED_TRANSFER:

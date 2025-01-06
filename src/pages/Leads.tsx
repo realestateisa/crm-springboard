@@ -5,7 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { useEffect, useRef, useState } from "react";
 import { Loader2, Search } from "lucide-react";
-import LeadsTable from "@/components/leads/LeadsTable";
+import { LeadsTable } from "@/components/leads/LeadsTable";
 
 const LEADS_PER_PAGE = 50;
 

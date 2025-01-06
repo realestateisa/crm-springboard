@@ -17,6 +17,10 @@ interface LeadsTableProps {
 export const LeadsTable = ({ leads }: LeadsTableProps) => {
   const navigate = useNavigate();
 
+  const handleLeadClick = (leadId: string) => {
+    navigate(`/lead/${leadId}`);
+  };
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -32,7 +36,7 @@ export const LeadsTable = ({ leads }: LeadsTableProps) => {
             <TableRow
               key={lead.id}
               className="cursor-pointer hover:bg-muted/50"
-              onClick={() => navigate(`/lead/${lead.id}`)}
+              onClick={() => handleLeadClick(lead.id)}
             >
               <TableCell>
                 {lead.first_name} {lead.last_name}
