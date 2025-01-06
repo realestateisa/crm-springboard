@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { VoiceResponse } from "npm:twilio@4.19.0/lib/twiml/VoiceResponse"
 import twilio from "npm:twilio@4.19.0"
 
 const corsHeaders = {
@@ -10,7 +9,10 @@ const corsHeaders = {
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { 
+      status: 200,
+      headers: corsHeaders 
+    });
   }
 
   try {
@@ -32,7 +34,7 @@ serve(async (req) => {
     );
 
     // Generate TwiML to move the call into a conference
-    const twiml = new VoiceResponse();
+    const twiml = new twilio.twiml.VoiceResponse();
     twiml.dial().conference({
       startConferenceOnEnter: 'false',
       endConferenceOnExit: 'true',
@@ -49,7 +51,12 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({ success: true }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { 
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        } 
+      }
     )
   } catch (error) {
     console.error('Error moving call to conference:', error);
@@ -57,7 +64,10 @@ serve(async (req) => {
       JSON.stringify({ error: error.message }),
       { 
         status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        } 
       }
     )
   }
