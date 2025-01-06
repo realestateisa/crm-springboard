@@ -28,7 +28,7 @@ const Lead = () => {
 
   if (isLoading) {
     return (
-      <div className="flex-1 flex flex-col min-w-0 md:ml-[16rem] bg-background">
+      <div className="flex-1 flex flex-col min-w-0 bg-background">
         <div className="container max-w-7xl mx-auto p-6">
           <Card>
             <CardContent className="space-y-4 pt-6">
@@ -44,7 +44,7 @@ const Lead = () => {
 
   if (!lead) {
     return (
-      <div className="flex-1 flex flex-col min-w-0 md:ml-[16rem] bg-background">
+      <div className="flex-1 flex flex-col min-w-0 bg-background">
         <div className="container max-w-7xl mx-auto p-6">
           <Card>
             <CardContent>
@@ -57,7 +57,7 @@ const Lead = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col min-w-0 md:ml-[16rem] bg-background">
+    <div className="flex-1 flex flex-col min-w-0 bg-background">
       <div className="border-b border-border/50">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
