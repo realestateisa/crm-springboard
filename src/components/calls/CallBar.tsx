@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Phone, PhoneOff, Mic, MicOff, PhoneForwarded } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { DialogTitle } from '@/components/ui/dialog';
 
 interface CallBarProps {
   status: 'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed';
@@ -95,16 +96,17 @@ export function CallBar({
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right">
-                  <div className="flex flex-col gap-4 pt-6">
-                    <h3 className="text-lg font-semibold">Transfer to Support</h3>
+                  <DialogTitle className="text-lg font-semibold pt-6">Transfer to Support</DialogTitle>
+                  <div className="flex flex-col gap-4 pt-4">
                     <p className="text-sm text-muted-foreground">
                       Transfer number: (210) 664-3493
                     </p>
                     <Button 
                       onClick={onTransfer}
                       className="w-full"
+                      disabled={transferStatus === 'connecting' || transferStatus === 'transferred'}
                     >
-                      Start Transfer
+                      {transferStatus === 'connecting' ? 'Connecting...' : 'Start Transfer'}
                     </Button>
                   </div>
                 </SheetContent>
