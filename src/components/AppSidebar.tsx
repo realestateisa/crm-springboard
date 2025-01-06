@@ -86,7 +86,7 @@ export function AppSidebar() {
                       className="flex items-center gap-3 px-3 py-2 text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md transition-colors duration-200"
                     >
                       <Shield className="h-4 w-4" />
-                      <span>Admin</span>
+                      <span className="text-base">Admin</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
