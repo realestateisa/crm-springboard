@@ -1,19 +1,11 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Lead } from "@/integrations/supabase/types/leads";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { useEffect, useRef, useState } from "react";
 import { Loader2, Search } from "lucide-react";
+import LeadsTable from "@/components/leads/LeadsTable";
 
 const LEADS_PER_PAGE = 50;
 
@@ -142,49 +134,7 @@ export default function Leads() {
         </div>
 
         <div className="rounded-lg border border-border/50 bg-card shadow-sm overflow-hidden transition-all duration-200 hover:border-border">
-          <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-muted/50 bg-muted/30">
-                <TableHead className="font-semibold">Name</TableHead>
-                <TableHead className="font-semibold">Client</TableHead>
-                <TableHead className="font-semibold">Status</TableHead>
-                <TableHead className="font-semibold">Location</TableHead>
-                <TableHead className="font-semibold">Created</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <TableRow key={i} className="hover:bg-muted/50 animate-fade-in">
-                    <TableCell><Skeleton className="h-4 w-[250px]" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                  </TableRow>
-                ))
-              ) : leads.map((lead) => (
-                <TableRow 
-                  key={lead.id} 
-                  className="hover:bg-muted/50 cursor-pointer transition-colors duration-200 animate-fade-in"
-                >
-                  <TableCell className="font-medium">
-                    {lead.first_name} {lead.last_name}
-                  </TableCell>
-                  <TableCell>{lead.client}</TableCell>
-                  <TableCell>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                      {lead.status}
-                    </span>
-                  </TableCell>
-                  <TableCell>{lead.location}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {new Date(lead.date_created!).toLocaleDateString()}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <LeadsTable leads={leads} isLoading={isLoading} />
         </div>
 
         {/* Infinite scroll sentinel */}
