@@ -25,24 +25,24 @@ export function useCallTransfer() {
     try {
       const conferenceId = `conf_${Date.now()}`;
       
-      // Put the original call on hold
-      call.mute(true);
-      setIsOnHold(true);
-      setTransferStatus('connecting');
-
       console.log('Moving call to conference:', { callSid: outboundCallSid, conferenceId });
+
+      const body = { callSid: outboundCallSid, conferenceId };
+      console.log('Sending to edge function:', body);
 
       // Move the current call to the conference using the edge function
       const { data, error } = await supabase.functions.invoke('move-call-to-conference', {
-        body: { 
-          callSid: outboundCallSid,
-          conferenceId 
-        }
+        body
       });
 
       if (error) {
         throw new Error('Failed to move call to conference: ' + error.message);
       }
+
+      // Put the original call on hold
+      call.mute(true);
+      setIsOnHold(true);
+      setTransferStatus('connecting');
 
       // Make the transfer call
       const newTransferCall = await device.connect({
