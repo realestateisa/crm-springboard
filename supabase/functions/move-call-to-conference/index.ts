@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { VoiceResponse } from "npm:twilio/lib/twiml/VoiceResponse"
 import twilio from "npm:twilio@4.19.0"
 
 const corsHeaders = {
@@ -30,20 +31,32 @@ serve(async (req) => {
       Deno.env.get('TWILIO_AUTH_TOKEN') ?? ''
     );
 
-    // Update the call to join the conference
-    await client.calls(callSid).update({
-      url: `https://handler.twilio.com/twiml/EH0123456789abcdef?conferenceId=${conferenceId}`,
-      method: 'POST'
-    });
+    // Generate TwiML to move the call into a conference
+    const twiml = new VoiceResponse();
+    twiml.dial().conference({
+      startConferenceOnEnter: 'false',
+      endConferenceOnExit: 'true',
+      waitUrl: 'http://twimlets.com/holdmusic?Bucket=com.twilio.music.classical'
+    }, conferenceId);
 
-    return new Response(JSON.stringify({ success: true }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+    // Update the call with the new TwiML
+    await client.calls(callSid)
+      .update({
+        twiml: twiml.toString()
+      });
+
+    return new Response(
+      JSON.stringify({ success: true }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
   } catch (error) {
     console.error('Error moving call to conference:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { 
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
+    )
   }
 })
