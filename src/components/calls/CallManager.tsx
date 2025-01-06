@@ -24,8 +24,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
         // Create new device
         const newDevice = new Device(token, {
-          codecPreferences: ['opus' as any, 'pcmu' as any],
-          fakeLocalDTMF: true,
+          codecPreferences: ['opus', 'pcmu'],
           enableRingingState: true,
         });
 

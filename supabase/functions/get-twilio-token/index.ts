@@ -1,7 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { AccessToken } from 'https://esm.sh/twilio@4.19.0/lib/jwt/AccessToken'
-import { VoiceGrant } from 'https://esm.sh/twilio@4.19.0/lib/jwt/AccessToken'
+import twilio from 'https://esm.sh/twilio@4.19.0'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -34,6 +33,9 @@ serve(async (req) => {
     }
 
     // Create an access token
+    const AccessToken = twilio.jwt.AccessToken;
+    const VoiceGrant = AccessToken.VoiceGrant;
+
     const accessToken = new AccessToken(
       Deno.env.get('TWILIO_ACCOUNT_SID')!,
       Deno.env.get('TWILIO_API_KEY')!,
