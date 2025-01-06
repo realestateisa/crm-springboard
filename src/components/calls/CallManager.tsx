@@ -113,18 +113,18 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
   };
 
   const handleTransfer = async () => {
-    if (!device || !call) return;
-    
+    if (!device || !call || call.status() !== 'open') {
+      toast.error('No active call to transfer');
+      return;
+    }
+
     try {
       // Create a new conference when transfer is initiated
       const conferenceId = `conf_${Date.now()}`;
       
       // Put the original call on hold
-      if (call.status() === 'open') {
-        call.mute(true);
-        setIsOnHold(true);
-      }
-
+      call.mute(true);
+      setIsOnHold(true);
       setTransferStatus('connecting');
       
       // Make the transfer call and add to conference
@@ -132,22 +132,21 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         params: {
           To: '12106643493',
           ConferenceName: conferenceId,
-          StartConferenceOnEnter: 'true', // Changed to string
-          EndConferenceOnExit: 'false' // Changed to string
+          StartConferenceOnEnter: 'true',
+          EndConferenceOnExit: 'false'
         }
       });
 
       setTransferCall(newTransferCall);
 
-      newTransferCall.on('ringing', () => setTransferStatus('connecting'));
       newTransferCall.on('accept', async () => {
-        // Once transfer target accepts, move original call to conference
         try {
+          // Move original call to conference
           await call.updateOptions({
             params: {
               ConferenceName: conferenceId,
-              StartConferenceOnEnter: 'true', // Changed to string
-              EndConferenceOnExit: 'true' // Changed to string
+              StartConferenceOnEnter: 'true',
+              EndConferenceOnExit: 'true'
             }
           });
           setTransferStatus('transferred');
@@ -155,7 +154,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
           console.error('Error moving original call to conference:', error);
           setTransferStatus('failed');
           toast.error('Transfer failed: Could not establish conference');
-          if (call && call.status() === 'open') {
+          if (call.status() === 'open') {
             call.mute(false);
             setIsOnHold(false);
           }
@@ -165,7 +164,6 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       newTransferCall.on('disconnect', () => {
         setTransferCall(null);
         setTransferStatus(undefined);
-        // If the transfer call ends, unmute the original call
         if (call && call.status() === 'open' && !originalCallerHungUp) {
           call.mute(false);
           setIsOnHold(false);
@@ -176,7 +174,6 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         console.error('Transfer call error:', error);
         setTransferStatus('failed');
         toast.error('Transfer failed: ' + error.message);
-        // If transfer fails, unmute the original call
         if (call && call.status() === 'open' && !originalCallerHungUp) {
           call.mute(false);
           setIsOnHold(false);
@@ -187,7 +184,6 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       console.error('Error making transfer:', error);
       setTransferStatus('failed');
       toast.error('Failed to initiate transfer');
-      // If transfer fails, unmute the original call
       if (call && call.status() === 'open' && !originalCallerHungUp) {
         call.mute(false);
         setIsOnHold(false);

@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
-import { Phone, PhoneOff, Mic, MicOff, PhoneForwarded } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { DialogTitle } from '@/components/ui/dialog';
+import { Phone } from "lucide-react";
+import { CallControls } from './CallControls';
+import { TransferPanel } from './TransferPanel';
 
 interface CallBarProps {
   status: 'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed';
@@ -74,53 +73,19 @@ export function CallBar({
           </div>
           
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onMute}
-              className={isMuted ? 'text-destructive' : ''}
-            >
-              {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-            </Button>
+            <CallControls
+              onHangup={onHangup}
+              onMute={onMute}
+              isMuted={isMuted}
+              status={status}
+            />
             
             {status === 'in-progress' && (
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-2"
-                  >
-                    <PhoneForwarded className="h-4 w-4" />
-                    Transfer
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right">
-                  <DialogTitle className="text-lg font-semibold pt-6">Transfer to Support</DialogTitle>
-                  <div className="flex flex-col gap-4 pt-4">
-                    <p className="text-sm text-muted-foreground">
-                      Transfer number: (210) 664-3493
-                    </p>
-                    <Button 
-                      onClick={onTransfer}
-                      className="w-full"
-                      disabled={transferStatus === 'connecting' || transferStatus === 'transferred'}
-                    >
-                      {transferStatus === 'connecting' ? 'Connecting...' : 'Start Transfer'}
-                    </Button>
-                  </div>
-                </SheetContent>
-              </Sheet>
+              <TransferPanel
+                onTransfer={onTransfer}
+                transferStatus={transferStatus}
+              />
             )}
-            
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={onHangup}
-            >
-              <PhoneOff className="h-4 w-4 mr-2" />
-              Hang Up
-            </Button>
           </div>
         </div>
       </div>
