@@ -7,9 +7,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, Mail, Phone } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { CallBar } from "@/components/calls/CallBar";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const Lead = () => {
   const { id } = useParams();
+  const [callStatus, setCallStatus] = useState<'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed' | null>(null);
+  const [isMuted, setIsMuted] = useState(false);
 
   const { data: lead, isLoading } = useQuery({
     queryKey: ["lead", id],
@@ -24,6 +29,40 @@ const Lead = () => {
       return data;
     },
   });
+
+  const handleCall = async () => {
+    if (!lead?.phone) {
+      toast.error("No phone number available for this lead");
+      return;
+    }
+
+    try {
+      setCallStatus('queued');
+      // TODO: Implement actual call logic with Twilio
+      // This is just a simulation for now
+      setTimeout(() => setCallStatus('ringing'), 1000);
+      setTimeout(() => setCallStatus('in-progress'), 3000);
+    } catch (error) {
+      console.error('Call error:', error);
+      setCallStatus('failed');
+      toast.error("Failed to initiate call");
+    }
+  };
+
+  const handleHangup = () => {
+    // TODO: Implement actual hangup logic
+    setCallStatus('completed');
+  };
+
+  const handleMute = () => {
+    // TODO: Implement actual mute logic
+    setIsMuted(!isMuted);
+  };
+
+  const handleTransfer = () => {
+    // TODO: Implement transfer logic
+    toast.info("Transfer functionality coming soon");
+  };
 
   if (isLoading) {
     return (
@@ -57,6 +96,17 @@ const Lead = () => {
 
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-background">
+      {callStatus && (
+        <CallBar
+          status={callStatus}
+          phoneNumber={lead.phone || ''}
+          onHangup={handleHangup}
+          onMute={handleMute}
+          onTransfer={handleTransfer}
+          isMuted={isMuted}
+        />
+      )}
+      
       <div className="border-b border-border/50">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -75,7 +125,12 @@ const Lead = () => {
                 <Mail className="h-4 w-4 mr-2" />
                 Email
               </Button>
-              <Button variant="outline" size="sm">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleCall}
+                disabled={!lead.phone || callStatus !== null}
+              >
                 <Phone className="h-4 w-4 mr-2" />
                 Call
               </Button>
