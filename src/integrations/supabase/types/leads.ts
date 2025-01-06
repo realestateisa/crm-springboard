@@ -1,5 +1,5 @@
-import { Json } from "./json";
 import { LeadStatus } from "./enums";
+import { Json } from "./json";
 
 export interface Lead {
   id: string;
