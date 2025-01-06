@@ -116,6 +116,9 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     if (!device || !call) return;
     
     try {
+      // Create a new conference when transfer is initiated
+      const conferenceId = `conf_${Date.now()}`;
+      
       // Put the original call on hold
       if (call.status() === 'open') {
         call.mute(true);
@@ -124,17 +127,41 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
       setTransferStatus('connecting');
       
-      // Make the transfer call
+      // Make the transfer call and add to conference
       const newTransferCall = await device.connect({
         params: {
           To: '12106643493',
+          ConferenceName: conferenceId,
+          StartConferenceOnEnter: true,
+          EndConferenceOnExit: false
         }
       });
 
       setTransferCall(newTransferCall);
 
       newTransferCall.on('ringing', () => setTransferStatus('connecting'));
-      newTransferCall.on('accept', () => setTransferStatus('transferred'));
+      newTransferCall.on('accept', async () => {
+        // Once transfer target accepts, move original call to conference
+        try {
+          await call.updateOptions({
+            params: {
+              ConferenceName: conferenceId,
+              StartConferenceOnEnter: true,
+              EndConferenceOnExit: true
+            }
+          });
+          setTransferStatus('transferred');
+        } catch (error) {
+          console.error('Error moving original call to conference:', error);
+          setTransferStatus('failed');
+          toast.error('Transfer failed: Could not establish conference');
+          if (call && call.status() === 'open') {
+            call.mute(false);
+            setIsOnHold(false);
+          }
+        }
+      });
+
       newTransferCall.on('disconnect', () => {
         setTransferCall(null);
         setTransferStatus(undefined);
@@ -144,6 +171,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
           setIsOnHold(false);
         }
       });
+
       newTransferCall.on('error', (error: any) => {
         console.error('Transfer call error:', error);
         setTransferStatus('failed');
