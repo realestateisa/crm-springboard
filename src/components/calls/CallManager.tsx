@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { CallBar } from './CallBar';
 import { useCallDevice } from './useCallDevice';
 import { useCallState } from './useCallState';
+import { useCallTransfer } from './useCallTransfer';
 import { supabase } from '@/integrations/supabase/client';
 
 interface CallManagerProps {
@@ -27,6 +28,8 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     outboundCallSid,
     setOutboundCallSid
   } = useCallState();
+
+  const { handleTransfer } = useCallTransfer();
 
   const handleCall = async () => {
     if (!device || !phoneNumber) return;
@@ -70,83 +73,15 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     }
   };
 
-  const handleTransfer = async () => {
-    if (!device || !call || call.status() !== 'open') {
-      toast.error('No active call to transfer');
-      return;
-    }
-
-    if (!outboundCallSid) {
-      toast.error('Call ID not available yet. Please wait a moment and try again.');
-      return;
-    }
-
-    try {
-      const conferenceId = `conf_${Date.now()}`;
-      
-      // Put the original call on hold
-      call.mute(true);
-      setIsOnHold(true);
-      setTransferStatus('connecting');
-
-      console.log('Moving call to conference:', { callSid: outboundCallSid, conferenceId });
-
-      // Move the current call to the conference using the edge function
-      const { data, error } = await supabase.functions.invoke('move-call-to-conference', {
-        body: { 
-          callSid: outboundCallSid,
-          conferenceId 
-        }
-      });
-
-      if (error) {
-        throw new Error('Failed to move call to conference: ' + error.message);
-      }
-
-      // Make the transfer call
-      const newTransferCall = await device.connect({
-        params: {
-          To: '12106643493',
-          ConferenceName: conferenceId,
-          StartConferenceOnEnter: 'true',
-          EndConferenceOnExit: 'false'
-        }
-      });
-
-      setTransferCall(newTransferCall);
-
-      newTransferCall.on('accept', () => {
-        setTransferStatus('transferred');
-      });
-
-      newTransferCall.on('disconnect', () => {
-        setTransferCall(null);
-        setTransferStatus(undefined);
-        if (call && call.status() === 'open' && !originalCallerHungUp) {
-          call.mute(false);
-          setIsOnHold(false);
-        }
-      });
-
-      newTransferCall.on('error', (error: any) => {
-        console.error('Transfer call error:', error);
-        setTransferStatus('failed');
-        toast.error('Transfer failed: ' + error.message);
-        if (call && call.status() === 'open' && !originalCallerHungUp) {
-          call.mute(false);
-          setIsOnHold(false);
-        }
-      });
-
-    } catch (error) {
-      console.error('Error making transfer:', error);
-      setTransferStatus('failed');
-      toast.error('Failed to initiate transfer');
-      if (call && call.status() === 'open' && !originalCallerHungUp) {
-        call.mute(false);
-        setIsOnHold(false);
-      }
-    }
+  const initiateTransfer = async () => {
+    await handleTransfer(
+      device,
+      call,
+      outboundCallSid,
+      setTransferStatus,
+      setIsOnHold,
+      originalCallerHungUp
+    );
   };
 
   const handleHangup = () => {
@@ -183,7 +118,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
           phoneNumber={phoneNumber || ''}
           onHangup={handleHangup}
           onMute={handleMute}
-          onTransfer={handleTransfer}
+          onTransfer={initiateTransfer}
           isMuted={isMuted}
           transferStatus={transferStatus}
           isOnHold={isOnHold}
