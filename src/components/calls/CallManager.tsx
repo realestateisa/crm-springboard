@@ -82,16 +82,18 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       setIsOnHold(true);
       setTransferStatus('connecting');
 
+      console.log('Moving call to conference:', { callSid: outboundCallSid, conferenceId });
+
       // Move the current call to the conference using the edge function
-      const { error: moveError } = await supabase.functions.invoke('move-call-to-conference', {
+      const { data, error } = await supabase.functions.invoke('move-call-to-conference', {
         body: { 
           callSid: outboundCallSid,
           conferenceId 
         }
       });
 
-      if (moveError) {
-        throw new Error('Failed to move call to conference: ' + moveError.message);
+      if (error) {
+        throw new Error('Failed to move call to conference: ' + error.message);
       }
 
       // Make the transfer call

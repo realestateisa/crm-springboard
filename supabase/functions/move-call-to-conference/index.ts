@@ -7,6 +7,7 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -18,6 +19,8 @@ serve(async (req) => {
       Deno.env.get('TWILIO_ACCOUNT_SID') ?? '',
       Deno.env.get('TWILIO_AUTH_TOKEN') ?? ''
     );
+
+    console.log(`Moving call ${callSid} to conference ${conferenceId}`);
 
     // Update the call to join the conference
     await client.calls(callSid).update({

@@ -24,17 +24,19 @@ export function TransferPanel({ onTransfer, transferStatus }: TransferPanelProps
       </SheetTrigger>
       <SheetContent 
         side="right"
+        aria-label="Transfer Call Panel"
         aria-describedby="transfer-description"
       >
         <DialogTitle className="text-lg font-semibold pt-6">Transfer to Support</DialogTitle>
         <p id="transfer-description" className="text-sm text-muted-foreground pt-4">
           Transfer number: (210) 664-3493
         </p>
-        <div className="flex flex-col gap-4 pt-4" role="dialog">
+        <div className="flex flex-col gap-4 pt-4" role="dialog" aria-label="Transfer Controls">
           <Button 
             onClick={onTransfer}
             className="w-full"
             disabled={transferStatus === 'connecting' || transferStatus === 'transferred'}
+            aria-label={transferStatus === 'connecting' ? 'Connecting transfer' : 'Start transfer'}
           >
             {transferStatus === 'connecting' ? 'Connecting...' : 'Start Transfer'}
           </Button>
