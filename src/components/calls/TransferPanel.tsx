@@ -22,12 +22,15 @@ export function TransferPanel({ onTransfer, transferStatus }: TransferPanelProps
           Transfer
         </Button>
       </SheetTrigger>
-      <SheetContent side="right">
+      <SheetContent 
+        side="right"
+        aria-describedby="transfer-description"
+      >
         <DialogTitle className="text-lg font-semibold pt-6">Transfer to Support</DialogTitle>
-        <div className="flex flex-col gap-4 pt-4" role="dialog" aria-label="Transfer call">
-          <p className="text-sm text-muted-foreground">
-            Transfer number: (210) 664-3493
-          </p>
+        <p id="transfer-description" className="text-sm text-muted-foreground pt-4">
+          Transfer number: (210) 664-3493
+        </p>
+        <div className="flex flex-col gap-4 pt-4" role="dialog">
           <Button 
             onClick={onTransfer}
             className="w-full"

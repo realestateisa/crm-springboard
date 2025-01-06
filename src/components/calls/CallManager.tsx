@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { CallBar } from './CallBar';
 import { useCallDevice } from './useCallDevice';
 import { useCallState } from './useCallState';
+import { supabase } from '@/integrations/supabase/client';
 
 interface CallManagerProps {
   phoneNumber: string | null;
@@ -81,6 +82,18 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       setIsOnHold(true);
       setTransferStatus('connecting');
 
+      // Move the current call to the conference using the edge function
+      const { error: moveError } = await supabase.functions.invoke('move-call-to-conference', {
+        body: { 
+          callSid: outboundCallSid,
+          conferenceId 
+        }
+      });
+
+      if (moveError) {
+        throw new Error('Failed to move call to conference: ' + moveError.message);
+      }
+
       // Make the transfer call
       const newTransferCall = await device.connect({
         params: {
@@ -93,27 +106,11 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
       setTransferCall(newTransferCall);
 
-      // Once the transfer call is accepted, move the original call to the conference
-      newTransferCall.on('accept', async () => {
-        try {
-          await device.connect({
-            params: {
-              To: phoneNumber,
-              ConferenceName: conferenceId,
-              StartConferenceOnEnter: 'true',
-              EndConferenceOnExit: 'false'
-            }
-          });
-          
-          setTransferStatus('transferred');
-          // Original call can now be disconnected as it's in the conference
-          if (call) {
-            call.disconnect();
-          }
-        } catch (error) {
-          console.error('Error moving original call to conference:', error);
-          setTransferStatus('failed');
-          toast.error('Transfer failed: Error moving call to conference');
+      newTransferCall.on('accept', () => {
+        setTransferStatus('transferred');
+        // Original call can now be disconnected as it's in the conference
+        if (call) {
+          call.disconnect();
         }
       });
 
