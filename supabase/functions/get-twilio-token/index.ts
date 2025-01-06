@@ -32,8 +32,7 @@ serve(async (req) => {
     }
 
     // Import Twilio JWT helper
-    const twilio = await import('https://esm.sh/twilio@4.19.0')
-    const AccessToken = twilio.jwt.AccessToken
+    const { AccessToken } = await import('npm:twilio/lib/jwt/AccessToken')
     const VoiceGrant = AccessToken.VoiceGrant
 
     // Create an access token

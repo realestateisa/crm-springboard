@@ -4,7 +4,7 @@ export * from "./database";
 export * from "./emails";
 export * from "./enums";
 export * from "./json";
-export type { Lead, LeadInsert, LeadUpdate } from "./leads";
+export { type Lead, type LeadInsert, type LeadUpdate } from "./leads";
 export * from "./organizations";
 export * from "./profiles";
 export * from "./sequences";
