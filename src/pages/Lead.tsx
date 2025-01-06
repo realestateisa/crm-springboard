@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LeadStatusBadge } from "@/components/leads/LeadStatusBadge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Mail, Phone, Activity } from "lucide-react";
+import { MessageSquare, Mail, Phone } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 const Lead = () => {
@@ -78,10 +78,6 @@ const Lead = () => {
               <Button variant="outline" size="sm">
                 <Phone className="h-4 w-4 mr-2" />
                 Call
-              </Button>
-              <Button variant="outline" size="sm">
-                <Activity className="h-4 w-4 mr-2" />
-                Activity
               </Button>
               <LeadStatusBadge status={lead.status} />
             </div>
