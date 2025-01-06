@@ -99,7 +99,7 @@ export function AppSidebar() {
                       className="flex items-center gap-3 px-3 py-2 text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md transition-colors duration-200"
                     >
                       <item.icon className="h-4 w-4" />
-                      <span>{item.label}</span>
+                      <span className="text-base">{item.label}</span>
                     </Link>
                   </SidebarMenuButton>
                   {item.subItems && expandedItem === item.label && location.pathname.startsWith('/tasks/inbox') && (
