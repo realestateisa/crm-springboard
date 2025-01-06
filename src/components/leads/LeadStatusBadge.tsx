@@ -21,6 +21,8 @@ const LeadStatusBadge = ({ status }: LeadStatusBadgeProps) => {
       case "Potential":
       case "Connected":
         return "bg-blue-100 text-blue-700"; // Blue for active statuses
+      case "Send AI Text (Continue Outreach)":
+        return "bg-gray-100 text-gray-700"; // Default for AI text status
       default:
         return "bg-gray-100 text-gray-700"; // Default fallback
     }
