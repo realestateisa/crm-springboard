@@ -1,57 +1,31 @@
-import { Device } from '@twilio/voice-sdk';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
 import { CallBar } from './CallBar';
+import { useCallDevice } from './useCallDevice';
+import { useCallState } from './useCallState';
 
 interface CallManagerProps {
   phoneNumber: string | null;
 }
 
 export function CallManager({ phoneNumber }: CallManagerProps) {
-  const [device, setDevice] = useState<Device | null>(null);
+  const device = useCallDevice();
   const [call, setCall] = useState<any>(null);
   const [transferCall, setTransferCall] = useState<any>(null);
-  const [callStatus, setCallStatus] = useState<'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed' | null>(null);
-  const [transferStatus, setTransferStatus] = useState<'connecting' | 'transferred' | 'failed' | undefined>();
-  const [isMuted, setIsMuted] = useState(false);
-  const [isOnHold, setIsOnHold] = useState(false);
-  const [originalCallerHungUp, setOriginalCallerHungUp] = useState(false);
-
-  useEffect(() => {
-    const setupDevice = async () => {
-      try {
-        const { data: { token }, error } = await supabase.functions.invoke('get-twilio-token');
-        
-        if (error) throw error;
-
-        const newDevice = new Device(token, {
-          codecPreferences: ['opus', 'pcmu'] as any, // Type assertion to fix codec error
-          allowIncomingWhileBusy: false
-        });
-
-        await newDevice.register();
-        setDevice(newDevice);
-
-        newDevice.on('error', (error: any) => {
-          console.error('Twilio device error:', error);
-          toast.error('Call error: ' + error.message);
-        });
-
-      } catch (error) {
-        console.error('Error setting up Twilio device:', error);
-        toast.error('Failed to setup call device');
-      }
-    };
-
-    setupDevice();
-
-    return () => {
-      if (device) {
-        device.destroy();
-      }
-    };
-  }, []);
+  const {
+    callStatus,
+    setCallStatus,
+    transferStatus,
+    setTransferStatus,
+    isMuted,
+    setIsMuted,
+    isOnHold,
+    setIsOnHold,
+    originalCallerHungUp,
+    setOriginalCallerHungUp,
+    outboundCallSid,
+    setOutboundCallSid
+  } = useCallState();
 
   const handleCall = async () => {
     if (!device || !phoneNumber) return;
@@ -62,6 +36,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       const newCall = await device.connect({
         params: {
           To: phoneNumber,
+          statusCallback: '/call-status', // This will receive the outbound call SID
         }
       });
 
@@ -79,36 +54,17 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         toast.error('Call error: ' + error.message);
       });
 
+      // Listen for the outbound call SID
+      newCall.on('info', (info: any) => {
+        if (info.CallSid) {
+          setOutboundCallSid(info.CallSid);
+        }
+      });
+
     } catch (error) {
       console.error('Error making call:', error);
       setCallStatus('failed');
       toast.error('Failed to make call');
-    }
-  };
-
-  const handleHangup = () => {
-    if (call) {
-      call.disconnect();
-      setCallStatus('completed');
-      setCall(null);
-    }
-    if (transferCall) {
-      transferCall.disconnect();
-      setTransferCall(null);
-      setTransferStatus(undefined);
-    }
-    setIsOnHold(false);
-    setOriginalCallerHungUp(false);
-  };
-
-  const handleMute = () => {
-    if (call) {
-      if (isMuted) {
-        call.mute(false);
-      } else {
-        call.mute(true);
-      }
-      setIsMuted(!isMuted);
     }
   };
 
@@ -119,15 +75,24 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     }
 
     try {
-      // Create a new conference when transfer is initiated
+      // Create a conference when transfer is initiated
       const conferenceId = `conf_${Date.now()}`;
       
       // Put the original call on hold
       call.mute(true);
       setIsOnHold(true);
       setTransferStatus('connecting');
-      
-      // Make the transfer call and add to conference
+
+      // First move the current call to the conference
+      await call.updateOptions({
+        params: {
+          ConferenceName: conferenceId,
+          StartConferenceOnEnter: 'true',
+          EndConferenceOnExit: 'false'
+        }
+      });
+
+      // Then make the transfer call and add to conference
       const newTransferCall = await device.connect({
         params: {
           To: '12106643493',
@@ -139,26 +104,8 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
       setTransferCall(newTransferCall);
 
-      newTransferCall.on('accept', async () => {
-        try {
-          // Move original call to conference
-          await call.updateOptions({
-            params: {
-              ConferenceName: conferenceId,
-              StartConferenceOnEnter: 'true',
-              EndConferenceOnExit: 'true'
-            }
-          });
-          setTransferStatus('transferred');
-        } catch (error) {
-          console.error('Error moving original call to conference:', error);
-          setTransferStatus('failed');
-          toast.error('Transfer failed: Could not establish conference');
-          if (call.status() === 'open') {
-            call.mute(false);
-            setIsOnHold(false);
-          }
-        }
+      newTransferCall.on('accept', () => {
+        setTransferStatus('transferred');
       });
 
       newTransferCall.on('disconnect', () => {
@@ -188,6 +135,32 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         call.mute(false);
         setIsOnHold(false);
       }
+    }
+  };
+
+  const handleHangup = () => {
+    if (call) {
+      call.disconnect();
+      setCallStatus('completed');
+      setCall(null);
+    }
+    if (transferCall) {
+      transferCall.disconnect();
+      setTransferCall(null);
+      setTransferStatus(undefined);
+    }
+    setIsOnHold(false);
+    setOriginalCallerHungUp(false);
+  };
+
+  const handleMute = () => {
+    if (call) {
+      if (isMuted) {
+        call.mute(false);
+      } else {
+        call.mute(true);
+      }
+      setIsMuted(!isMuted);
     }
   };
 
