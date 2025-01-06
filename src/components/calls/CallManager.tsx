@@ -55,8 +55,10 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         toast.error('Call error: ' + error.message);
       });
 
+      // Listen for CallSid from Twilio
       newCall.on('info', (info: any) => {
         if (info.CallSid) {
+          console.log('Received CallSid:', info.CallSid);
           setOutboundCallSid(info.CallSid);
         }
       });
@@ -71,6 +73,11 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
   const handleTransfer = async () => {
     if (!device || !call || call.status() !== 'open') {
       toast.error('No active call to transfer');
+      return;
+    }
+
+    if (!outboundCallSid) {
+      toast.error('Call ID not available yet. Please wait a moment and try again.');
       return;
     }
 

@@ -15,12 +15,20 @@ serve(async (req) => {
   try {
     const { callSid, conferenceId } = await req.json()
     
+    console.log(`Moving call ${callSid} to conference ${conferenceId}`);
+
+    if (!callSid) {
+      throw new Error('CallSid is required');
+    }
+
+    if (!conferenceId) {
+      throw new Error('ConferenceId is required');
+    }
+
     const client = new twilio.Twilio(
       Deno.env.get('TWILIO_ACCOUNT_SID') ?? '',
       Deno.env.get('TWILIO_AUTH_TOKEN') ?? ''
     );
-
-    console.log(`Moving call ${callSid} to conference ${conferenceId}`);
 
     // Update the call to join the conference
     await client.calls(callSid).update({
@@ -32,9 +40,9 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   } catch (error) {
-    console.error('Error moving call to conference:', error)
+    console.error('Error moving call to conference:', error);
     return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
+      status: 400,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
