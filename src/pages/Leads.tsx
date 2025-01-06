@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { useEffect, useRef, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 
 const LEADS_PER_PAGE = 50;
 
@@ -72,7 +72,6 @@ export default function Leads() {
         throw error;
       }
 
-      // Update total count only on first page
       if (pageParam === 0 && count !== null) {
         setTotalLeads(count);
       }
@@ -110,7 +109,7 @@ export default function Leads() {
     return (
       <div className="flex-1 flex flex-col min-w-0 md:ml-[16rem]">
         <div className="container py-6">
-          <div className="text-center text-red-500">
+          <div className="text-center text-red-500 animate-fade-in">
             Error loading leads. Please try refreshing the page.
           </div>
         </div>
@@ -120,36 +119,43 @@ export default function Leads() {
 
   return (
     <div className="flex-1 flex flex-col min-w-0 md:ml-[16rem]">
-      <div className="container py-6 space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold tracking-tight">
-            Leads {totalLeads > 0 && <span className="text-gray-500 text-2xl">({totalLeads} total)</span>}
+      <div className="container py-6 space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground/90">
+            Leads {totalLeads > 0 && 
+              <span className="text-xl font-normal text-muted-foreground ml-2">
+                ({totalLeads.toLocaleString()} total)
+              </span>
+            }
           </h1>
-          <div className="w-72">
-            <Input
-              placeholder="Search leads..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full"
-            />
+          <div className="w-full sm:w-72">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search leads..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 w-full bg-background border-border/50 focus:border-primary/50 transition-colors duration-200"
+              />
+            </div>
           </div>
         </div>
 
-        <div className="border rounded-lg">
+        <div className="rounded-lg border border-border/50 bg-card shadow-sm overflow-hidden transition-all duration-200 hover:border-border">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Client</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Created</TableHead>
+              <TableRow className="hover:bg-muted/50 bg-muted/30">
+                <TableHead className="font-semibold">Name</TableHead>
+                <TableHead className="font-semibold">Client</TableHead>
+                <TableHead className="font-semibold">Status</TableHead>
+                <TableHead className="font-semibold">Location</TableHead>
+                <TableHead className="font-semibold">Created</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
-                  <TableRow key={i}>
+                  <TableRow key={i} className="hover:bg-muted/50 animate-fade-in">
                     <TableCell><Skeleton className="h-4 w-[250px]" /></TableCell>
                     <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
                     <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
@@ -158,14 +164,21 @@ export default function Leads() {
                   </TableRow>
                 ))
               ) : leads.map((lead) => (
-                <TableRow key={lead.id}>
-                  <TableCell>
+                <TableRow 
+                  key={lead.id} 
+                  className="hover:bg-muted/50 cursor-pointer transition-colors duration-200 animate-fade-in"
+                >
+                  <TableCell className="font-medium">
                     {lead.first_name} {lead.last_name}
                   </TableCell>
                   <TableCell>{lead.client}</TableCell>
-                  <TableCell>{lead.status}</TableCell>
-                  <TableCell>{lead.location}</TableCell>
                   <TableCell>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                      {lead.status}
+                    </span>
+                  </TableCell>
+                  <TableCell>{lead.location}</TableCell>
+                  <TableCell className="text-muted-foreground">
                     {new Date(lead.date_created!).toLocaleDateString()}
                   </TableCell>
                 </TableRow>
@@ -180,7 +193,7 @@ export default function Leads() {
           className="flex justify-center p-4"
         >
           {isFetchingNextPage && (
-            <div className="flex items-center gap-2 text-gray-500">
+            <div className="flex items-center gap-2 text-muted-foreground animate-fade-in">
               <Loader2 className="h-4 w-4 animate-spin" />
               Loading more leads...
             </div>
@@ -188,7 +201,7 @@ export default function Leads() {
         </div>
 
         {!isLoading && leads.length === 0 && (
-          <div className="text-center text-gray-500 py-8">
+          <div className="text-center text-muted-foreground py-8 animate-fade-in">
             No leads found. Try adjusting your search.
           </div>
         )}
