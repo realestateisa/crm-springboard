@@ -24,7 +24,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
         // Create new device
         const newDevice = new Device(token, {
-          codecPreferences: ['opus', 'pcmu'],
+          codecPreferences: ['opus', 'pcmu'] as Array<'opus' | 'pcmu'>,
           allowIncomingWhileBusy: false
         });
 
