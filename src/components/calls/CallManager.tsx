@@ -1,4 +1,4 @@
-import { Device } from '@twilio/voice-sdk';
+import { Device, Call } from '@twilio/voice-sdk';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,9 +8,17 @@ interface CallManagerProps {
   phoneNumber: string | null;
 }
 
+// Define interface for Twilio Call with children property
+interface TwilioCall extends Call {
+  children: TwilioCall[];
+  parameters: {
+    CallSid: string;
+  };
+}
+
 export function CallManager({ phoneNumber }: CallManagerProps) {
   const [device, setDevice] = useState<Device | null>(null);
-  const [call, setCall] = useState<any>(null);
+  const [call, setCall] = useState<TwilioCall | null>(null);
   const [callStatus, setCallStatus] = useState<'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed' | null>(null);
   const [isMuted, setIsMuted] = useState(false);
 
@@ -65,7 +73,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
           statusCallback: `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/twilio-status-callback`,
           statusCallbackEvent: 'initiated,ringing,answered,completed'
         }
-      });
+      }) as TwilioCall;
 
       setCall(newCall);
 
@@ -79,12 +87,12 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
       // Monitor for child calls immediately
       console.log('Setting up child call monitoring');
-      newCall.children.forEach((childCall: any) => {
+      newCall.children.forEach((childCall: TwilioCall) => {
         console.log('Existing child call found, SID:', childCall.sid);
         setupChildCallHandlers(childCall);
       });
 
-      newCall.on('childCall', (childCall: any) => {
+      newCall.on('childCall', (childCall: TwilioCall) => {
         console.log('New child call created, SID:', childCall.sid);
         setupChildCallHandlers(childCall);
       });
@@ -104,7 +112,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     }
   };
 
-  const setupChildCallHandlers = (childCall: any) => {
+  const setupChildCallHandlers = (childCall: TwilioCall) => {
     childCall.on('accept', () => {
       console.log('Child call connected, SID:', childCall.sid);
     });
