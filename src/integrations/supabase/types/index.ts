@@ -12,6 +12,3 @@ export * from "./sequence-steps";
 export * from "./sms";
 export * from "./tasks";
 export * from "./templates";
-
-// Re-export Lead type explicitly
-export type { Lead } from "./leads";
