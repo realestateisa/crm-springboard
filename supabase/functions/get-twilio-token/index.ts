@@ -51,6 +51,40 @@ serve(async (req) => {
     })
     token.addGrant(grant)
 
+    // Create TwiML client
+    const client = twilio(
+      Deno.env.get('TWILIO_ACCOUNT_SID')!,
+      Deno.env.get('TWILIO_AUTH_TOKEN')!
+    )
+
+    // Set up TwiML handler for outbound calls
+    const twiml = new twilio.twiml.VoiceResponse()
+    
+    // Get the To parameter from the request if it exists
+    const url = new URL(req.url)
+    const to = url.searchParams.get('To')
+    
+    if (to) {
+      // Make the outbound call and capture the child call
+      const dial = twiml.dial({
+        callerId: Deno.env.get('TWILIO_NUMBER'),
+        record: 'record-from-answer',
+      })
+      dial.number(to)
+
+      // Log the response for debugging
+      console.log('TwiML Response:', twiml.toString())
+      
+      return new Response(twiml.toString(), {
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'application/xml',
+        },
+        status: 200,
+      })
+    }
+
+    // If no To parameter, return the token for client setup
     return new Response(
       JSON.stringify({ token: token.toJwt() }),
       {
@@ -59,7 +93,7 @@ serve(async (req) => {
       },
     )
   } catch (error) {
-    console.error('Error generating token:', error)
+    console.error('Error:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       {
