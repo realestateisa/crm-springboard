@@ -24,7 +24,8 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
         // Create new device
         const newDevice = new Device(token, {
-          codecPreferences: ['opus', 'pcmu'] as unknown as Device.Codec[],
+          // @ts-ignore - Twilio types are incorrect, but these are valid codec options
+          codecPreferences: ['opus', 'pcmu'],
           allowIncomingWhileBusy: false
         });
 
@@ -61,6 +62,8 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       const newCall = await device.connect({
         params: {
           To: phoneNumber,
+          statusCallback: `${Deno.env.get('SUPABASE_URL')}/functions/v1/twilio-status-callback`,
+          statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'],
         }
       });
 
@@ -68,7 +71,10 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
       // Setup call event handlers
       newCall.on('ringing', () => setCallStatus('ringing'));
-      newCall.on('accept', () => setCallStatus('in-progress'));
+      newCall.on('accept', () => {
+        setCallStatus('in-progress');
+        console.log('Call accepted, parent call SID:', newCall.parameters.CallSid);
+      });
       newCall.on('disconnect', () => setCallStatus('completed'));
       newCall.on('error', (error: any) => {
         console.error('Call error:', error);
