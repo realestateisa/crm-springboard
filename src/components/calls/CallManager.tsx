@@ -70,8 +70,9 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       newCall.on('ringing', () => setCallStatus('ringing'));
       newCall.on('accept', () => {
         setCallStatus('in-progress');
-        // Log the child call SID when the call is connected
-        console.log('Child CallSid:', newCall.parameters.StirIdentity);
+        // Log both parent and child call SIDs
+        console.log('Parent CallSid:', newCall.parameters.CallSid);
+        console.log('Child CallSid:', newCall.customParameters?.childCallSid);
       });
       newCall.on('disconnect', () => setCallStatus('completed'));
       newCall.on('error', (error: any) => {
