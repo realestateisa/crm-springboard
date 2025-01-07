@@ -62,7 +62,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       const newCall = await device.connect({
         params: {
           To: phoneNumber,
-          statusCallback: `${process.env.VITE_SUPABASE_URL}/functions/v1/twilio-status-callback`,
+          statusCallback: `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/twilio-status-callback`,
           statusCallbackEvent: 'initiated,ringing,answered,completed'
         }
       });
