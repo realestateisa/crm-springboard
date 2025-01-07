@@ -24,7 +24,8 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
         // Create new device
         const newDevice = new Device(token, {
-          codecPreferences: ['opus', 'pcmu'] as unknown as Device.Codec[],
+          // Updated codec preferences to use string array
+          codecPreferences: ['opus', 'pcmu'],
           allowIncomingWhileBusy: false
         });
 
@@ -72,7 +73,9 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         setCallStatus('in-progress');
         // Log both parent and child call SIDs
         console.log('Parent CallSid:', newCall.parameters.CallSid);
-        console.log('Child CallSid:', newCall.customParameters?.childCallSid);
+        // Access custom parameters safely
+        const customParams = newCall.customParameters || {};
+        console.log('Child CallSid:', customParams.childCallSid);
       });
       newCall.on('disconnect', () => setCallStatus('completed'));
       newCall.on('error', (error: any) => {
