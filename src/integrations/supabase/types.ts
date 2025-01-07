@@ -72,6 +72,7 @@ export type Database = {
       }
       calls: {
         Row: {
+          child_call_sid: string | null
           created_by: string | null
           date_created: string | null
           date_updated: string | null
@@ -88,6 +89,7 @@ export type Database = {
           updated_by: string | null
         }
         Insert: {
+          child_call_sid?: string | null
           created_by?: string | null
           date_created?: string | null
           date_updated?: string | null
@@ -104,6 +106,7 @@ export type Database = {
           updated_by?: string | null
         }
         Update: {
+          child_call_sid?: string | null
           created_by?: string | null
           date_created?: string | null
           date_updated?: string | null
