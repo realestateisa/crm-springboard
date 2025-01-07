@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Lead } from "@/integrations/supabase/types";
+import { Lead } from "@/integrations/supabase/types/leads";
 
 interface LeadDetailsProps {
   lead: Lead;
