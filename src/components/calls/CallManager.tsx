@@ -68,7 +68,11 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
       // Setup call event handlers
       newCall.on('ringing', () => setCallStatus('ringing'));
-      newCall.on('accept', () => setCallStatus('in-progress'));
+      newCall.on('accept', () => {
+        setCallStatus('in-progress');
+        // Log the child call SID when the call is connected
+        console.log('Child CallSid:', newCall.parameters.StirIdentity);
+      });
       newCall.on('disconnect', () => setCallStatus('completed'));
       newCall.on('error', (error: any) => {
         console.error('Call error:', error);
