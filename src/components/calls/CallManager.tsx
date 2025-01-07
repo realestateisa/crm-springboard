@@ -8,9 +8,8 @@ interface CallManagerProps {
   phoneNumber: string | null;
 }
 
-// Define interface for Twilio Call with children property
+// Define interface for Twilio Call
 interface TwilioCall extends Call {
-  children: TwilioCall[];
   parameters: {
     CallSid: string;
   };
@@ -83,18 +82,8 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       newCall.on('accept', () => {
         setCallStatus('in-progress');
         console.log('Parent call connected, SID:', newCall.parameters.CallSid);
-      });
-
-      // Monitor for child calls immediately
-      console.log('Setting up child call monitoring');
-      newCall.children.forEach((childCall: TwilioCall) => {
-        console.log('Existing child call found, SID:', childCall.sid);
-        setupChildCallHandlers(childCall);
-      });
-
-      newCall.on('childCall', (childCall: TwilioCall) => {
-        console.log('New child call created, SID:', childCall.sid);
-        setupChildCallHandlers(childCall);
+        // Get child calls through Edge Function
+        monitorChildCalls(newCall.parameters.CallSid);
       });
 
       newCall.on('disconnect', () => setCallStatus('completed'));
@@ -112,19 +101,53 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     }
   };
 
-  const setupChildCallHandlers = (childCall: TwilioCall) => {
-    childCall.on('accept', () => {
-      console.log('Child call connected, SID:', childCall.sid);
-    });
+  const monitorChildCalls = async (parentCallSid: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('get-child-calls', {
+        body: { parentCallSid }
+      });
 
-    childCall.on('disconnect', () => {
-      console.log('Child call disconnected, SID:', childCall.sid);
-    });
+      if (error) throw error;
 
-    childCall.on('error', (error: any) => {
-      console.error('Child call error:', error);
-      toast.error('Transfer error: ' + error.message);
-    });
+      // Setup handlers for each child call
+      if (data.childCalls) {
+        data.childCalls.forEach((childCall: any) => {
+          console.log('Child call found, SID:', childCall.sid);
+          setupChildCallHandlers(childCall.sid);
+        });
+      }
+
+      // Poll for new child calls every few seconds
+      const pollInterval = setInterval(async () => {
+        const { data: newData, error: newError } = await supabase.functions.invoke('get-child-calls', {
+          body: { parentCallSid }
+        });
+
+        if (newError) {
+          console.error('Error polling child calls:', newError);
+          return;
+        }
+
+        if (newData.childCalls) {
+          newData.childCalls.forEach((childCall: any) => {
+            console.log('New child call detected, SID:', childCall.sid);
+            setupChildCallHandlers(childCall.sid);
+          });
+        }
+      }, 5000);
+
+      // Cleanup interval on disconnect
+      if (call) {
+        call.on('disconnect', () => clearInterval(pollInterval));
+      }
+
+    } catch (error) {
+      console.error('Error monitoring child calls:', error);
+    }
+  };
+
+  const setupChildCallHandlers = (childCallSid: string) => {
+    console.log('Setting up handlers for child call:', childCallSid);
   };
 
   const handleHangup = () => {
