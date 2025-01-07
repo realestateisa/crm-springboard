@@ -1,35 +1,60 @@
-import { useState } from 'react';
+import { Device } from '@twilio/voice-sdk';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { CallBar } from './CallBar';
-import { useCallDevice } from './useCallDevice';
-import { useCallState } from './useCallState';
-import { useCallTransfer } from './useCallTransfer';
 import { supabase } from '@/integrations/supabase/client';
+import { CallBar } from './CallBar';
 
 interface CallManagerProps {
   phoneNumber: string | null;
 }
 
+// Define the allowed codec types based on Twilio's documentation
+type TwilioCodec = 'opus' | 'pcmu';
+
 export function CallManager({ phoneNumber }: CallManagerProps) {
-  const device = useCallDevice();
+  const [device, setDevice] = useState<Device | null>(null);
   const [call, setCall] = useState<any>(null);
   const [transferCall, setTransferCall] = useState<any>(null);
-  const {
-    callStatus,
-    setCallStatus,
-    transferStatus,
-    setTransferStatus,
-    isMuted,
-    setIsMuted,
-    isOnHold,
-    setIsOnHold,
-    originalCallerHungUp,
-    setOriginalCallerHungUp,
-    outboundCallSid,
-    setOutboundCallSid
-  } = useCallState();
+  const [callStatus, setCallStatus] = useState<'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed' | null>(null);
+  const [transferStatus, setTransferStatus] = useState<'connecting' | 'transferred' | 'failed' | undefined>();
+  const [isMuted, setIsMuted] = useState(false);
+  const [isOnHold, setIsOnHold] = useState(false);
+  const [originalCallerHungUp, setOriginalCallerHungUp] = useState(false);
 
-  const { handleTransfer } = useCallTransfer();
+  useEffect(() => {
+    const setupDevice = async () => {
+      try {
+        const { data: { token }, error } = await supabase.functions.invoke('get-twilio-token');
+        
+        if (error) throw error;
+
+        const newDevice = new Device(token, {
+          codecPreferences: ['opus', 'pcmu'] as TwilioCodec[],
+          allowIncomingWhileBusy: false
+        });
+
+        await newDevice.register();
+        setDevice(newDevice);
+
+        newDevice.on('error', (error: any) => {
+          console.error('Twilio device error:', error);
+          toast.error('Call error: ' + error.message);
+        });
+
+      } catch (error) {
+        console.error('Error setting up Twilio device:', error);
+        toast.error('Failed to setup call device');
+      }
+    };
+
+    setupDevice();
+
+    return () => {
+      if (device) {
+        device.destroy();
+      }
+    };
+  }, []);
 
   const handleCall = async () => {
     if (!device || !phoneNumber) return;
@@ -40,19 +65,13 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       const newCall = await device.connect({
         params: {
           To: phoneNumber,
-          statusCallback: '/call-status',
         }
       });
 
       setCall(newCall);
 
       newCall.on('ringing', () => setCallStatus('ringing'));
-      newCall.on('accept', () => {
-        setCallStatus('in-progress');
-        console.log('Call connected with CallSid:', newCall.parameters.CallSid);
-        console.log('Child CallSid:', newCall.parameters.StirIdentity);
-        setOutboundCallSid(newCall.parameters.CallSid);
-      });
+      newCall.on('accept', () => setCallStatus('in-progress'));
       newCall.on('disconnect', () => {
         setCallStatus('completed');
         setOriginalCallerHungUp(true);
@@ -68,17 +87,6 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       setCallStatus('failed');
       toast.error('Failed to make call');
     }
-  };
-
-  const initiateTransfer = async () => {
-    await handleTransfer(
-      device,
-      call,
-      outboundCallSid,
-      setTransferStatus,
-      setIsOnHold,
-      originalCallerHungUp
-    );
   };
 
   const handleHangup = () => {
@@ -107,6 +115,61 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     }
   };
 
+  const handleTransfer = async () => {
+    if (!device || !call) return;
+    
+    try {
+      // Put the original call on hold
+      if (call.status() === 'open') {
+        call.mute(true);
+        setIsOnHold(true);
+      }
+
+      setTransferStatus('connecting');
+      
+      // Make the transfer call
+      const newTransferCall = await device.connect({
+        params: {
+          To: '12106643493',
+        }
+      });
+
+      setTransferCall(newTransferCall);
+
+      newTransferCall.on('ringing', () => setTransferStatus('connecting'));
+      newTransferCall.on('accept', () => setTransferStatus('transferred'));
+      newTransferCall.on('disconnect', () => {
+        setTransferCall(null);
+        setTransferStatus(undefined);
+        // If the transfer call ends, unmute the original call
+        if (call && call.status() === 'open' && !originalCallerHungUp) {
+          call.mute(false);
+          setIsOnHold(false);
+        }
+      });
+      newTransferCall.on('error', (error: any) => {
+        console.error('Transfer call error:', error);
+        setTransferStatus('failed');
+        toast.error('Transfer failed: ' + error.message);
+        // If transfer fails, unmute the original call
+        if (call && call.status() === 'open' && !originalCallerHungUp) {
+          call.mute(false);
+          setIsOnHold(false);
+        }
+      });
+
+    } catch (error) {
+      console.error('Error making transfer:', error);
+      setTransferStatus('failed');
+      toast.error('Failed to initiate transfer');
+      // If transfer fails, unmute the original call
+      if (call && call.status() === 'open' && !originalCallerHungUp) {
+        call.mute(false);
+        setIsOnHold(false);
+      }
+    }
+  };
+
   return (
     <>
       {callStatus && (
@@ -115,7 +178,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
           phoneNumber={phoneNumber || ''}
           onHangup={handleHangup}
           onMute={handleMute}
-          onTransfer={initiateTransfer}
+          onTransfer={handleTransfer}
           isMuted={isMuted}
           transferStatus={transferStatus}
           isOnHold={isOnHold}
