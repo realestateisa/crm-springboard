@@ -22,9 +22,9 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         
         if (error) throw error;
 
-        // Create new device with proper codec types
+        // Create new device
         const newDevice = new Device(token, {
-          codecPreferences: ['opus', 'pcmu'] as Array<'opus' | 'pcmu'>,
+          codecPreferences: ['opus', 'pcmu'] as unknown as Device.Codec[],
           allowIncomingWhileBusy: false
         });
 
@@ -58,16 +58,6 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     try {
       setCallStatus('queued');
       
-      // Generate TwiML for the call
-      const { data: twimlResponse, error: twimlError } = await supabase.functions.invoke('get-twilio-token', {
-        body: { 
-          path: '/generate-twiml',
-          To: phoneNumber 
-        }
-      });
-
-      if (twimlError) throw twimlError;
-
       const newCall = await device.connect({
         params: {
           To: phoneNumber,
@@ -78,11 +68,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
       // Setup call event handlers
       newCall.on('ringing', () => setCallStatus('ringing'));
-      newCall.on('accept', () => {
-        setCallStatus('in-progress');
-        // Log parent call SID - child SID will come via status callback
-        console.log('Parent CallSid:', newCall.parameters.CallSid);
-      });
+      newCall.on('accept', () => setCallStatus('in-progress'));
       newCall.on('disconnect', () => setCallStatus('completed'));
       newCall.on('error', (error: any) => {
         console.error('Call error:', error);
