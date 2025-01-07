@@ -22,10 +22,9 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         
         if (error) throw error;
 
-        // Create new device
+        // Create new device with proper codec types
         const newDevice = new Device(token, {
-          // Updated codec preferences to use string array
-          codecPreferences: ['opus', 'pcmu'],
+          codecPreferences: ['opus', 'pcmu'] as Device.Codec[],
           allowIncomingWhileBusy: false
         });
 
