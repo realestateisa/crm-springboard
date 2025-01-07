@@ -59,6 +59,16 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     try {
       setCallStatus('queued');
       
+      // Generate TwiML for the call
+      const { data: twimlResponse, error: twimlError } = await supabase.functions.invoke('get-twilio-token', {
+        body: { 
+          path: '/generate-twiml',
+          To: phoneNumber 
+        }
+      });
+
+      if (twimlError) throw twimlError;
+
       const newCall = await device.connect({
         params: {
           To: phoneNumber,
@@ -71,11 +81,8 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       newCall.on('ringing', () => setCallStatus('ringing'));
       newCall.on('accept', () => {
         setCallStatus('in-progress');
-        // Log both parent and child call SIDs
+        // Log parent call SID - child SID will come via status callback
         console.log('Parent CallSid:', newCall.parameters.CallSid);
-        // Access custom parameters safely
-        const customParams = newCall.customParameters || {};
-        console.log('Child CallSid:', customParams.childCallSid);
       });
       newCall.on('disconnect', () => setCallStatus('completed'));
       newCall.on('error', (error: any) => {
