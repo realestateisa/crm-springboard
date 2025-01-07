@@ -82,6 +82,14 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         toast.error('Call error: ' + error.message);
       });
 
+      // Add child call monitoring
+      newCall.on('childCall', (childCall: any) => {
+        console.log('Child call created, SID:', childCall.sid);
+        childCall.on('accept', () => {
+          console.log('Child call accepted, SID:', childCall.sid);
+        });
+      });
+
     } catch (error) {
       console.error('Error making call:', error);
       setCallStatus('failed');
