@@ -77,17 +77,16 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         console.log('Parent call connected, SID:', newCall.parameters.CallSid);
       });
 
-      // Add child call monitoring
-      newCall.on('childCall', (childCall: any) => {
-        console.log('Child call created, SID:', childCall.sid);
-        
-        childCall.on('accept', () => {
-          console.log('Child call connected, SID:', childCall.sid);
-        });
+      // Monitor for child calls immediately
+      console.log('Setting up child call monitoring');
+      newCall.children.forEach((childCall: any) => {
+        console.log('Existing child call found, SID:', childCall.sid);
+        setupChildCallHandlers(childCall);
+      });
 
-        childCall.on('disconnect', () => {
-          console.log('Child call disconnected, SID:', childCall.sid);
-        });
+      newCall.on('childCall', (childCall: any) => {
+        console.log('New child call created, SID:', childCall.sid);
+        setupChildCallHandlers(childCall);
       });
 
       newCall.on('disconnect', () => setCallStatus('completed'));
@@ -103,6 +102,21 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       setCallStatus('failed');
       toast.error('Failed to make call');
     }
+  };
+
+  const setupChildCallHandlers = (childCall: any) => {
+    childCall.on('accept', () => {
+      console.log('Child call connected, SID:', childCall.sid);
+    });
+
+    childCall.on('disconnect', () => {
+      console.log('Child call disconnected, SID:', childCall.sid);
+    });
+
+    childCall.on('error', (error: any) => {
+      console.error('Child call error:', error);
+      toast.error('Transfer error: ' + error.message);
+    });
   };
 
   const handleHangup = () => {
