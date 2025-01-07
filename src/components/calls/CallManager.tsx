@@ -71,23 +71,31 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
       // Setup call event handlers
       newCall.on('ringing', () => setCallStatus('ringing'));
+      
       newCall.on('accept', () => {
         setCallStatus('in-progress');
-        console.log('Call accepted, parent call SID:', newCall.parameters.CallSid);
-      });
-      newCall.on('disconnect', () => setCallStatus('completed'));
-      newCall.on('error', (error: any) => {
-        console.error('Call error:', error);
-        setCallStatus('failed');
-        toast.error('Call error: ' + error.message);
+        console.log('Parent call connected, SID:', newCall.parameters.CallSid);
       });
 
       // Add child call monitoring
       newCall.on('childCall', (childCall: any) => {
         console.log('Child call created, SID:', childCall.sid);
+        
         childCall.on('accept', () => {
-          console.log('Child call accepted, SID:', childCall.sid);
+          console.log('Child call connected, SID:', childCall.sid);
         });
+
+        childCall.on('disconnect', () => {
+          console.log('Child call disconnected, SID:', childCall.sid);
+        });
+      });
+
+      newCall.on('disconnect', () => setCallStatus('completed'));
+      
+      newCall.on('error', (error: any) => {
+        console.error('Call error:', error);
+        setCallStatus('failed');
+        toast.error('Call error: ' + error.message);
       });
 
     } catch (error) {
