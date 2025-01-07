@@ -2,7 +2,7 @@ import { LeadStatusBadge } from '@/components/leads/LeadStatusBadge';
 import { CallManager } from '@/components/calls/CallManager';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, Mail } from 'lucide-react';
-import type { Lead } from '@/integrations/supabase/types/leads';
+import { Lead } from '@/integrations/supabase/types';
 
 interface LeadHeaderProps {
   lead: Lead;

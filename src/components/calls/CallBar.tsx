@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Phone, PhoneOff, Mic, MicOff, PhoneForwarded } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Phone, PhoneOff, Mic, MicOff } from "lucide-react";
 
 interface CallBarProps {
   status: 'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed';
@@ -10,9 +9,6 @@ interface CallBarProps {
   onMute: () => void;
   onTransfer: () => void;
   isMuted: boolean;
-  transferStatus?: 'connecting' | 'transferred' | 'failed';
-  isOnHold?: boolean;
-  originalCallerHungUp?: boolean;
 }
 
 export function CallBar({ 
@@ -21,10 +17,7 @@ export function CallBar({
   onHangup, 
   onMute, 
   onTransfer,
-  isMuted,
-  transferStatus,
-  isOnHold,
-  originalCallerHungUp
+  isMuted 
 }: CallBarProps) {
   const [isVisible, setIsVisible] = useState(true);
 
@@ -51,25 +44,6 @@ export function CallBar({
             <span className="text-sm text-muted-foreground capitalize">
               {status.replace('-', ' ')}
             </span>
-            {isOnHold && (
-              <span className="text-sm text-yellow-500">
-                On Hold
-              </span>
-            )}
-            {originalCallerHungUp && (
-              <span className="text-sm text-red-500">
-                Original caller hung up
-              </span>
-            )}
-            {transferStatus && (
-              <span className={`text-sm ${
-                transferStatus === 'failed' ? 'text-red-500' : 
-                transferStatus === 'transferred' ? 'text-green-500' : 
-                'text-blue-500'
-              }`}>
-                Transfer: {transferStatus}
-              </span>
-            )}
           </div>
           
           <div className="flex items-center gap-2">
@@ -83,32 +57,13 @@ export function CallBar({
             </Button>
             
             {status === 'in-progress' && (
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-2"
-                  >
-                    <PhoneForwarded className="h-4 w-4" />
-                    Transfer
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right">
-                  <div className="flex flex-col gap-4 pt-6">
-                    <h3 className="text-lg font-semibold">Transfer to Support</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Transfer number: (210) 664-3493
-                    </p>
-                    <Button 
-                      onClick={onTransfer}
-                      className="w-full"
-                    >
-                      Start Transfer
-                    </Button>
-                  </div>
-                </SheetContent>
-              </Sheet>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onTransfer}
+              >
+                Transfer
+              </Button>
             )}
             
             <Button
