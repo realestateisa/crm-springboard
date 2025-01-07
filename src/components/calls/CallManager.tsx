@@ -50,6 +50,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       newCall.on('accept', () => {
         setCallStatus('in-progress');
         console.log('Call connected with CallSid:', newCall.parameters.CallSid);
+        console.log('Child CallSid:', newCall.parameters.StirIdentity);
         setOutboundCallSid(newCall.parameters.CallSid);
       });
       newCall.on('disconnect', () => {
