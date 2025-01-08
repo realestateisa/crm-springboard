@@ -85,11 +85,11 @@
 
   /* Add transition for main content */
   main {
-    @apply transition-[margin] duration-300 ease-in-out;
+    @apply transition-[margin] duration-300 ease-in-out relative;
   }
   
   /* Push main content down when call bar is present */
-  main:has(+ .call-bar) {
+  main:has(.call-bar) {
     @apply mt-16;
   }
 }

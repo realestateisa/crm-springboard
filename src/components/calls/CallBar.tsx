@@ -37,7 +37,7 @@ export function CallBar({
       setIsExiting(true);
       const timer = setTimeout(() => {
         setIsVisible(false);
-      }, 300); // Match this with the CSS transition duration
+      }, 300);
       return () => clearTimeout(timer);
     } else {
       setIsExiting(false);
@@ -73,7 +73,7 @@ export function CallBar({
 
   return (
     <div 
-      className={`fixed top-0 left-0 right-0 z-50 bg-background border-b border-border shadow-lg transition-all duration-300 ease-in-out transform call-bar ${
+      className={`absolute top-0 left-0 right-0 z-50 bg-background border-b border-border shadow-lg transition-all duration-300 ease-in-out transform call-bar ${
         isExiting ? '-translate-y-full' : 'translate-y-0'
       }`}
     >
