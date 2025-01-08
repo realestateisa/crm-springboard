@@ -61,7 +61,7 @@ export function CallBar({
       <div className="container max-w-7xl mx-auto px-4 py-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <DropdownMenu open={dialpadOpen} onOpenChange={setDialpadOpen}>
+            <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="flex items-center gap-2">
                   <Phone className="h-4 w-4" />
@@ -69,7 +69,11 @@ export function CallBar({
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-[240px] p-4 bg-background">
+              <DropdownMenuContent 
+                align="start" 
+                className="w-[240px] p-4 bg-background border shadow-lg"
+                style={{ zIndex: 100 }}
+              >
                 <div className="grid grid-cols-3 gap-2">
                   {dialpadButtons.map((row, rowIndex) => (
                     <div key={rowIndex} className="col-span-3 grid grid-cols-3 gap-2">
@@ -78,7 +82,7 @@ export function CallBar({
                           key={digit}
                           variant="outline"
                           size="sm"
-                          className="w-full h-12 text-lg font-medium"
+                          className="w-full h-12 text-lg font-medium hover:bg-accent"
                         >
                           {digit}
                         </Button>
