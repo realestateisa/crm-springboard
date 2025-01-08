@@ -1,13 +1,14 @@
-import { Activity, ActivityInsert, ActivityUpdate } from "./activities";
-import { Call, CallInsert, CallUpdate } from "./calls";
-import { Email, EmailInsert, EmailUpdate } from "./emails";
-import { Organization, OrganizationInsert, OrganizationUpdate } from "./organizations";
-import { Profile, ProfileInsert, ProfileUpdate } from "./profiles";
-import { Sequence, SequenceInsert, SequenceUpdate } from "./sequences";
-import { SequenceStep, SequenceStepInsert, SequenceStepUpdate } from "./sequence-steps";
-import { SMS, SMSInsert, SMSUpdate } from "./sms";
-import { Task, TaskInsert, TaskUpdate } from "./tasks";
-import { Template, TemplateInsert, TemplateUpdate } from "./templates";
+import { Activity, ActivityInsert, ActivityUpdate } from "./activities"
+import { Call, CallInsert, CallUpdate } from "./calls"
+import { Email, EmailInsert, EmailUpdate } from "./emails"
+import { Lead, LeadInsert, LeadUpdate } from "./leads"
+import { Organization, OrganizationInsert, OrganizationUpdate } from "./organizations"
+import { Profile, ProfileInsert, ProfileUpdate } from "./profiles"
+import { Sequence, SequenceInsert, SequenceUpdate } from "./sequences"
+import { SequenceStep, SequenceStepInsert, SequenceStepUpdate } from "./sequence-steps"
+import { SMS, SMSInsert, SMSUpdate } from "./sms"
+import { Task, TaskInsert, TaskUpdate } from "./tasks"
+import { Template, TemplateInsert, TemplateUpdate } from "./templates"
 
 export interface Database {
   public: {
@@ -28,84 +29,9 @@ export interface Database {
         Update: EmailUpdate
       }
       leads: {
-        Row: {
-          id: string;
-          email: string | null;
-          phone: string | null;
-          phone_formatted: string | null;
-          description: string | null;
-          client: string | null;
-          status: Database["public"]["Enums"]["lead_status"];
-          location: string;
-          source: string | null;
-          timezone: string | null;
-          script: string | null;
-          phone_status: string | null;
-          phone_type: string | null;
-          api_url: string | null;
-          date_created: string | null;
-          date_updated: string | null;
-          created_by: string | null;
-          updated_by: string | null;
-          custom_fields: any | null;
-          first_name: string;
-          last_name: string | null;
-          transfer_ext: string | null;
-          lead_type: string | null;
-          crm_id: string | null;
-        }
-        Insert: {
-          id?: string;
-          email?: string | null;
-          phone?: string | null;
-          phone_formatted?: string | null;
-          description?: string | null;
-          client?: string | null;
-          status?: Database["public"]["Enums"]["lead_status"];
-          location: string;
-          source?: string | null;
-          timezone?: string | null;
-          script?: string | null;
-          phone_status?: string | null;
-          phone_type?: string | null;
-          api_url?: string | null;
-          date_created?: string | null;
-          date_updated?: string | null;
-          created_by?: string | null;
-          updated_by?: string | null;
-          custom_fields?: any | null;
-          first_name: string;
-          last_name?: string | null;
-          transfer_ext?: string | null;
-          lead_type?: string | null;
-          crm_id?: string | null;
-        }
-        Update: {
-          id?: string;
-          email?: string | null;
-          phone?: string | null;
-          phone_formatted?: string | null;
-          description?: string | null;
-          client?: string | null;
-          status?: Database["public"]["Enums"]["lead_status"];
-          location?: string;
-          source?: string | null;
-          timezone?: string | null;
-          script?: string | null;
-          phone_status?: string | null;
-          phone_type?: string | null;
-          api_url?: string | null;
-          date_created?: string | null;
-          date_updated?: string | null;
-          created_by?: string | null;
-          updated_by?: string | null;
-          custom_fields?: any | null;
-          first_name?: string;
-          last_name?: string | null;
-          transfer_ext?: string | null;
-          lead_type?: string | null;
-          crm_id?: string | null;
-        }
+        Row: Lead
+        Insert: LeadInsert
+        Update: LeadUpdate
       }
       organizations: {
         Row: Organization
@@ -162,3 +88,83 @@ export interface Database {
     }
   }
 }
+
+export type Tables<
+  PublicTableNameOrOptions extends
+    | keyof (Database["public"]["Tables"] & Database["public"]["Views"])
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+        Database[PublicTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"] &
+      Database["public"]["Views"])
+  ? (Database["public"]["Tables"] &
+      Database["public"]["Views"])[PublicTableNameOrOptions] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : never
+
+export type TablesInsert<
+  PublicTableNameOrOptions extends
+    | keyof Database["public"]["Tables"]
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
+  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : never
+
+export type TablesUpdate<
+  PublicTableNameOrOptions extends
+    | keyof Database["public"]["Tables"]
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
+  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : never
+
+export type Enums<
+  PublicEnumNameOrOptions extends
+    | keyof Database["public"]["Enums"]
+    | { schema: keyof Database },
+  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = PublicEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : PublicEnumNameOrOptions extends keyof Database["public"]["Enums"]
+  ? Database["public"]["Enums"][PublicEnumNameOrOptions]
+  : never

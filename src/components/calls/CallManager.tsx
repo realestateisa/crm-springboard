@@ -1,4 +1,4 @@
-import { Device, Call } from '@twilio/voice-sdk';
+import { Device } from '@twilio/voice-sdk';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,16 +8,9 @@ interface CallManagerProps {
   phoneNumber: string | null;
 }
 
-// Define interface for Twilio Call
-interface TwilioCall extends Call {
-  parameters: {
-    CallSid: string;
-  };
-}
-
 export function CallManager({ phoneNumber }: CallManagerProps) {
   const [device, setDevice] = useState<Device | null>(null);
-  const [call, setCall] = useState<TwilioCall | null>(null);
+  const [call, setCall] = useState<any>(null);
   const [callStatus, setCallStatus] = useState<'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed' | null>(null);
   const [isMuted, setIsMuted] = useState(false);
 
@@ -31,8 +24,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
         // Create new device
         const newDevice = new Device(token, {
-          // @ts-ignore - Twilio types are incorrect, but these are valid codec options
-          codecPreferences: ['opus', 'pcmu'],
+          codecPreferences: ['opus', 'pcmu'] as unknown as Device.Codec[],
           allowIncomingWhileBusy: false
         });
 
@@ -69,25 +61,15 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       const newCall = await device.connect({
         params: {
           To: phoneNumber,
-          statusCallback: `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/twilio-status-callback`,
-          statusCallbackEvent: 'initiated,ringing,answered,completed'
         }
-      }) as TwilioCall;
+      });
 
       setCall(newCall);
 
       // Setup call event handlers
       newCall.on('ringing', () => setCallStatus('ringing'));
-      
-      newCall.on('accept', () => {
-        setCallStatus('in-progress');
-        console.log('Parent call connected, SID:', newCall.parameters.CallSid);
-        // Get child calls through Edge Function
-        monitorChildCalls(newCall.parameters.CallSid);
-      });
-
+      newCall.on('accept', () => setCallStatus('in-progress'));
       newCall.on('disconnect', () => setCallStatus('completed'));
-      
       newCall.on('error', (error: any) => {
         console.error('Call error:', error);
         setCallStatus('failed');
@@ -99,55 +81,6 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       setCallStatus('failed');
       toast.error('Failed to make call');
     }
-  };
-
-  const monitorChildCalls = async (parentCallSid: string) => {
-    try {
-      const { data, error } = await supabase.functions.invoke('get-child-calls', {
-        body: { parentCallSid }
-      });
-
-      if (error) throw error;
-
-      // Setup handlers for each child call
-      if (data.childCalls) {
-        data.childCalls.forEach((childCall: any) => {
-          console.log('Child call found, SID:', childCall.sid);
-          setupChildCallHandlers(childCall.sid);
-        });
-      }
-
-      // Poll for new child calls every few seconds
-      const pollInterval = setInterval(async () => {
-        const { data: newData, error: newError } = await supabase.functions.invoke('get-child-calls', {
-          body: { parentCallSid }
-        });
-
-        if (newError) {
-          console.error('Error polling child calls:', newError);
-          return;
-        }
-
-        if (newData.childCalls) {
-          newData.childCalls.forEach((childCall: any) => {
-            console.log('New child call detected, SID:', childCall.sid);
-            setupChildCallHandlers(childCall.sid);
-          });
-        }
-      }, 5000);
-
-      // Cleanup interval on disconnect
-      if (call) {
-        call.on('disconnect', () => clearInterval(pollInterval));
-      }
-
-    } catch (error) {
-      console.error('Error monitoring child calls:', error);
-    }
-  };
-
-  const setupChildCallHandlers = (childCallSid: string) => {
-    console.log('Setting up handlers for child call:', childCallSid);
   };
 
   const handleHangup = () => {
