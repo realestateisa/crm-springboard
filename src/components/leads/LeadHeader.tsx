@@ -1,6 +1,6 @@
 import { LeadStatusBadge } from '@/components/leads/LeadStatusBadge';
 import { CallManager } from '@/components/calls/CallManager';
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import { MessageSquare, Mail } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 
@@ -30,6 +30,7 @@ export function LeadHeader({ lead }: LeadHeaderProps) {
                 <Mail className="h-4 w-4 mr-2" />
                 Email
               </Button>
+              <CallManager phoneNumber={lead.phone} />
               <LeadStatusBadge status={lead.status} />
             </div>
           </div>
