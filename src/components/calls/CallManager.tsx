@@ -24,11 +24,9 @@ export const CallManager = ({
   const [selectedCodecs, setSelectedCodecs] = useState<string[]>([]);
 
   useEffect(() => {
-    if (device) {
+    if (device?.audio) {
       const audioHelper = device.audio;
-      if (audioHelper) {
-        setSelectedCodecs(audioHelper.availableCodecs);
-      }
+      setSelectedCodecs(audioHelper.availableCodecs || []);
     }
   }, [device]);
 
@@ -71,13 +69,13 @@ export const CallManager = ({
 
   return (
     <CallBar
-      activeCall={activeCall}
-      isMuted={isMuted}
-      isHeld={isHeld}
-      onMuteToggle={handleMuteToggle}
-      onHoldToggle={handleHoldToggle}
+      status={activeCall ? 'in-progress' : 'queued'}
+      phoneNumber={activeCall?.parameters?.To || ''}
       onHangup={handleHangup}
-      onAccept={handleAccept}
+      onMute={handleMuteToggle}
+      onTransfer={() => {}}
+      isMuted={isMuted}
+      transferState="initial"
     />
   );
 };

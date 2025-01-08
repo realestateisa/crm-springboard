@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 interface CallBarProps {
-  status: 'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed';
-  phoneNumber: string;
+  status?: 'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed';
+  phoneNumber?: string;
   onHangup: () => void;
   onMute: () => void;
   onTransfer: () => void;
@@ -19,8 +19,8 @@ interface CallBarProps {
 }
 
 export function CallBar({ 
-  status, 
-  phoneNumber, 
+  status = 'queued', 
+  phoneNumber = '', 
   onHangup, 
   onMute, 
   onTransfer,
@@ -82,7 +82,7 @@ export function CallBar({
                 <span className="text-sm font-medium">{phoneNumber}</span>
               </Button>
               <span className="text-sm text-muted-foreground capitalize">
-                {status.replace('-', ' ')}
+                {status?.replace('-', ' ') || 'Unknown'}
               </span>
             </div>
             
