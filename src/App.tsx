@@ -91,7 +91,7 @@ const App = () => (
             path="/admin" 
             element={
               <ProtectedRoute>
-                <div className="min-h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:ml-[16rem]">
+                <div className="min-h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                   <Admin />
                 </div>
               </ProtectedRoute>
@@ -101,7 +101,7 @@ const App = () => (
             path="/tasks/inbox" 
             element={
               <ProtectedRoute>
-                <div className="min-h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:ml-[16rem]">
+                <div className="min-h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                   <Inbox />
                 </div>
               </ProtectedRoute>
@@ -111,7 +111,7 @@ const App = () => (
             path="/leads" 
             element={
               <ProtectedRoute>
-                <div className="min-h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:ml-[16rem]">
+                <div className="min-h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                   <Leads />
                 </div>
               </ProtectedRoute>
@@ -121,7 +121,7 @@ const App = () => (
             path="/lead/:id" 
             element={
               <ProtectedRoute>
-                <div className="min-h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:ml-[16rem]">
+                <div className="min-h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                   <Lead />
                 </div>
               </ProtectedRoute>
@@ -131,7 +131,7 @@ const App = () => (
             path="/" 
             element={
               <ProtectedRoute>
-                <div className="min-h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:ml-[16rem]">
+                <div className="min-h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                   <Index />
                 </div>
               </ProtectedRoute>
