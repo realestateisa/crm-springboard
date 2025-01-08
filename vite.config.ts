@@ -10,10 +10,7 @@ export default defineConfig(({ mode }) => ({
   },
   base: mode === 'production' ? '/' : '/',
   plugins: [
-    react({
-      jsxRuntime: 'automatic',
-      jsxImportSource: 'react'
-    }),
+    react(),
     mode === 'development' &&
     componentTagger(),
   ].filter(Boolean),
