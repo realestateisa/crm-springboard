@@ -1,234 +1,83 @@
-import { Device } from '@twilio/voice-sdk';
-import { useState, useEffect } from 'react';
-import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
-import { CallBar } from './CallBar';
-import { TwilioCodec, TransferState } from './types';
+import { useEffect, useState } from "react";
+import { Device } from "@twilio/voice-sdk";
+import { CallBar } from "./CallBar";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface CallManagerProps {
-  phoneNumber: string | null;
+  device: Device | null;
+  isReady: boolean;
+  activeCall: any | null;
+  onCallAccepted: () => void;
+  onCallEnded: () => void;
 }
 
-export function CallManager({ phoneNumber }: CallManagerProps) {
-  const [device, setDevice] = useState<Device | null>(null);
-  const [call, setCall] = useState<any>(null);
-  const [callStatus, setCallStatus] = useState<'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed' | null>(null);
+export const CallManager = ({
+  device,
+  isReady,
+  activeCall,
+  onCallAccepted,
+  onCallEnded,
+}: CallManagerProps) => {
+  const { toast } = useToast();
   const [isMuted, setIsMuted] = useState(false);
-  const [transferState, setTransferState] = useState<TransferState>({
-    childCallSid: null,
-    transferCallSid: null,
-    status: 'initial'
-  });
+  const [isHeld, setIsHeld] = useState(false);
+  const [selectedCodecs, setSelectedCodecs] = useState<string[]>([]);
 
   useEffect(() => {
-    const setupDevice = async () => {
-      try {
-        const { data: { token }, error } = await supabase.functions.invoke('get-twilio-token');
-        
-        if (error) throw error;
+    if (device) {
+      const codecs = device.audio().availableCodecs;
+      setSelectedCodecs(codecs as string[]);
+    }
+  }, [device]);
 
-        const newDevice = new Device(token, {
-          codecPreferences: ['opus', 'pcmu'] as TwilioCodec[],
-          allowIncomingWhileBusy: false,
-          playRingtone: false
-        });
+  const handleMuteToggle = () => {
+    if (activeCall) {
+      setIsMuted(!isMuted);
+      activeCall.mute(!isMuted);
+      toast({
+        title: isMuted ? "Unmuted" : "Muted",
+        description: `You are now ${isMuted ? "unmuted" : "muted"}.`,
+      });
+    }
+  };
 
-        await newDevice.register();
-        setDevice(newDevice);
-
-        newDevice.on('error', (error: any) => {
-          console.error('Twilio device error:', error);
-          toast.error('Call error: ' + error.message);
-        });
-
-      } catch (error) {
-        console.error('Error setting up Twilio device:', error);
-        toast.error('Failed to setup call device');
+  const handleHoldToggle = () => {
+    if (activeCall) {
+      setIsHeld(!isHeld);
+      if (isHeld) {
+        activeCall.unhold();
+        toast({ title: "Call resumed" });
+      } else {
+        activeCall.hold();
+        toast({ title: "Call on hold" });
       }
-    };
-
-    setupDevice();
-
-    return () => {
-      if (device) {
-        device.destroy();
-      }
-    };
-  }, []);
-
-  const handleCall = async () => {
-    if (!device || !phoneNumber) return;
-
-    try {
-      setCallStatus('queued');
-      
-      const newCall = await device.connect({
-        params: {
-          To: phoneNumber,
-        }
-      });
-
-      setCall(newCall);
-
-      // Setup call event handlers
-      newCall.on('ringing', () => setCallStatus('ringing'));
-      
-      newCall.on('accept', async () => {
-        setCallStatus('in-progress');
-        console.log('Call accepted, parent call SID:', newCall.parameters.CallSid);
-        
-        try {
-          const { data: childCalls, error } = await supabase.functions.invoke('get-child-calls', {
-            body: { parentCallSid: newCall.parameters.CallSid }
-          });
-          
-          if (error) throw error;
-          
-          if (childCalls && childCalls.length > 0) {
-            const childCallSid = childCalls[0].sid;
-            console.log('Found child call SID:', childCallSid);
-            setTransferState(prev => ({
-              ...prev,
-              childCallSid
-            }));
-          }
-        } catch (error) {
-          console.error('Error fetching child calls:', error);
-        }
-      });
-
-      newCall.on('disconnect', () => {
-        setCallStatus('completed');
-        setCall(null);
-        setTransferState({
-          childCallSid: null,
-          transferCallSid: null,
-          status: 'initial'
-        });
-      });
-
-      newCall.on('error', (error: any) => {
-        console.error('Call error:', error);
-        setCallStatus('failed');
-        toast.error('Call error: ' + error.message);
-      });
-
-    } catch (error) {
-      console.error('Error making call:', error);
-      setCallStatus('failed');
-      toast.error('Failed to make call');
     }
   };
 
   const handleHangup = () => {
-    if (call) {
-      call.disconnect();
-      setCallStatus('completed');
-      setCall(null);
-      setTransferState({
-        childCallSid: null,
-        transferCallSid: null,
-        status: 'initial'
-      });
+    if (activeCall) {
+      activeCall.disconnect();
+      onCallEnded();
+      toast({ title: "Call ended" });
     }
   };
 
-  const handleMute = () => {
-    if (call) {
-      if (isMuted) {
-        call.mute(false);
-      } else {
-        call.mute(true);
-      }
-      setIsMuted(!isMuted);
-    }
+  const handleAccept = () => {
+    onCallAccepted();
+    toast({ title: "Call accepted" });
   };
-
-  const handleDigitPress = (digit: string) => {
-    if (call && callStatus === 'in-progress') {
-      call.sendDigits(digit);
-    }
-  };
-
-  const handleTransfer = async () => {
-    if (!call || !transferState.childCallSid) {
-      toast.error('No active call to transfer');
-      return;
-    }
-
-    try {
-      if (transferState.status === 'initial') {
-        // First click - initiate transfer
-        const { data, error } = await supabase.functions.invoke('transfer-call', {
-          body: {
-            action: 'initiate',
-            childCallSid: transferState.childCallSid,
-            parentCallSid: call.parameters.CallSid
-          }
-        });
-
-        if (error) throw error;
-
-        setTransferState(prev => ({
-          ...prev,
-          transferCallSid: data.transferCallSid,
-          status: 'connecting'
-        }));
-
-        toast.success('Transfer initiated - click again to complete transfer');
-
-      } else if (transferState.status === 'connecting') {
-        // Second click - complete transfer
-        const { error } = await supabase.functions.invoke('transfer-call', {
-          body: {
-            action: 'complete',
-            childCallSid: transferState.childCallSid,
-            parentCallSid: call.parameters.CallSid
-          }
-        });
-
-        if (error) throw error;
-
-        setTransferState(prev => ({
-          ...prev,
-          status: 'completed'
-        }));
-
-        toast.success('Transfer completed');
-        handleHangup();
-      }
-    } catch (error) {
-      console.error('Transfer error:', error);
-      toast.error('Transfer failed: ' + error.message);
-    }
-  };
-
-  useEffect(() => {
-    const handleInitiateCall = () => {
-      if (!device || !phoneNumber || callStatus !== null) return;
-      handleCall();
-    };
-
-    window.addEventListener('initiate-call', handleInitiateCall);
-    return () => {
-      window.removeEventListener('initiate-call', handleInitiateCall);
-    };
-  }, [device, phoneNumber, callStatus]);
 
   return (
-    <>
-      {callStatus && (
-        <CallBar
-          status={callStatus}
-          phoneNumber={phoneNumber || ''}
-          onHangup={handleHangup}
-          onMute={handleMute}
-          onTransfer={handleTransfer}
-          isMuted={isMuted}
-          transferState={transferState.status}
-          onDigitPress={handleDigitPress}
-        />
-      )}
-    </>
+    <CallBar
+      isReady={isReady}
+      activeCall={activeCall}
+      isMuted={isMuted}
+      isHeld={isHeld}
+      onMuteToggle={handleMuteToggle}
+      onHoldToggle={handleHoldToggle}
+      onHangup={handleHangup}
+      onAccept={handleAccept}
+    />
   );
-}
+};
