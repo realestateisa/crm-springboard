@@ -1,52 +1,70 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import type { Tables } from "@/integrations/supabase/types";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Lead } from "@/integrations/supabase/types";
 
-type Lead = Tables<"leads">;
+interface LeadDetailsProps {
+  lead: Lead;
+}
 
-export const LeadDetails = () => {
-  const { id } = useParams();
-  const [lead, setLead] = useState<Lead | null>(null);
-
-  useEffect(() => {
-    const fetchLead = async () => {
-      if (!id) return;
-      
-      const { data, error } = await supabase
-        .from("leads")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (error) {
-        console.error("Error fetching lead:", error);
-        return;
-      }
-
-      setLead(data);
-    };
-
-    fetchLead();
-  }, [id]);
-
-  if (!lead) {
-    return <div>Loading...</div>;
-  }
-
+export function LeadDetails({ lead }: LeadDetailsProps) {
   return (
-    <div>
-      <h1>Lead Details</h1>
-      <div>
-        <p>Lead ID: {lead.id}</p>
-        <p>Name: {`${lead.first_name} ${lead.last_name || ''}`}</p>
-        <p>Email: {lead.email}</p>
-        <p>Phone: {lead.phone}</p>
-        <p>Status: {lead.status}</p>
-        <p>Created: {new Date(lead.date_created || '').toLocaleDateString()}</p>
-      </div>
-    </div>
-  );
-};
+    <Card>
+      <CardContent className="pt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-semibold mb-4">Contact Information</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Phone</span>
+                  <span>{lead.phone || "N/A"}</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Email</span>
+                  <span>{lead.email || "N/A"}</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Location</span>
+                  <span>{lead.location}</span>
+                </div>
+              </div>
+            </div>
 
-export default LeadDetails;
+            <div>
+              <h3 className="font-semibold mb-4">Additional Details</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Source</span>
+                  <span>{lead.source || "N/A"}</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Lead Type</span>
+                  <span>{lead.lead_type || "N/A"}</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Timezone</span>
+                  <span>{lead.timezone || "UTC"}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            {lead.description && (
+              <div>
+                <h3 className="font-semibold mb-4">Notes</h3>
+                <p className="text-muted-foreground whitespace-pre-wrap">
+                  {lead.description}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
