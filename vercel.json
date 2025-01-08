@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/((?!api|_next/static|_next/image|favicon.ico).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
@@ -11,7 +11,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "*"
+          "value": "https://isa-one.com"
         },
         {
           "key": "Access-Control-Allow-Methods",
