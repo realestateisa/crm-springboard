@@ -1,20 +1,14 @@
 import { Tables } from "@/integrations/supabase/types";
 
-// Make sure TwilioCodec and Codec are the same type - they must be identical
+// Define the exact codec types that Twilio expects
 export type TwilioCodec = "opus" | "pcmu";
-export type Codec = TwilioCodec; // This ensures they are exactly the same type
+export type Codec = TwilioCodec;
 
 export interface CallState {
   isIncoming: boolean;
-  isOutgoing: boolean;
-  isActive: boolean;
+  isOngoing: boolean;
   isMuted: boolean;
-  isOnHold: boolean;
-  phoneNumber: string | null;
-  callSid: string | null;
-  childCallSid: string | null;
-  transferCallSid: string | null;
-  status: 'initial' | 'connecting' | 'completed';
+  status: 'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed' | null;
 }
 
 export interface TransferState {

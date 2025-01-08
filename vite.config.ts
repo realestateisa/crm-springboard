@@ -17,11 +17,14 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-    },
+    }
+  },
+  optimizeDeps: {
+    include: ['@twilio/voice-sdk']
   },
   build: {
-    rollupOptions: {
-      external: ['@twilio/voice-sdk'],
-    },
-  },
+    commonjsOptions: {
+      include: [/@twilio\/voice-sdk/]
+    }
+  }
 }));
