@@ -79,16 +79,19 @@
   display: grid;
   grid-template-rows: auto 1fr;
   min-height: 100vh;
+  position: relative;
 }
 
 /* Call bar grid area */
 .call-bar-area {
-  grid-row: 1;
+  position: fixed;
+  top: 4rem; /* Height of the header */
+  left: 16rem; /* Width of sidebar */
+  right: 0;
   height: 0;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.3s ease;
-  position: relative;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
   z-index: 50;
 }
 
@@ -104,6 +107,11 @@
   transition: transform 0.3s ease;
   margin-left: 16rem; /* Add consistent left margin for sidebar */
   width: calc(100% - 16rem); /* Ensure content width accounts for sidebar */
+  padding-top: 4rem; /* Add padding when call bar is active */
+}
+
+.call-bar-area.active + .main-content {
+  padding-top: 8rem; /* Increase padding when call bar is active */
 }
 
 /* Add smooth transitions */
