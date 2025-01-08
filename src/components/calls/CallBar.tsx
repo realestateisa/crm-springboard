@@ -74,8 +74,8 @@ export function CallBar({
   return (
     <div 
       className={`fixed top-0 left-0 right-0 z-50 bg-background border-b border-border shadow-lg call-bar h-16 ${
-        isExiting ? 'opacity-0 -translate-y-full' : 'opacity-100'
-      } transition-all duration-300`}
+        isExiting ? 'opacity-0' : 'opacity-100'
+      } transition-opacity duration-300`}
     >
       <div className="container max-w-7xl mx-auto px-4 py-2">
         <div className="flex items-center justify-between">
