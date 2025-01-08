@@ -78,14 +78,15 @@
 .app-container {
   display: grid;
   grid-template-rows: auto 1fr;
-  min-height: 100vh;
+  min-height: calc(100vh - 4rem); /* Subtract header height */
+  margin-top: 4rem; /* Account for fixed header */
 }
 
 /* Call bar grid area */
 .call-bar-area {
-  position: fixed;
-  top: 4rem; /* Height of the header */
-  left: 16rem; /* Width of sidebar */
+  position: sticky;
+  top: 4rem; /* Align with bottom of header */
+  left: 0;
   right: 0;
   height: 4rem;
   opacity: 0;
@@ -93,6 +94,9 @@
   transform: translateY(-100%);
   transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
   z-index: 50;
+  background-color: hsl(var(--background));
+  border-bottom: 1px solid hsl(var(--border));
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
 }
 
 .call-bar-area.active {
