@@ -77,20 +77,21 @@
 /* Grid layout for app content */
 .app-container {
   display: grid;
-  grid-template-rows: 4rem 1fr;
+  grid-template-rows: auto 1fr;
   min-height: 100vh;
 }
 
 /* Call bar grid area */
 .call-bar-area {
   grid-row: 1;
-  height: 4rem;
+  height: 0;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .call-bar-area.active {
+  height: 4rem;
   opacity: 1;
   visibility: visible;
 }
