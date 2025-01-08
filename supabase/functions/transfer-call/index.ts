@@ -28,11 +28,16 @@ serve(async (req) => {
           hold: true
         });
 
-      // 2. Create new outbound call to transfer number with required from parameter
+      const twilioNumber = Deno.env.get('TWILIO_PHONE_NUMBER');
+      if (!twilioNumber) {
+        throw new Error('TWILIO_PHONE_NUMBER environment variable is not set');
+      }
+
+      // 2. Create new outbound call to transfer number
       const newCall = await client.calls
         .create({
           to: '+12106643493',
-          from: Deno.env.get('TWILIO_PHONE_NUMBER'),
+          from: twilioNumber,
           twiml: '<Response><Say>Connecting you to the conference.</Say><Dial><Conference>conf_' + childCallSid + '</Conference></Dial></Response>'
         });
 
