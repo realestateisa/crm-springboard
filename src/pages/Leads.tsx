@@ -2,9 +2,8 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Lead } from "@/integrations/supabase/types/leads";
 import { useToast } from "@/components/ui/use-toast";
-import { Input } from "@/components/ui/input";
 import { useEffect, useRef, useState } from "react";
-import { Loader2, Search } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { LeadsTable } from "@/components/leads/LeadsTable";
 
 const LEADS_PER_PAGE = 50;
@@ -99,7 +98,7 @@ export default function Leads() {
 
   if (isError) {
     return (
-      <div className="flex-1 flex flex-col min-w-0 md:ml-[16rem]">
+      <div className="flex-1 flex flex-col min-w-0 bg-background">
         <div className="container py-6">
           <div className="text-center text-red-500 animate-fade-in">
             Error loading leads. Please try refreshing the page.
@@ -123,17 +122,6 @@ export default function Leads() {
                   ({totalLeads.toLocaleString()})
                 </span>
               )}
-            </div>
-            <div className="w-full sm:w-72">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search leads..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9 w-full bg-background border-border/50 focus:border-primary/50 transition-colors duration-200"
-                />
-              </div>
             </div>
           </div>
         </div>
