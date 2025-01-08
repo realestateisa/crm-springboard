@@ -24,7 +24,7 @@ serve(async (req) => {
       
       // Create conference name using child call SID
       const conferenceName = `conf_${childCallSid}`;
-      const holdMusicUrl = "http://twimlets.com/holdmusic?Bucket=com.twilio.music.classical";
+      const holdMusicUrl = "http://demo.twilio.com/docs/classic.mp3";
 
       // 1. Put child call on hold with hold music
       await client.calls(childCallSid)
@@ -60,7 +60,7 @@ serve(async (req) => {
       console.log('Completing transfer for child call:', childCallSid);
       
       const conferenceName = `conf_${childCallSid}`;
-      const holdMusicUrl = "http://twimlets.com/holdmusic?Bucket=com.twilio.music.classical";
+      const holdMusicUrl = "http://demo.twilio.com/docs/classic.mp3";
       
       // 1. Take child off hold and connect to conference
       await client.calls(childCallSid)
