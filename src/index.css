@@ -77,10 +77,10 @@
 /* Grid layout for app content */
 .app-container {
   position: relative;
-  min-height: calc(100vh - 4rem); /* Subtract header height */
-  margin-top: 4rem; /* Account for fixed header */
-  margin-left: 16rem; /* Add consistent left margin for sidebar */
-  width: calc(100% - 16rem); /* Ensure content width accounts for sidebar */
+  min-height: calc(100vh - 4rem);
+  padding-top: 0; /* Remove margin-top and use padding-top: 0 */
+  margin-left: 16rem;
+  width: calc(100% - 16rem);
 }
 
 /* Call bar grid area */
