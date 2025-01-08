@@ -2,6 +2,7 @@ export * from './activities';
 export * from './calls';
 export * from './database';
 export * from './emails';
+export * from './enums';
 export * from './leads';
 export * from './organizations';
 export * from './profiles';

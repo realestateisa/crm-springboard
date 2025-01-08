@@ -1,9 +1,9 @@
-export type LeadStatus = 'Potential' | 'Active' | 'Inactive';
+import { LeadStatus } from './enums';
 
 export interface Lead {
   id: string;
   first_name: string;
-  last_name: string;
+  last_name: string | null;
   email?: string;
   phone?: string;
   client?: string;
@@ -16,4 +16,5 @@ export interface Lead {
   date_updated?: string;
   created_by?: string;
   updated_by?: string;
+  description?: string;
 }
