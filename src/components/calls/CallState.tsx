@@ -13,7 +13,7 @@ export function useCallState() {
 
   const resetCallState = () => {
     setCall(null);
-    setCallStatus('completed');
+    setCallStatus(null); // Changed from 'completed' to null to ensure full reset
     setIsMuted(false);
     setTransferState({
       childCallSid: null,

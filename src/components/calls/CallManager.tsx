@@ -65,6 +65,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       });
 
       newCall.on('disconnect', async () => {
+        console.log('Call disconnected, cleaning up...');
         resetCallState();
         await resetDevice();
       });
