@@ -15,6 +15,7 @@ interface CallBarProps {
   onTransfer: () => void;
   isMuted: boolean;
   transferState: 'initial' | 'connecting' | 'completed';
+  onDigitPress?: (digit: string) => void;
 }
 
 export function CallBar({ 
@@ -24,7 +25,8 @@ export function CallBar({
   onMute, 
   onTransfer,
   isMuted,
-  transferState
+  transferState,
+  onDigitPress
 }: CallBarProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [dialpadOpen, setDialpadOpen] = useState(false);
@@ -49,6 +51,14 @@ export function CallBar({
     }
   };
 
+  const handleDigitPress = (digit: string) => {
+    if (onDigitPress) {
+      onDigitPress(digit);
+      // Keep the dropdown open for multiple presses
+      setDialpadOpen(true);
+    }
+  };
+
   const dialpadButtons = [
     ['1', '2', '3'],
     ['4', '5', '6'],
@@ -61,11 +71,23 @@ export function CallBar({
       <div className="container max-w-7xl mx-auto px-4 py-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <DropdownMenu>
+            <Button variant="ghost" size="sm" className="flex items-center gap-2">
+              <Phone className="h-4 w-4" />
+              <span className="text-sm font-medium">{phoneNumber}</span>
+            </Button>
+            <span className="text-sm text-muted-foreground capitalize">
+              {status.replace('-', ' ')}
+            </span>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <DropdownMenu open={dialpadOpen} onOpenChange={setDialpadOpen}>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                  <Phone className="h-4 w-4" />
-                  <span className="text-sm font-medium">{phoneNumber}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="mr-2"
+                >
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -83,6 +105,8 @@ export function CallBar({
                           variant="outline"
                           size="sm"
                           className="w-full h-12 text-lg font-medium hover:bg-accent"
+                          onClick={() => handleDigitPress(digit)}
+                          disabled={status !== 'in-progress'}
                         >
                           {digit}
                         </Button>
@@ -92,12 +116,7 @@ export function CallBar({
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
-            <span className="text-sm text-muted-foreground capitalize">
-              {status.replace('-', ' ')}
-            </span>
-          </div>
-          
-          <div className="flex items-center gap-2">
+
             <Button
               variant="ghost"
               size="sm"

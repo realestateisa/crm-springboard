@@ -143,6 +143,12 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     }
   };
 
+  const handleDigitPress = (digit: string) => {
+    if (call && callStatus === 'in-progress') {
+      call.sendDigits(digit);
+    }
+  };
+
   const handleTransfer = async () => {
     if (!call || !transferState.childCallSid) {
       toast.error('No active call to transfer');
@@ -207,6 +213,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
           onTransfer={handleTransfer}
           isMuted={isMuted}
           transferState={transferState.status}
+          onDigitPress={handleDigitPress}
         />
       )}
       <button
