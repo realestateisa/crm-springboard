@@ -1,4 +1,4 @@
-import { Twilio } from "npm:twilio@4.19.0";
+import twilio from "npm:twilio@4.19.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
   try {
     const { parentCallSid } = await req.json();
     
-    const client = new Twilio(
+    const client = twilio(
       Deno.env.get('TWILIO_ACCOUNT_SID') || '',
       Deno.env.get('TWILIO_AUTH_TOKEN') || ''
     );
