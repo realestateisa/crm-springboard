@@ -6,7 +6,8 @@ import {
   MessageSquare,
   Settings,
   Shield,
-  User
+  User,
+  LogOut
 } from "lucide-react";
 import {
   Sidebar,
@@ -21,9 +22,16 @@ import {
   SidebarMenuSubItem
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAdmin } from "@/contexts/AdminContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const menuItems = [
   { 
@@ -44,6 +52,7 @@ export function AppSidebar() {
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const { isAdmin } = useAdmin();
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const currentPath = location.pathname;
@@ -58,10 +67,19 @@ export function AppSidebar() {
     }
   }, [location.pathname]);
 
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate('/login');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
   return (
     <Sidebar className="fixed top-0 left-0 h-full w-64 glass-sidebar border-r border-sidebar-border/50">
       <SidebarContent className="flex flex-col h-full">
-        <div className="h-14 p-4 border-b border-sidebar-border/50 flex items-center">
+        <div className="h-14 p-4 border-b border-sidebar-border/50 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8 ring-2 ring-sidebar-border/50 transition-shadow hover:ring-sidebar-border">
               <AvatarImage src="/placeholder.svg" />
@@ -72,6 +90,17 @@ export function AppSidebar() {
               <p className="text-xs text-sidebar-foreground/70 truncate">Agent ISA</p>
             </div>
           </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="outline-none">
+              <User className="h-4 w-4 text-sidebar-foreground/70 hover:text-sidebar-foreground transition-colors" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Sign out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <SidebarGroup>
