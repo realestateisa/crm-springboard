@@ -11,7 +11,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://isa-one.com"
+          "value": "https://www.isa-one.com, https://isa-one.com"
         },
         {
           "key": "Access-Control-Allow-Methods",
