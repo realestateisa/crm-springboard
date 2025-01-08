@@ -46,12 +46,10 @@ serve(async (req) => {
           twiml: `<Response><Say>Connecting you to the conference.</Say><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false" beep="false">${conferenceName}</Conference></Dial></Response>`
         });
 
-      // 3. Redirect parent call to conference using a redirect URL
-      const redirectUrl = `https://handler.twilio.com/twiml/EH0123?conferenceName=${conferenceName}`;
+      // 3. Connect parent call to conference
       await client.calls(parentCallSid)
         .update({
-          url: redirectUrl,
-          method: 'GET'
+          twiml: `<Response><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false" beep="false">${conferenceName}</Conference></Dial></Response>`
         });
 
       return new Response(
