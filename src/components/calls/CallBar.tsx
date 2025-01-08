@@ -73,7 +73,7 @@ export function CallBar({
 
   return (
     <div 
-      className={`absolute top-0 left-0 right-0 z-50 bg-background border-b border-border shadow-lg transition-transform duration-300 ease-in-out transform ${
+      className={`absolute top-0 left-0 right-0 z-50 bg-background border-b border-border shadow-lg transition-transform duration-300 ease-in-out transform call-bar ${
         isExiting ? '-translate-y-full' : 'translate-y-0'
       }`}
     >
