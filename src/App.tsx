@@ -65,6 +65,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
           <div className="flex-1">
             <AppHeader />
             <div className="app-container">
+              <div className="call-bar-area" />
               <main className="main-content">
                 {children}
               </main>
