@@ -28,12 +28,13 @@ serve(async (req) => {
           hold: true
         });
 
-      // 2. Create new outbound call to transfer number
-      const newCall = await client.calls.create({
-        to: '+12106643493',
-        from: Deno.env.get('TWILIO_PHONE_NUMBER'),
-        twiml: '<Response><Say>Connecting you to the conference.</Say><Dial><Conference>conf_' + childCallSid + '</Conference></Dial></Response>'
-      });
+      // 2. Create new outbound call to transfer number with required from parameter
+      const newCall = await client.calls
+        .create({
+          to: '+12106643493',
+          from: Deno.env.get('TWILIO_PHONE_NUMBER'),
+          twiml: '<Response><Say>Connecting you to the conference.</Say><Dial><Conference>conf_' + childCallSid + '</Conference></Dial></Response>'
+        });
 
       // 3. Connect parent to conference
       await client.calls(parentCallSid)
