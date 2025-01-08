@@ -56,7 +56,15 @@ const Lead = () => {
 
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-background">
-      <div className="call-bar-area" />
+      <CallBar 
+        status="in-progress"
+        phoneNumber={lead.phone}
+        onHangup={() => {}}
+        onMute={() => {}}
+        onTransfer={() => {}}
+        isMuted={false}
+        transferState="initial"
+      />
       <LeadHeader lead={lead} />
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <LeadDetails lead={lead} />
