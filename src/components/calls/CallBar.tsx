@@ -30,11 +30,17 @@ export function CallBar({
 }: CallBarProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [dialpadOpen, setDialpadOpen] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
     if (status === 'completed' || status === 'failed') {
-      const timer = setTimeout(() => setIsVisible(false), 3000);
+      setIsExiting(true);
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 300); // Match this with the CSS transition duration
       return () => clearTimeout(timer);
+    } else {
+      setIsExiting(false);
     }
   }, [status]);
 
@@ -54,7 +60,6 @@ export function CallBar({
   const handleDigitPress = (digit: string) => {
     if (onDigitPress) {
       onDigitPress(digit);
-      // Keep the dropdown open for multiple presses
       setDialpadOpen(true);
     }
   };
@@ -67,7 +72,14 @@ export function CallBar({
   ];
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border shadow-lg transition-all duration-300 ease-in-out">
+    <div 
+      className={`fixed top-0 left-0 right-0 z-50 bg-background border-b border-border shadow-lg transition-all duration-300 ease-in-out transform ${
+        isExiting ? '-translate-y-full' : 'translate-y-0'
+      }`}
+      style={{ 
+        marginBottom: isVisible && !isExiting ? '64px' : '0',
+      }}
+    >
       <div className="container max-w-7xl mx-auto px-4 py-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -92,8 +104,8 @@ export function CallBar({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent 
-                align="start" 
-                className="w-[240px] p-4 bg-background border shadow-lg"
+                align="end" 
+                className="w-[240px] p-4 bg-background border shadow-lg -translate-x-16"
                 style={{ zIndex: 100 }}
               >
                 <div className="grid grid-cols-3 gap-2">

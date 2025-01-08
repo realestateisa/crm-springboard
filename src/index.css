@@ -82,6 +82,15 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 240 5% 64.9%;
   }
+
+  /* Add margin transition for call bar */
+  body {
+    @apply transition-[margin] duration-300 ease-in-out;
+  }
+  
+  body:has(.fixed) {
+    @apply mt-16;
+  }
 }
 
 @layer base {
