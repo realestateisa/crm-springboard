@@ -11,7 +11,6 @@ interface LeadHeaderProps {
 export function LeadHeader({ lead }: LeadHeaderProps) {
   return (
     <>
-      <CallManager phoneNumber={lead.phone} />
       <div className="border-b border-border/50">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

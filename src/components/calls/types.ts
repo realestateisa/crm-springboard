@@ -1,5 +1,5 @@
 export type TwilioCodec = 'opus' | 'pcmu';
-export type Codec = 'opus' | 'pcmu';
+export type Codec = TwilioCodec;
 
 export type TransferState = {
   childCallSid: string | null;
