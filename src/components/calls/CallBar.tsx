@@ -15,7 +15,6 @@ interface CallBarProps {
   onTransfer: () => void;
   isMuted: boolean;
   transferState: 'initial' | 'connecting' | 'completed';
-  onDigitPress?: (digit: string) => void;
 }
 
 export function CallBar({ 
@@ -25,10 +24,10 @@ export function CallBar({
   onMute, 
   onTransfer,
   isMuted,
-  transferState,
-  onDigitPress
+  transferState
 }: CallBarProps) {
   const [isVisible, setIsVisible] = useState(true);
+  const [dialpadOpen, setDialpadOpen] = useState(false);
 
   useEffect(() => {
     if (status === 'completed' || status === 'failed') {
@@ -57,12 +56,6 @@ export function CallBar({
     ['*', '0', '#']
   ];
 
-  const handleDigitPress = (digit: string) => {
-    if (onDigitPress) {
-      onDigitPress(digit);
-    }
-  };
-
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border shadow-lg transition-all duration-300 ease-in-out">
       <div className="container max-w-7xl mx-auto px-4 py-2">
@@ -90,7 +83,6 @@ export function CallBar({
                           variant="outline"
                           size="sm"
                           className="w-full h-12 text-lg font-medium hover:bg-accent"
-                          onClick={() => handleDigitPress(digit)}
                         >
                           {digit}
                         </Button>

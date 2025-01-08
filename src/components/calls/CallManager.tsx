@@ -69,6 +69,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
       setCall(newCall);
 
+      // Setup call event handlers
       newCall.on('ringing', () => setCallStatus('ringing'));
       
       newCall.on('accept', async () => {
@@ -142,12 +143,6 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     }
   };
 
-  const handleDigitPress = (digit: string) => {
-    if (call && callStatus === 'in-progress') {
-      call.sendDigits(digit);
-    }
-  };
-
   const handleTransfer = async () => {
     if (!call || !transferState.childCallSid) {
       toast.error('No active call to transfer');
@@ -156,6 +151,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
     try {
       if (transferState.status === 'initial') {
+        // First click - initiate transfer
         const { data, error } = await supabase.functions.invoke('transfer-call', {
           body: {
             action: 'initiate',
@@ -175,6 +171,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         toast.success('Transfer initiated - click again to complete transfer');
 
       } else if (transferState.status === 'connecting') {
+        // Second click - complete transfer
         const { error } = await supabase.functions.invoke('transfer-call', {
           body: {
             action: 'complete',
@@ -210,7 +207,6 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
           onTransfer={handleTransfer}
           isMuted={isMuted}
           transferState={transferState.status}
-          onDigitPress={handleDigitPress}
         />
       )}
       <button
