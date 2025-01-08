@@ -1,7 +1,6 @@
 import { LeadStatusBadge } from '@/components/leads/LeadStatusBadge';
-import { CallManager } from '@/components/calls/CallManager';
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Mail } from 'lucide-react';
+import { MessageSquare, Mail, Phone } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 
 interface LeadHeaderProps {
@@ -28,7 +27,10 @@ export function LeadHeader({ lead }: LeadHeaderProps) {
               <Mail className="h-4 w-4 mr-2" />
               Email
             </Button>
-            <CallManager phoneNumber={lead.phone} />
+            <Button variant="outline" size="sm" onClick={() => window.dispatchEvent(new CustomEvent('initiate-call'))}>
+              <Phone className="h-4 w-4 mr-2" />
+              Call
+            </Button>
             <LeadStatusBadge status={lead.status} />
           </div>
         </div>

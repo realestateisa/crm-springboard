@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { LeadHeader } from "@/components/leads/LeadHeader";
 import { LeadDetails } from "@/components/leads/LeadDetails";
 import { Tables } from "@/integrations/supabase/types";
+import { CallManager } from "@/components/calls/CallManager";
 
 type Lead = Tables<"leads">;
 
@@ -58,6 +59,7 @@ const Lead = () => {
 
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-background">
+      <CallManager phoneNumber={lead.phone} />
       <div className="relative">
         <LeadHeader lead={lead} />
       </div>

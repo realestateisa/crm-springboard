@@ -1,8 +1,7 @@
 export type TwilioCodec = 'opus' | 'pcmu';
-export type Codec = TwilioCodec;
 
-export type TransferState = {
+export interface TransferState {
   childCallSid: string | null;
   transferCallSid: string | null;
   status: 'initial' | 'connecting' | 'completed';
-};
+}
