@@ -45,7 +45,6 @@ export function AppSidebar() {
   const { isAdmin } = useAdmin();
   const location = useLocation();
 
-  // Update expanded item based on current route
   useEffect(() => {
     const currentPath = location.pathname;
     const matchingMenuItem = menuItems.find(item => 
@@ -60,7 +59,7 @@ export function AppSidebar() {
   }, [location.pathname]);
 
   return (
-    <Sidebar className="fixed top-0 left-0 h-full w-64 bg-sidebar/95 backdrop-blur supports-[backdrop-filter]:bg-sidebar/60 border-r border-sidebar-border/50">
+    <Sidebar className="fixed top-0 left-0 h-full w-64 glass-sidebar border-r border-sidebar-border/50">
       <SidebarContent className="flex flex-col h-full">
         <div className="h-14 p-4 border-b border-sidebar-border/50 flex items-center">
           <div className="flex items-center gap-2">
