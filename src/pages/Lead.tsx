@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LeadHeader } from "@/components/leads/LeadHeader";
 import { LeadDetails } from "@/components/leads/LeadDetails";
-import { CallBar } from "@/components/calls/CallBar";
 import { Tables } from "@/integrations/supabase/types";
 
 type Lead = Tables<"leads">;
@@ -59,7 +58,9 @@ const Lead = () => {
 
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-background">
-      <LeadHeader lead={lead} />
+      <div className="relative">
+        <LeadHeader lead={lead} />
+      </div>
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <LeadDetails lead={lead} />
       </div>
