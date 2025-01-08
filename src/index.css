@@ -72,17 +72,33 @@
   body {
     @apply bg-background text-foreground;
   }
-  
-  /* Main content transition */
-  main {
-    @apply transition-[margin] duration-300 ease-in-out;
-    margin-top: 0;
-  }
-  
-  /* When call bar is present, add margin equal to call bar height */
-  main:has(.call-bar) {
-    margin-top: 4rem; /* 64px to match call bar height */
-  }
+}
+
+/* Grid layout for app content */
+.app-container {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+}
+
+/* Call bar grid area */
+.call-bar-area {
+  grid-row: 1;
+  height: 4rem; /* 64px */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.call-bar-area.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Main content grid area */
+.main-content {
+  grid-row: 2;
+  transition: transform 0.3s ease;
 }
 
 /* Add smooth transitions */

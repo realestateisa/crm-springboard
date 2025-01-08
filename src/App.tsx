@@ -62,11 +62,13 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       <SidebarProvider>
         <div className="flex min-h-screen w-full">
           <AppSidebar />
-          <div className="flex-1 flex flex-col">
+          <div className="flex-1">
             <AppHeader />
-            <main className="flex-1">
-              {children}
-            </main>
+            <div className="app-container">
+              <main className="main-content">
+                {children}
+              </main>
+            </div>
           </div>
         </div>
       </SidebarProvider>

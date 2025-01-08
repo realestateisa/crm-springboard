@@ -72,24 +72,21 @@ export function CallBar({
   ];
 
   return (
-    <div 
-      className={`fixed top-0 left-0 right-0 z-50 bg-background border-b border-border shadow-lg call-bar h-16 ${
-        isExiting ? 'opacity-0' : 'opacity-100'
-      } transition-opacity duration-300`}
-    >
-      <div className="container max-w-7xl mx-auto px-4 py-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" className="flex items-center gap-2">
-              <Phone className="h-4 w-4" />
-              <span className="text-sm font-medium">{phoneNumber}</span>
-            </Button>
-            <span className="text-sm text-muted-foreground capitalize">
-              {status.replace('-', ' ')}
-            </span>
-          </div>
-          
-          <div className="flex items-center gap-2">
+    <div className={`call-bar-area ${!isExiting ? 'active' : ''}`}>
+      <div className="bg-background border-b border-border shadow-lg h-full">
+        <div className="container max-w-7xl mx-auto px-4 py-2 h-full">
+          <div className="flex items-center justify-between h-full">
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                <Phone className="h-4 w-4" />
+                <span className="text-sm font-medium">{phoneNumber}</span>
+              </Button>
+              <span className="text-sm text-muted-foreground capitalize">
+                {status.replace('-', ' ')}
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-2">
             <DropdownMenu open={dialpadOpen} onOpenChange={setDialpadOpen}>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -125,35 +122,36 @@ export function CallBar({
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onMute}
-              className={isMuted ? 'text-destructive' : ''}
-            >
-              {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-            </Button>
-            
-            {status === 'in-progress' && (
+              
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
-                onClick={onTransfer}
-                disabled={transferState === 'completed'}
+                onClick={onMute}
+                className={isMuted ? 'text-destructive' : ''}
               >
-                {getTransferButtonText()}
+                {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
               </Button>
-            )}
-            
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={onHangup}
-            >
-              <PhoneOff className="h-4 w-4 mr-2" />
-              Hang Up
-            </Button>
+              
+              {status === 'in-progress' && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onTransfer}
+                  disabled={transferState === 'completed'}
+                >
+                  {getTransferButtonText()}
+                </Button>
+              )}
+              
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={onHangup}
+              >
+                <PhoneOff className="h-4 w-4 mr-2" />
+                Hang Up
+              </Button>
+            </div>
           </div>
         </div>
       </div>
