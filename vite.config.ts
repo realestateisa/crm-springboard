@@ -10,7 +10,10 @@ export default defineConfig(({ mode }) => ({
   },
   base: mode === 'production' ? '/' : '/',
   plugins: [
-    react(),
+    react({
+      jsxRuntime: 'automatic',
+      jsxImportSource: 'react'
+    }),
     mode === 'development' &&
     componentTagger(),
   ].filter(Boolean),
@@ -20,11 +23,12 @@ export default defineConfig(({ mode }) => ({
     }
   },
   optimizeDeps: {
-    include: ['@twilio/voice-sdk']
+    include: ['@twilio/voice-sdk', 'react', 'react-dom', 'react/jsx-runtime']
   },
   build: {
     commonjsOptions: {
-      include: [/@twilio\/voice-sdk/]
+      include: [/@twilio\/voice-sdk/, /node_modules/],
+      transformMixedEsModules: true
     }
   }
 }));
