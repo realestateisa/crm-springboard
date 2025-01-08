@@ -45,10 +45,15 @@ serve(async (req) => {
           twiml: `<Response><Say>Connecting you to the conference.</Say><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false" beep="false" waitUrl="${holdMusicUrl}">${conferenceName}</Conference></Dial></Response>`
         });
 
-      // 3. Connect parent call to conference but with waitUrl set to empty to avoid hearing hold music
+      // 3. Connect parent call to conference with empty waitUrl
+      const parentTwiml = `<Response><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false" beep="false" waitUrl="">${conferenceName}</Conference></Dial></Response>`;
+      
+      // Create a new TwiML bin or use a Function URL to host this TwiML
+      const twimlBinUrl = `https://handler.twilio.com/twiml/${Deno.env.get('TWILIO_TWIML_BIN_SID')}`;
+      
       await client.calls(parentCallSid)
         .update({
-          twiml: `<Response><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false" beep="false" waitUrl="">${conferenceName}</Conference></Dial></Response>`
+          url: twimlBinUrl
         });
 
       return new Response(
