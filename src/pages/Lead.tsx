@@ -60,9 +60,7 @@ const Lead = () => {
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-background">
       <CallManager phoneNumber={lead.phone} />
-      <div className="relative">
-        <LeadHeader lead={lead} />
-      </div>
+      <LeadHeader lead={lead} />
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <LeadDetails lead={lead} />
       </div>
