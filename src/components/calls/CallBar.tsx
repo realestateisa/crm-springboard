@@ -73,12 +73,9 @@ export function CallBar({
 
   return (
     <div 
-      className={`fixed top-0 left-0 right-0 z-50 bg-background border-b border-border shadow-lg transition-all duration-300 ease-in-out transform ${
+      className={`fixed top-0 left-0 right-0 z-50 bg-background border-b border-border shadow-lg transition-all duration-300 ease-in-out transform call-bar ${
         isExiting ? '-translate-y-full' : 'translate-y-0'
       }`}
-      style={{ 
-        marginBottom: isVisible && !isExiting ? '64px' : '0',
-      }}
     >
       <div className="container max-w-7xl mx-auto px-4 py-2">
         <div className="flex items-center justify-between">

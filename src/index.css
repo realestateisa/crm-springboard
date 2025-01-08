@@ -83,12 +83,13 @@
     --sidebar-ring: 240 5% 64.9%;
   }
 
-  /* Add margin transition for call bar */
-  body {
+  /* Add transition for main content */
+  main {
     @apply transition-[margin] duration-300 ease-in-out;
   }
   
-  body:has(.fixed) {
+  /* Push main content down when call bar is present */
+  main:has(+ .call-bar) {
     @apply mt-16;
   }
 }
