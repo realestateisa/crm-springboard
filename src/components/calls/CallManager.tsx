@@ -24,7 +24,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
         // Create new device
         const newDevice = new Device(token, {
-          codecPreferences: ['opus', 'pcmu'] as unknown as Device.Codec[],
+          codecPreferences: ['opus', 'pcmu'],
           allowIncomingWhileBusy: false
         });
 
@@ -68,8 +68,34 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
       // Setup call event handlers
       newCall.on('ringing', () => setCallStatus('ringing'));
-      newCall.on('accept', () => setCallStatus('in-progress'));
-      newCall.on('disconnect', () => setCallStatus('completed'));
+      
+      newCall.on('accept', async () => {
+        setCallStatus('in-progress');
+        console.log('Call accepted, parent call SID:', newCall.parameters.CallSid);
+        
+        // Get child calls using Twilio REST API via our edge function
+        try {
+          const { data: childCalls, error } = await supabase.functions.invoke('get-child-calls', {
+            body: { parentCallSid: newCall.parameters.CallSid }
+          });
+          
+          if (error) throw error;
+          
+          if (childCalls && childCalls.length > 0) {
+            childCalls.forEach(call => {
+              console.log('Found child call SID:', call.sid);
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching child calls:', error);
+        }
+      });
+
+      newCall.on('disconnect', () => {
+        setCallStatus('completed');
+        setCall(null);
+      });
+
       newCall.on('error', (error: any) => {
         console.error('Call error:', error);
         setCallStatus('failed');
