@@ -25,10 +25,12 @@ serve(async (req) => {
       // Create conference name using child call SID
       const conferenceName = `conf_${childCallSid}`;
 
-      // 1. Put child call on hold
+      // 1. Put child call on hold and connect to conference
+      // This keeps the child call connected even while on hold
       await client.calls(childCallSid)
         .update({
-          hold: true
+          hold: true,
+          twiml: `<Response><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false" beep="false" waitUrl="http://twimlets.com/holdmusic?Bucket=com.twilio.music.classical">${conferenceName}</Conference></Dial></Response>`
         });
 
       const twilioNumber = Deno.env.get('TWILIO_PHONE_NUMBER');
@@ -41,13 +43,13 @@ serve(async (req) => {
         .create({
           to: '+12106643493',
           from: twilioNumber,
-          twiml: `<Response><Say>Connecting you to the conference.</Say><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false">${conferenceName}</Conference></Dial></Response>`
+          twiml: `<Response><Say>Connecting you to the conference.</Say><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false" beep="false">${conferenceName}</Conference></Dial></Response>`
         });
 
       // 3. Update parent call to join conference
       await client.calls(parentCallSid)
         .update({
-          twiml: `<Response><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false">${conferenceName}</Conference></Dial></Response>`
+          twiml: `<Response><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false" beep="false">${conferenceName}</Conference></Dial></Response>`
         });
 
       return new Response(
@@ -60,11 +62,11 @@ serve(async (req) => {
       
       const conferenceName = `conf_${childCallSid}`;
       
-      // 1. Take child off hold and connect to conference
+      // 1. Take child off hold and keep in conference
       await client.calls(childCallSid)
         .update({
           hold: false,
-          twiml: `<Response><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false">${conferenceName}</Conference></Dial></Response>`
+          twiml: `<Response><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false" beep="false">${conferenceName}</Conference></Dial></Response>`
         });
 
       // 2. Remove parent from call
