@@ -9,6 +9,7 @@ interface CallBarProps {
   onMute: () => void;
   onTransfer: () => void;
   isMuted: boolean;
+  transferState: 'initial' | 'connecting' | 'completed';
 }
 
 export function CallBar({ 
@@ -17,7 +18,8 @@ export function CallBar({
   onHangup, 
   onMute, 
   onTransfer,
-  isMuted 
+  isMuted,
+  transferState
 }: CallBarProps) {
   const [isVisible, setIsVisible] = useState(true);
 
@@ -29,6 +31,17 @@ export function CallBar({
   }, [status]);
 
   if (!isVisible) return null;
+
+  const getTransferButtonText = () => {
+    switch (transferState) {
+      case 'connecting':
+        return 'Complete Transfer';
+      case 'completed':
+        return 'Transfer Complete';
+      default:
+        return 'Transfer';
+    }
+  };
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border shadow-lg transition-all duration-300 ease-in-out">
@@ -61,8 +74,9 @@ export function CallBar({
                 variant="outline"
                 size="sm"
                 onClick={onTransfer}
+                disabled={transferState === 'completed'}
               >
-                Transfer
+                {getTransferButtonText()}
               </Button>
             )}
             

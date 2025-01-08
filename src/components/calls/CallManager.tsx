@@ -8,6 +8,12 @@ interface CallManagerProps {
   phoneNumber: string | null;
 }
 
+type TransferState = {
+  childCallSid: string | null;
+  transferCallSid: string | null;
+  status: 'initial' | 'connecting' | 'completed';
+}
+
 // Define valid codec types
 type TwilioCodec = 'opus' | 'pcmu';
 
@@ -16,16 +22,19 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
   const [call, setCall] = useState<any>(null);
   const [callStatus, setCallStatus] = useState<'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed' | null>(null);
   const [isMuted, setIsMuted] = useState(false);
+  const [transferState, setTransferState] = useState<TransferState>({
+    childCallSid: null,
+    transferCallSid: null,
+    status: 'initial'
+  });
 
   useEffect(() => {
     const setupDevice = async () => {
       try {
-        // Get token from our Supabase Edge Function
         const { data: { token }, error } = await supabase.functions.invoke('get-twilio-token');
         
         if (error) throw error;
 
-        // Create new device with properly typed codec preferences
         const newDevice = new Device(token, {
           codecPreferences: ['opus', 'pcmu'] as TwilioCodec[],
           allowIncomingWhileBusy: false
@@ -34,7 +43,6 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         await newDevice.register();
         setDevice(newDevice);
 
-        // Setup device event handlers
         newDevice.on('error', (error: any) => {
           console.error('Twilio device error:', error);
           toast.error('Call error: ' + error.message);
@@ -76,7 +84,6 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         setCallStatus('in-progress');
         console.log('Call accepted, parent call SID:', newCall.parameters.CallSid);
         
-        // Get child calls using Twilio REST API via our edge function
         try {
           const { data: childCalls, error } = await supabase.functions.invoke('get-child-calls', {
             body: { parentCallSid: newCall.parameters.CallSid }
@@ -85,9 +92,12 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
           if (error) throw error;
           
           if (childCalls && childCalls.length > 0) {
-            childCalls.forEach(call => {
-              console.log('Found child call SID:', call.sid);
-            });
+            const childCallSid = childCalls[0].sid;
+            console.log('Found child call SID:', childCallSid);
+            setTransferState(prev => ({
+              ...prev,
+              childCallSid
+            }));
           }
         } catch (error) {
           console.error('Error fetching child calls:', error);
@@ -97,6 +107,11 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       newCall.on('disconnect', () => {
         setCallStatus('completed');
         setCall(null);
+        setTransferState({
+          childCallSid: null,
+          transferCallSid: null,
+          status: 'initial'
+        });
       });
 
       newCall.on('error', (error: any) => {
@@ -117,6 +132,11 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
       call.disconnect();
       setCallStatus('completed');
       setCall(null);
+      setTransferState({
+        childCallSid: null,
+        transferCallSid: null,
+        status: 'initial'
+      });
     }
   };
 
@@ -131,9 +151,57 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     }
   };
 
-  const handleTransfer = () => {
-    // TODO: Implement transfer functionality
-    toast.info('Transfer functionality coming soon');
+  const handleTransfer = async () => {
+    if (!call || !transferState.childCallSid) {
+      toast.error('No active call to transfer');
+      return;
+    }
+
+    try {
+      if (transferState.status === 'initial') {
+        // First click - initiate transfer
+        const { data, error } = await supabase.functions.invoke('transfer-call', {
+          body: {
+            action: 'initiate',
+            childCallSid: transferState.childCallSid,
+            parentCallSid: call.parameters.CallSid
+          }
+        });
+
+        if (error) throw error;
+
+        setTransferState(prev => ({
+          ...prev,
+          transferCallSid: data.transferCallSid,
+          status: 'connecting'
+        }));
+
+        toast.success('Transfer initiated - click again to complete transfer');
+
+      } else if (transferState.status === 'connecting') {
+        // Second click - complete transfer
+        const { error } = await supabase.functions.invoke('transfer-call', {
+          body: {
+            action: 'complete',
+            childCallSid: transferState.childCallSid,
+            parentCallSid: call.parameters.CallSid
+          }
+        });
+
+        if (error) throw error;
+
+        setTransferState(prev => ({
+          ...prev,
+          status: 'completed'
+        }));
+
+        toast.success('Transfer completed');
+        handleHangup();
+      }
+    } catch (error) {
+      console.error('Transfer error:', error);
+      toast.error('Transfer failed: ' + error.message);
+    }
   };
 
   return (
@@ -146,6 +214,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
           onMute={handleMute}
           onTransfer={handleTransfer}
           isMuted={isMuted}
+          transferState={transferState.status}
         />
       )}
       <button
