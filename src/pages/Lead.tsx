@@ -6,6 +6,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { LeadHeader } from "@/components/leads/LeadHeader";
 import { LeadDetails } from "@/components/leads/LeadDetails";
 import { CallBar } from "@/components/calls/CallBar";
+import { Tables } from "@/integrations/supabase/types";
+
+type Lead = Tables<"leads">;
 
 const Lead = () => {
   const { id } = useParams();
@@ -56,15 +59,6 @@ const Lead = () => {
 
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-background">
-      <CallBar 
-        status="in-progress"
-        phoneNumber={lead.phone}
-        onHangup={() => {}}
-        onMute={() => {}}
-        onTransfer={() => {}}
-        isMuted={false}
-        transferState="initial"
-      />
       <LeadHeader lead={lead} />
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <LeadDetails lead={lead} />

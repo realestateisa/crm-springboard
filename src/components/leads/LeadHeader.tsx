@@ -2,10 +2,10 @@ import { LeadStatusBadge } from '@/components/leads/LeadStatusBadge';
 import { CallManager } from '@/components/calls/CallManager';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, Mail } from 'lucide-react';
-import { Lead } from '@/integrations/supabase/types';
+import { Tables } from '@/integrations/supabase/types';
 
 interface LeadHeaderProps {
-  lead: Lead;
+  lead: Tables<"leads">;
 }
 
 export function LeadHeader({ lead }: LeadHeaderProps) {
