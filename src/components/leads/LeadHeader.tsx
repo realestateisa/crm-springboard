@@ -8,6 +8,10 @@ interface LeadHeaderProps {
 }
 
 export function LeadHeader({ lead }: LeadHeaderProps) {
+  const handleCallClick = () => {
+    window.dispatchEvent(new CustomEvent('initiate-call'));
+  };
+
   return (
     <div className="border-b border-border/50">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -27,7 +31,7 @@ export function LeadHeader({ lead }: LeadHeaderProps) {
               <Mail className="h-4 w-4 mr-2" />
               Email
             </Button>
-            <Button variant="outline" size="sm" onClick={() => window.dispatchEvent(new CustomEvent('initiate-call'))}>
+            <Button variant="outline" size="sm" onClick={handleCallClick}>
               <Phone className="h-4 w-4 mr-2" />
               Call
             </Button>
