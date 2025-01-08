@@ -99,6 +99,8 @@
 .main-content {
   grid-row: 2;
   transition: transform 0.3s ease;
+  margin-left: 16rem; /* Add consistent left margin for sidebar */
+  width: calc(100% - 16rem); /* Ensure content width accounts for sidebar */
 }
 
 /* Add smooth transitions */
