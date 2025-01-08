@@ -22,6 +22,9 @@ serve(async (req) => {
     if (action === 'initiate') {
       console.log('Initiating transfer for child call:', childCallSid);
       
+      // Create conference name using child call SID
+      const conferenceName = `conf_${childCallSid}`;
+
       // 1. Put child call on hold
       await client.calls(childCallSid)
         .update({
@@ -33,18 +36,18 @@ serve(async (req) => {
         throw new Error('TWILIO_PHONE_NUMBER environment variable is not set');
       }
 
-      // 2. Create new outbound call to transfer number
+      // 2. Create new outbound call to transfer number and connect to conference
       const newCall = await client.calls
         .create({
           to: '+12106643493',
           from: twilioNumber,
-          twiml: '<Response><Say>Connecting you to the conference.</Say><Dial><Conference>conf_' + childCallSid + '</Conference></Dial></Response>'
+          twiml: `<Response><Say>Connecting you to the conference.</Say><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false">${conferenceName}</Conference></Dial></Response>`
         });
 
-      // 3. Connect parent to conference
+      // 3. Update parent call to join conference
       await client.calls(parentCallSid)
         .update({
-          twiml: '<Response><Dial><Conference>conf_' + childCallSid + '</Conference></Dial></Response>'
+          twiml: `<Response><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false">${conferenceName}</Conference></Dial></Response>`
         });
 
       return new Response(
@@ -55,11 +58,13 @@ serve(async (req) => {
     } else if (action === 'complete') {
       console.log('Completing transfer for child call:', childCallSid);
       
+      const conferenceName = `conf_${childCallSid}`;
+      
       // 1. Take child off hold and connect to conference
       await client.calls(childCallSid)
         .update({
           hold: false,
-          twiml: '<Response><Dial><Conference>conf_' + childCallSid + '</Conference></Dial></Response>'
+          twiml: `<Response><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false">${conferenceName}</Conference></Dial></Response>`
         });
 
       // 2. Remove parent from call
