@@ -64,12 +64,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
           <AppSidebar />
           <div className="flex-1">
             <AppHeader />
-            <div className="app-container">
-              <div className="call-bar-area" />
-              <main className="main-content">
-                {children}
-              </main>
-            </div>
+            <main className="app-container">
+              {children}
+            </main>
           </div>
         </div>
       </SidebarProvider>
