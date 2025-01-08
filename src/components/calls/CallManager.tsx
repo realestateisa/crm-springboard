@@ -1,60 +1,27 @@
-import { Device } from '@twilio/voice-sdk';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { CallBar } from './CallBar';
-import { TwilioCodec, TransferState } from './types';
+import { useTwilioDevice } from '@/hooks/use-twilio-device';
+import { useCallState } from './CallState';
 
 interface CallManagerProps {
   phoneNumber: string | null;
 }
 
 export function CallManager({ phoneNumber }: CallManagerProps) {
-  const [device, setDevice] = useState<Device | null>(null);
-  const [call, setCall] = useState<any>(null);
-  const [callStatus, setCallStatus] = useState<'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed' | null>(null);
-  const [isMuted, setIsMuted] = useState(false);
-  const [transferState, setTransferState] = useState<TransferState>({
-    childCallSid: null,
-    transferCallSid: null,
-    status: 'initial'
-  });
-
-  useEffect(() => {
-    const setupDevice = async () => {
-      try {
-        const { data: { token }, error } = await supabase.functions.invoke('get-twilio-token');
-        
-        if (error) throw error;
-
-        const newDevice = new Device(token, {
-          codecPreferences: ['opus', 'pcmu'] as TwilioCodec[],
-          allowIncomingWhileBusy: false,
-          playRingtone: false
-        });
-
-        await newDevice.register();
-        setDevice(newDevice);
-
-        newDevice.on('error', (error: any) => {
-          console.error('Twilio device error:', error);
-          toast.error('Call error: ' + error.message);
-        });
-
-      } catch (error) {
-        console.error('Error setting up Twilio device:', error);
-        toast.error('Failed to setup call device');
-      }
-    };
-
-    setupDevice();
-
-    return () => {
-      if (device) {
-        device.destroy();
-      }
-    };
-  }, []);
+  const { device, resetDevice } = useTwilioDevice();
+  const {
+    call,
+    setCall,
+    callStatus,
+    setCallStatus,
+    isMuted,
+    setIsMuted,
+    transferState,
+    setTransferState,
+    resetCallState
+  } = useCallState();
 
   const handleCall = async () => {
     if (!device || !phoneNumber) return;
@@ -97,14 +64,9 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         }
       });
 
-      newCall.on('disconnect', () => {
-        setCallStatus('completed');
-        setCall(null);
-        setTransferState({
-          childCallSid: null,
-          transferCallSid: null,
-          status: 'initial'
-        });
+      newCall.on('disconnect', async () => {
+        resetCallState();
+        await resetDevice();
       });
 
       newCall.on('error', (error: any) => {
@@ -120,16 +82,11 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     }
   };
 
-  const handleHangup = () => {
+  const handleHangup = async () => {
     if (call) {
       call.disconnect();
-      setCallStatus('completed');
-      setCall(null);
-      setTransferState({
-        childCallSid: null,
-        transferCallSid: null,
-        status: 'initial'
-      });
+      resetCallState();
+      await resetDevice();
     }
   };
 
@@ -158,7 +115,6 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
     try {
       if (transferState.status === 'initial') {
-        // First click - initiate transfer
         const { data, error } = await supabase.functions.invoke('transfer-call', {
           body: {
             action: 'initiate',
@@ -178,7 +134,6 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         toast.success('Transfer initiated - click again to complete transfer');
 
       } else if (transferState.status === 'connecting') {
-        // Second click - complete transfer
         const { error } = await supabase.functions.invoke('transfer-call', {
           body: {
             action: 'complete',
