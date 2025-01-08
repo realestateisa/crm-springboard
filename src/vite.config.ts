@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
-  base: '/',
+  base: mode === 'production' ? '/' : '/',
   plugins: [
     react(),
     mode === 'development' &&
@@ -17,14 +17,11 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-    }
-  },
-  optimizeDeps: {
-    include: ['@twilio/voice-sdk']
+    },
   },
   build: {
-    commonjsOptions: {
-      include: [/@twilio\/voice-sdk/]
-    }
-  }
+    rollupOptions: {
+      external: ['@twilio/voice-sdk'],
+    },
+  },
 }));
