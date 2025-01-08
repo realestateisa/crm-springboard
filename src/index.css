@@ -106,22 +106,6 @@
   transform: translateY(0);
 }
 
-/* Main content grid area */
-.main-content {
-  transition: padding-top 0.3s ease;
-  padding-top: 0;
-}
-
-.call-bar-area.active ~ .main-content {
-  padding-top: 4rem; /* Add padding when call bar is active */
-}
-
-.transition-all {
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
 /* Add fade animations */
 @keyframes fadeIn {
   from {
