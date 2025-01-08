@@ -87,41 +87,41 @@ export function CallBar({
             </div>
             
             <div className="flex items-center gap-2">
-            <DropdownMenu open={dialpadOpen} onOpenChange={setDialpadOpen}>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="mr-2"
+              <DropdownMenu open={dialpadOpen} onOpenChange={setDialpadOpen}>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="mr-2"
+                  >
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent 
+                  align="end" 
+                  className="w-[240px] p-4 bg-background border shadow-lg -translate-x-16"
+                  style={{ zIndex: 100 }}
                 >
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                align="end" 
-                className="w-[240px] p-4 bg-background border shadow-lg -translate-x-16"
-                style={{ zIndex: 100 }}
-              >
-                <div className="grid grid-cols-3 gap-2">
-                  {dialpadButtons.map((row, rowIndex) => (
-                    <div key={rowIndex} className="col-span-3 grid grid-cols-3 gap-2">
-                      {row.map((digit) => (
-                        <Button
-                          key={digit}
-                          variant="outline"
-                          size="sm"
-                          className="w-full h-12 text-lg font-medium hover:bg-accent"
-                          onClick={() => handleDigitPress(digit)}
-                          disabled={status !== 'in-progress'}
-                        >
-                          {digit}
-                        </Button>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <div className="grid grid-cols-3 gap-2">
+                    {dialpadButtons.map((row, rowIndex) => (
+                      <div key={rowIndex} className="col-span-3 grid grid-cols-3 gap-2">
+                        {row.map((digit) => (
+                          <Button
+                            key={digit}
+                            variant="outline"
+                            size="sm"
+                            className="w-full h-12 text-lg font-medium hover:bg-accent"
+                            onClick={() => handleDigitPress(digit)}
+                            disabled={status !== 'in-progress'}
+                          >
+                            {digit}
+                          </Button>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
               
               <Button
                 variant="ghost"
