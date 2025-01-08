@@ -1,4 +1,7 @@
+import { Tables } from "@/integrations/supabase/types";
+
 export type TwilioCodec = "opus" | "pcmu";
+export type Codec = TwilioCodec;
 
 export interface CallState {
   isIncoming: boolean;
@@ -14,3 +17,5 @@ export interface TransferState {
   transferCallSid: string | null;
   status: 'initial' | 'connecting' | 'completed';
 }
+
+export type Lead = Tables<"leads">;

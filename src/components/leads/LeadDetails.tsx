@@ -1,9 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Lead } from "@/integrations/supabase/types";
+import { Tables } from "@/integrations/supabase/types";
 
 interface LeadDetailsProps {
-  lead: Lead;
+  lead: Tables<"leads">;
 }
 
 export function LeadDetails({ lead }: LeadDetailsProps) {
