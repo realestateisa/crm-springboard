@@ -65,7 +65,7 @@ serve(async (req) => {
       // 1. Take child off hold and connect to conference
       await client.calls(childCallSid)
         .update({
-          twiml: `<Response><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false" beep="false" waitUrl="${holdMusicUrl}">${conferenceName}</Conference></Dial></Response>`
+          twiml: `<Response><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false" beep="true" waitUrl="${holdMusicUrl}">${conferenceName}</Conference></Dial></Response>`
         });
 
       // 2. Remove parent from call
