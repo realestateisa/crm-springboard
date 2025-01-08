@@ -1,5 +1,5 @@
 import { Database } from './database';
 
-export type Lead = Database['public']['Tables']['leads']['Row'];
-export type LeadInsert = Database['public']['Tables']['leads']['Insert'];
-export type LeadUpdate = Database['public']['Tables']['leads']['Update'];
+export interface Lead extends Database['public']['Tables']['leads']['Row'] {}
+export interface LeadInsert extends Database['public']['Tables']['leads']['Insert'] {}
+export interface LeadUpdate extends Database['public']['Tables']['leads']['Update'] {}
