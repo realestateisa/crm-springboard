@@ -1,4 +1,4 @@
-export type Codec = "opus" | "pcmu";
+export type TwilioCodec = "opus" | "pcmu";
 
 export interface CallState {
   isIncoming: boolean;
@@ -7,4 +7,10 @@ export interface CallState {
   isConnected: boolean;
   isMuted: boolean;
   status: string | null;
+}
+
+export interface TransferState {
+  childCallSid: string | null;
+  transferCallSid: string | null;
+  status: 'initial' | 'connecting' | 'completed';
 }
