@@ -28,7 +28,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         if (error) throw error;
 
         const newDevice = new Device(token, {
-          codecPreferences: ['opus', 'pcmu'] as TwilioCodec[],
+          codecPreferences: ['opus', 'pcmu'],
           allowIncomingWhileBusy: false
         });
 
