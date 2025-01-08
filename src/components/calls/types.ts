@@ -1,6 +1,3 @@
-import { Tables } from "@/integrations/supabase/types";
-
-// Define the exact codec types that Twilio expects
 export type TwilioCodec = "opus" | "pcmu";
 export type Codec = TwilioCodec;
 

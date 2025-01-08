@@ -19,10 +19,22 @@ serve(async (req) => {
       Deno.env.get('TWILIO_AUTH_TOKEN')
     );
 
+    // Check call status before proceeding
+    const checkCallStatus = async (callSid: string) => {
+      const call = await client.calls(callSid).fetch();
+      if (call.status !== 'in-progress') {
+        throw new Error(`Call ${callSid} is not in-progress (status: ${call.status}). Cannot proceed with operation.`);
+      }
+      return call;
+    };
+
     if (action === 'initiate') {
       console.log('Initiating transfer for child call:', childCallSid);
       
-      // Create conference name using child call SID
+      // Verify both calls are still active
+      await checkCallStatus(childCallSid);
+      await checkCallStatus(parentCallSid);
+      
       const conferenceName = `conf_${childCallSid}`;
       const holdMusicUrl = "http://demo.twilio.com/docs/classic.mp3";
 
@@ -37,7 +49,7 @@ serve(async (req) => {
         throw new Error('TWILIO_PHONE_NUMBER environment variable is not set');
       }
 
-      // Create new outbound call to transfer number with endConferenceOnExit set to false
+      // Create new outbound call to transfer number with endConferenceOnExit set to true
       const newCall = await client.calls
         .create({
           to: '+12106643493',
@@ -59,6 +71,10 @@ serve(async (req) => {
 
     } else if (action === 'complete') {
       console.log('Completing transfer for child call:', childCallSid);
+      
+      // Verify calls are still active before completing transfer
+      await checkCallStatus(childCallSid);
+      await checkCallStatus(parentCallSid);
       
       const conferenceName = `conf_${childCallSid}`;
       const holdMusicUrl = "http://demo.twilio.com/docs/classic.mp3";
