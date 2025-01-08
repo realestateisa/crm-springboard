@@ -8,6 +8,9 @@ interface CallManagerProps {
   phoneNumber: string | null;
 }
 
+// Define valid codec types
+type TwilioCodec = 'opus' | 'pcmu';
+
 export function CallManager({ phoneNumber }: CallManagerProps) {
   const [device, setDevice] = useState<Device | null>(null);
   const [call, setCall] = useState<any>(null);
@@ -22,9 +25,9 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         
         if (error) throw error;
 
-        // Create new device
+        // Create new device with properly typed codec preferences
         const newDevice = new Device(token, {
-          codecPreferences: ['opus', 'pcmu'],
+          codecPreferences: ['opus', 'pcmu'] as TwilioCodec[],
           allowIncomingWhileBusy: false
         });
 

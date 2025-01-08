@@ -1,4 +1,4 @@
-import { Twilio } from "npm:twilio";
+import { Twilio } from "npm:twilio@4.19.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
