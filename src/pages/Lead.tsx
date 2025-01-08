@@ -23,7 +23,7 @@ const Lead = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as Lead;
     },
   });
 
@@ -59,10 +59,16 @@ const Lead = () => {
 
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-background">
-      <CallManager phoneNumber={lead.phone} />
+      <CallManager 
+        device={null}
+        isReady={false}
+        activeCall={null}
+        onCallAccepted={() => {}}
+        onCallEnded={() => {}}
+      />
       <LeadHeader lead={lead} />
       <div className="container max-w-7xl mx-auto">
-        <LeadDetails lead={lead} />
+        <LeadDetails />
       </div>
     </div>
   );

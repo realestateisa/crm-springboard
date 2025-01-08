@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Device } from "@twilio/voice-sdk";
 import { CallBar } from "./CallBar";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
 interface CallManagerProps {
   device: Device | null;
@@ -26,8 +25,10 @@ export const CallManager = ({
 
   useEffect(() => {
     if (device) {
-      const codecs = device.audio().availableCodecs;
-      setSelectedCodecs(codecs as string[]);
+      const audioHelper = device.audio;
+      if (audioHelper) {
+        setSelectedCodecs(audioHelper.availableCodecs);
+      }
     }
   }, [device]);
 
@@ -70,7 +71,6 @@ export const CallManager = ({
 
   return (
     <CallBar
-      isReady={isReady}
       activeCall={activeCall}
       isMuted={isMuted}
       isHeld={isHeld}
