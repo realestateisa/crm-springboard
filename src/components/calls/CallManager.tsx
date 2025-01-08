@@ -3,19 +3,11 @@ import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { CallBar } from './CallBar';
+import { TwilioCodec, TransferState } from './types';
 
 interface CallManagerProps {
   phoneNumber: string | null;
 }
-
-type TransferState = {
-  childCallSid: string | null;
-  transferCallSid: string | null;
-  status: 'initial' | 'connecting' | 'completed';
-}
-
-// Define valid codec types
-type TwilioCodec = 'opus' | 'pcmu';
 
 export function CallManager({ phoneNumber }: CallManagerProps) {
   const [device, setDevice] = useState<Device | null>(null);
