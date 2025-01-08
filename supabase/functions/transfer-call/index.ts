@@ -37,7 +37,7 @@ serve(async (req) => {
         throw new Error('TWILIO_PHONE_NUMBER environment variable is not set');
       }
 
-      // 2. Create new outbound call to transfer number
+      // 2. Create new outbound call to transfer number with endConferenceOnExit set to false
       const newCall = await client.calls
         .create({
           to: '+12106643493',
@@ -45,7 +45,7 @@ serve(async (req) => {
           twiml: `<Response><Say>Connecting you to the conference.</Say><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false" beep="false" waitUrl="${holdMusicUrl}">${conferenceName}</Conference></Dial></Response>`
         });
 
-      // 3. Connect parent call to conference with empty waitUrl
+      // 3. Connect parent call to conference with endConferenceOnExit set to false
       await client.calls(parentCallSid)
         .update({
           twiml: `<Response><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false" beep="false" waitUrl="">${conferenceName}</Conference></Dial></Response>`
@@ -62,13 +62,31 @@ serve(async (req) => {
       const conferenceName = `conf_${childCallSid}`;
       const holdMusicUrl = "http://demo.twilio.com/docs/classic.mp3";
       
-      // 1. Take child off hold and connect to conference
+      // Get conference participants
+      const conferences = await client.conferences
+        .list({ friendlyName: conferenceName, status: 'in-progress' });
+
+      if (conferences.length === 0) {
+        throw new Error('Conference not found');
+      }
+
+      const conference = conferences[0];
+      const participants = await client.conferences(conference.sid)
+        .participants
+        .list();
+
+      // Only allow transfer if there are at least 2 participants
+      if (participants.length < 2) {
+        throw new Error('Cannot complete transfer: minimum 2 participants required');
+      }
+
+      // Take child off hold and connect to conference
       await client.calls(childCallSid)
         .update({
           twiml: `<Response><Dial><Conference startConferenceOnEnter="true" endConferenceOnExit="false" beep="true" waitUrl="${holdMusicUrl}">${conferenceName}</Conference></Dial></Response>`
         });
 
-      // 2. Remove parent from call
+      // Remove parent from call only if there are enough participants
       await client.calls(parentCallSid)
         .update({
           status: 'completed'
