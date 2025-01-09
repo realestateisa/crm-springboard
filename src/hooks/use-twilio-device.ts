@@ -16,12 +16,7 @@ export function useTwilioDevice() {
       const newDevice = new Device(token, {
         codecPreferences: ['opus', 'pcmu'] as TwilioCodec[],
         allowIncomingWhileBusy: false,
-        playRingtone: false,
-        sounds: {
-          incoming: false,
-          outgoing: false,
-          disconnect: false
-        }
+        playRingtone: false
       });
 
       await newDevice.register();
