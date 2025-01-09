@@ -1,3 +1,5 @@
+import { Tables } from '@/integrations/supabase/types';
+
 export type TwilioCodec = "opus" | "pcmu";
 export type Codec = TwilioCodec;
 

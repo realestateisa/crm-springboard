@@ -2,6 +2,7 @@ import { Device } from '@twilio/voice-sdk';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { TwilioCodec } from '@/components/calls/types';
 
 export function useTwilioDevice() {
   const [device, setDevice] = useState<Device | null>(null);
@@ -13,13 +14,13 @@ export function useTwilioDevice() {
       if (error) throw error;
 
       const newDevice = new Device(token, {
-        codecPreferences: ['opus', 'pcmu'],
+        codecPreferences: ['opus', 'pcmu'] as TwilioCodec[],
         allowIncomingWhileBusy: false,
         playRingtone: false,
         sounds: {
-          incoming: '',    // Empty string disables the sound
-          outgoing: '',    // Empty string disables the sound
-          disconnect: ''   // Empty string disables the sound
+          incoming: null,    // Disable incoming sound
+          outgoing: null,    // Disable outgoing sound
+          disconnect: null   // Disable disconnect sound
         }
       });
 
