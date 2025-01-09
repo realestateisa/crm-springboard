@@ -14,4 +14,7 @@ export interface TransferState {
   status: 'initial' | 'connecting' | 'completed';
 }
 
-export type Lead = Tables<"leads">;
+export type Lead = {
+  id: string;
+  phone: string | null;
+};
