@@ -26,6 +26,21 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
 
+  // Initialize device when component mounts
+  useEffect(() => {
+    const initDevice = async () => {
+      try {
+        await resetDevice();
+        console.log('Twilio device initialized successfully');
+      } catch (error) {
+        console.error('Error initializing Twilio device:', error);
+        toast.error('Failed to initialize call device');
+      }
+    };
+    
+    initDevice();
+  }, [resetDevice]);
+
   useEffect(() => {
     const handleInitiateCall = () => {
       console.log('Call initiation triggered', { phoneNumber });
@@ -43,6 +58,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
   const handleCall = async () => {
     if (!device || !phoneNumber) {
       console.log('Cannot make call - device or phone number missing', { device, phoneNumber });
+      toast.error('Call device not ready. Please try again.');
       return;
     }
 
