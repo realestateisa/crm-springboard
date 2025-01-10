@@ -28,6 +28,7 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
 
   useEffect(() => {
     const handleInitiateCall = () => {
+      console.log('Call initiation triggered', { phoneNumber });
       if (phoneNumber) {
         handleCall();
       }
@@ -40,9 +41,13 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
   }, [phoneNumber]);
 
   const handleCall = async () => {
-    if (!device || !phoneNumber) return;
+    if (!device || !phoneNumber) {
+      console.log('Cannot make call - device or phone number missing', { device, phoneNumber });
+      return;
+    }
 
     try {
+      console.log('Initiating call to:', phoneNumber);
       setCallStatus('queued');
       
       const newCall = await device.connect({
@@ -51,14 +56,19 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
         }
       });
 
+      console.log('Call connected:', newCall);
       setCall(newCall);
 
       // Setup call event handlers
-      newCall.on('ringing', () => setCallStatus('ringing'));
+      newCall.on('ringing', () => {
+        console.log('Call ringing');
+        setCallStatus('ringing');
+      });
       
       newCall.on('accept', async () => {
+        console.log('Call accepted');
         setCallStatus('in-progress');
-        console.log('Call accepted, parent call SID:', newCall.parameters.CallSid);
+        console.log('Parent call SID:', newCall.parameters.CallSid);
         
         try {
           const { data: childCalls, error } = await supabase.functions.invoke('get-child-calls', {
