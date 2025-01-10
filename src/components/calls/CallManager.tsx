@@ -183,10 +183,10 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
   useEffect(() => {
     if (call && callStatus === 'in-progress') {
       // Get the audio stream from the call
-      const stream = new MediaStream();
-      const audioTracks = call.getRemoteAudioTracks();
-      audioTracks.forEach(track => stream.addTrack(track));
-      setAudioStream(stream);
+      const stream = call.getRemoteStream();
+      if (stream) {
+        setAudioStream(stream);
+      }
     } else {
       setAudioStream(null);
     }
