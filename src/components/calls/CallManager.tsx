@@ -26,6 +26,19 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
 
+  useEffect(() => {
+    const handleInitiateCall = () => {
+      if (phoneNumber) {
+        handleCall();
+      }
+    };
+
+    window.addEventListener('initiate-call', handleInitiateCall);
+    return () => {
+      window.removeEventListener('initiate-call', handleInitiateCall);
+    };
+  }, [phoneNumber]);
+
   const handleCall = async () => {
     if (!device || !phoneNumber) return;
 

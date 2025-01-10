@@ -9,7 +9,8 @@ interface LeadHeaderProps {
 
 export function LeadHeader({ lead }: LeadHeaderProps) {
   const handleCallClick = () => {
-    window.dispatchEvent(new CustomEvent('initiate-call'));
+    const event = new CustomEvent('initiate-call');
+    window.dispatchEvent(event);
   };
 
   return (
