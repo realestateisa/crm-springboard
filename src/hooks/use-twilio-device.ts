@@ -28,7 +28,7 @@ export function useTwilioDevice() {
 
       // Configure new device with more conservative settings
       const newDevice = new Device(token, {
-        codecPreferences: ['opus', 'pcmu'],
+        codecPreferences: ['opus', 'pcmu'] as ('opus' | 'pcmu')[],
         maxCallSignalingTimeoutMs: 30000,
         closeProtection: true,
         reconnectBackOffMs: 100
