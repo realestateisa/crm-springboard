@@ -21,7 +21,7 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     rollupOptions: {
-      external: ['@twilio/voice-sdk'],
+      external: ['@twilio/voice-sdk', '@speechmatics/real-time-client'],
     },
   },
 }));

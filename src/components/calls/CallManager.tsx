@@ -115,6 +115,48 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     setIsTranscribing(!isTranscribing);
   };
 
+  const handleTransfer = async () => {
+    if (!call || !transferState.childCallSid) return;
+
+    try {
+      if (transferState.status === 'initial') {
+        const { data, error } = await supabase.functions.invoke('transfer-call', {
+          body: { 
+            childCallSid: transferState.childCallSid,
+            action: 'initiate',
+            parentCallSid: call.parameters.CallSid
+          }
+        });
+
+        if (error) throw error;
+        
+        setTransferState(prev => ({
+          ...prev,
+          transferCallSid: data.transferCallSid,
+          status: 'connecting'
+        }));
+      } else if (transferState.status === 'connecting') {
+        const { error } = await supabase.functions.invoke('transfer-call', {
+          body: { 
+            childCallSid: transferState.childCallSid,
+            action: 'complete',
+            parentCallSid: call.parameters.CallSid
+          }
+        });
+
+        if (error) throw error;
+
+        setTransferState(prev => ({
+          ...prev,
+          status: 'completed'
+        }));
+      }
+    } catch (error) {
+      console.error('Transfer error:', error);
+      toast.error('Failed to transfer call');
+    }
+  };
+
   useEffect(() => {
     if (call && callStatus === 'in-progress') {
       // Get the audio stream from the call

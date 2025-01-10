@@ -3,11 +3,13 @@ import { Tables } from '@/integrations/supabase/types';
 export type TwilioCodec = "opus" | "pcmu";
 export type Codec = TwilioCodec;
 
+export type CallStatus = 'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed' | null;
+
 export interface CallState {
   isIncoming: boolean;
   isOngoing: boolean;
   isMuted: boolean;
-  status: 'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed' | null;
+  status: CallStatus;
 }
 
 export interface TransferState {
