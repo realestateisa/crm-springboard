@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { CallBar } from './CallBar';
 import { useTwilioDevice } from '@/hooks/use-twilio-device';
 import { useCallState } from './CallState';
+import { TranscriptionWindow } from './TranscriptionWindow';
 
 interface CallManagerProps {
   phoneNumber: string | null;
@@ -22,6 +23,8 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     setTransferState,
     resetCallState
   } = useCallState();
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
 
   const handleCall = async () => {
     if (!device || !phoneNumber) return;
@@ -108,82 +111,43 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
     }
   };
 
-  const handleTransfer = async () => {
-    if (!call || !transferState.childCallSid) {
-      toast.error('No active call to transfer');
-      return;
-    }
-
-    try {
-      if (transferState.status === 'initial') {
-        const { data, error } = await supabase.functions.invoke('transfer-call', {
-          body: {
-            action: 'initiate',
-            childCallSid: transferState.childCallSid,
-            parentCallSid: call.parameters.CallSid
-          }
-        });
-
-        if (error) throw error;
-
-        setTransferState(prev => ({
-          ...prev,
-          transferCallSid: data.transferCallSid,
-          status: 'connecting'
-        }));
-
-        toast.success('Transfer initiated - click again to complete transfer');
-
-      } else if (transferState.status === 'connecting') {
-        const { error } = await supabase.functions.invoke('transfer-call', {
-          body: {
-            action: 'complete',
-            childCallSid: transferState.childCallSid,
-            parentCallSid: call.parameters.CallSid
-          }
-        });
-
-        if (error) throw error;
-
-        setTransferState(prev => ({
-          ...prev,
-          status: 'completed'
-        }));
-
-        toast.success('Transfer completed');
-        handleHangup();
-      }
-    } catch (error) {
-      console.error('Transfer error:', error);
-      toast.error('Transfer failed: ' + error.message);
-    }
+  const handleTranscribe = () => {
+    setIsTranscribing(!isTranscribing);
   };
 
   useEffect(() => {
-    const handleInitiateCall = () => {
-      if (!device || !phoneNumber || callStatus !== null) return;
-      handleCall();
-    };
-
-    window.addEventListener('initiate-call', handleInitiateCall);
-    return () => {
-      window.removeEventListener('initiate-call', handleInitiateCall);
-    };
-  }, [device, phoneNumber, callStatus]);
+    if (call && callStatus === 'in-progress') {
+      // Get the audio stream from the call
+      const stream = new MediaStream();
+      const audioTracks = call.getRemoteAudioTracks();
+      audioTracks.forEach(track => stream.addTrack(track));
+      setAudioStream(stream);
+    } else {
+      setAudioStream(null);
+    }
+  }, [call, callStatus]);
 
   return (
     <>
       {callStatus && (
-        <CallBar
-          status={callStatus}
-          phoneNumber={phoneNumber || ''}
-          onHangup={handleHangup}
-          onMute={handleMute}
-          onTransfer={handleTransfer}
-          isMuted={isMuted}
-          transferState={transferState.status}
-          onDigitPress={handleDigitPress}
-        />
+        <>
+          <CallBar
+            status={callStatus}
+            phoneNumber={phoneNumber || ''}
+            onHangup={handleHangup}
+            onMute={handleMute}
+            onTransfer={handleTransfer}
+            onTranscribe={handleTranscribe}
+            isMuted={isMuted}
+            isTranscribing={isTranscribing}
+            transferState={transferState.status}
+            onDigitPress={handleDigitPress}
+          />
+          <TranscriptionWindow 
+            audioStream={audioStream}
+            isVisible={isTranscribing}
+          />
+        </>
       )}
     </>
   );
