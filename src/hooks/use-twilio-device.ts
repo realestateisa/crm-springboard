@@ -15,7 +15,6 @@ export function useTwilioDevice() {
       const newDevice = new Device(token, {
         codecPreferences: ['opus', 'pcmu'] as any,
         allowIncomingWhileBusy: false,
-        playRingtone: false,
         sounds: {
           incoming: null,    // Disable incoming sound
           outgoing: null,    // Disable outgoing sound
