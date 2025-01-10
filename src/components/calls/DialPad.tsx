@@ -4,7 +4,7 @@ import {
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Dialpad } from "lucide-react";
+import { Keypad } from "lucide-react";
 
 interface DialPadProps {
   onDigitPress: (digit: string) => void;
@@ -17,7 +17,7 @@ export function DialPad({ onDigitPress }: DialPadProps) {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          <Dialpad className="h-4 w-4" />
+          <Keypad className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

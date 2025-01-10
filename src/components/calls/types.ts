@@ -1,7 +1,7 @@
 import { Tables } from '@/integrations/supabase/types';
 
 export type TwilioCodec = "opus" | "pcmu";
-export type Codec = TwilioCodec;
+export type Codec = "opus" | "pcmu";
 
 export type CallStatus = 'queued' | 'ringing' | 'in-progress' | 'completed' | 'failed' | null;
 
