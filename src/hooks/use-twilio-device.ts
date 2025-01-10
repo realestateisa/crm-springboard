@@ -1,11 +1,12 @@
 import { Device } from '@twilio/voice-sdk';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
 export function useTwilioDevice() {
   const [device, setDevice] = useState<Device | null>(null);
   const [isInitializing, setIsInitializing] = useState(false);
+  const mountedRef = useRef(true);
 
   const setupDevice = async () => {
     try {
@@ -27,11 +28,10 @@ export function useTwilioDevice() {
 
       // Configure new device with more conservative settings
       const newDevice = new Device(token, {
-        codecPreferences: ['opus', 'pcmu'],
-        maxCallSignalingTimeoutMs: 30000, // Increase timeout
-        wsServer: 'wss://voice-js.twilio.com',  // Use primary server
-        closeProtection: true, // Prevent accidental disconnects
-        enableIceRestart: true, // Allow connection recovery
+        codecPreferences: ['opus', 'pcmu'] as Device.Codec[],
+        maxCallSignalingTimeoutMs: 30000,
+        closeProtection: true,
+        enableIceRestart: true,
         maxReconnectAttempts: 3,
         reconnectBackOffMs: 100
       });
@@ -40,7 +40,9 @@ export function useTwilioDevice() {
       try {
         await newDevice.register();
         console.log('Device registered successfully');
-        setDevice(newDevice);
+        if (mountedRef.current) {
+          setDevice(newDevice);
+        }
       } catch (regError) {
         console.error('Error registering device:', regError);
         throw regError;
@@ -50,7 +52,6 @@ export function useTwilioDevice() {
       newDevice.on('error', (error: any) => {
         console.error('Twilio device error:', error);
         
-        // Handle specific error codes
         if (error.code === 31005) {
           toast.error('Connection error. Please try again.');
           resetDevice();
@@ -63,7 +64,13 @@ export function useTwilioDevice() {
     } catch (error) {
       console.error('Error setting up Twilio device:', error);
       toast.error('Failed to setup call device. Please try again.');
-      setDevice(null);
+      if (mountedRef.current) {
+        setDevice(null);
+      }
+    } finally {
+      if (mountedRef.current) {
+        setIsInitializing(false);
+      }
     }
   };
 
@@ -71,7 +78,9 @@ export function useTwilioDevice() {
     if (device) {
       try {
         device.destroy();
-        setDevice(null);
+        if (mountedRef.current) {
+          setDevice(null);
+        }
       } catch (error) {
         console.error('Error destroying device:', error);
       }
@@ -89,13 +98,18 @@ export function useTwilioDevice() {
       console.error('Error resetting device:', error);
       toast.error('Failed to reset device. Please refresh the page.');
     } finally {
-      setIsInitializing(false);
+      if (mountedRef.current) {
+        setIsInitializing(false);
+      }
     }
   };
 
   useEffect(() => {
+    mountedRef.current = true;
     setupDevice();
+    
     return () => {
+      mountedRef.current = false;
       destroyDevice();
     };
   }, []);

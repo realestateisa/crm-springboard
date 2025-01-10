@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { CallBar } from './CallBar';
@@ -25,16 +25,22 @@ export function CallManager({ phoneNumber }: CallManagerProps) {
   } = useCallState();
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
+  const initializingRef = useRef(false);
 
   // Initialize device when component mounts
   useEffect(() => {
     const initDevice = async () => {
+      if (initializingRef.current) return;
+      
+      initializingRef.current = true;
       try {
         await resetDevice();
         console.log('Twilio device initialized successfully');
       } catch (error) {
         console.error('Error initializing Twilio device:', error);
         toast.error('Failed to initialize call device');
+      } finally {
+        initializingRef.current = false;
       }
     };
     
