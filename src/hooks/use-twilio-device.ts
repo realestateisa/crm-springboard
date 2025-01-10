@@ -13,7 +13,7 @@ export function useTwilioDevice() {
       if (error) throw error;
 
       const newDevice = new Device(token, {
-        codecPreferences: ['opus', 'pcmu'],
+        codecPreferences: ['opus', 'pcmu'] as any,
         allowIncomingWhileBusy: false,
         playRingtone: false,
         sounds: {
