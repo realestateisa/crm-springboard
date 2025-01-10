@@ -2,7 +2,6 @@ import { Device } from '@twilio/voice-sdk';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { Codec } from '@/components/calls/types';
 
 export function useTwilioDevice() {
   const [device, setDevice] = useState<Device | null>(null);
@@ -14,7 +13,7 @@ export function useTwilioDevice() {
       if (error) throw error;
 
       const newDevice = new Device(token, {
-        codecPreferences: ['opus', 'pcmu'] as Codec[],
+        codecPreferences: ['opus', 'pcmu'],
         allowIncomingWhileBusy: false,
         playRingtone: false,
         sounds: {
